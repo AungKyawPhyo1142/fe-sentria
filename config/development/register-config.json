@@ -1,0 +1,5 @@
+{
+  "env": "development",
+  "lang": "en",
+  "endpoint": "http://localhost:3000"
+}

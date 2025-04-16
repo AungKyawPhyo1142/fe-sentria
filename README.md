@@ -1,54 +1,30 @@
-# React + TypeScript + Vite
+# Sentria
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Sentria is a community-driven disaster response platform that helps people stay safe and connected during natural disasters. Users can report incidents with map-based locations, share real-time updates, and request or offer help to others nearby. The platform intelligently aggregates post data to identify affected zones and generate safe travel routes that avoid danger areas. It also provides access to vital resources such as emergency hotlines, shelter locations, and survival guides—all powered by free and open-source technologies.
 
-Currently, two official plugins are available:
+## Technologies
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- React + Typescript
 
-## Expanding the ESLint configuration
+- Zustand
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- React Query
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+## Installation
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 1. Clone the project from the repo
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### 2. Install all the dependencies
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+    npm install
+
+### 3. Run with the following command
+
+    npm run dev
+
+## Contributors
+
+- [Sebastian Kein (AungKyaw Phyo)](https://github.com/AungKyawPhyo1142)
+- [Nyi Nyi Soe](https://github.com/Nyi-NyiSoe)
+- [Kyi Thant Sin](https://github.com/KyiThantSin)
+- [Linn Latt Cho](https://github.com/linnlatt132)

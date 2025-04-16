@@ -1,0 +1,5 @@
+{
+  "env": "production",
+  "lang": "en",
+  "endpoint": "https://api.myapp.com"
+}
