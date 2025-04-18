@@ -28,3 +28,4 @@ Sentria is a community-driven disaster response platform that helps people stay 
 - [Nyi Nyi Soe](https://github.com/Nyi-NyiSoe)
 - [Kyi Thant Sin](https://github.com/KyiThantSin)
 - [Linn Latt Cho](https://github.com/linnlatt132)
+- [Saw Zi Dunn](https://github.com/SawZiDunn)
