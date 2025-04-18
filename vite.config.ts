@@ -19,6 +19,7 @@ export default defineConfig({
       '@features': path.resolve(__dirname, './src/features'),
       '@pages': path.resolve(__dirname, './src/pages'),
       '@utils': path.resolve(__dirname, './src/utils'),
+      '@i18n': path.resolve(__dirname, './src/services/i18n'),
       '@zustand': path.resolve(__dirname, './src/services/zustand'),
       '@routes': path.resolve(__dirname, './src/services/routes'),
       '@formik': path.resolve(__dirname, './src/services/formik'),

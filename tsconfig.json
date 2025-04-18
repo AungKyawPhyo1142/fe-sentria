@@ -23,6 +23,7 @@
     "paths": {
       "@/*": ["./src/*"],
       "@config/*": ["config/*"],
+      "@i18n/*": ["src/services/i18n/*"],
       "@assets/*": ["src/assets/*"],
       "@components/*": ["src/components/*"],
       "@features/*": ["src/features/*"],

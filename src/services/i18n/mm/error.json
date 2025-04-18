@@ -1,0 +1,7 @@
+{
+  "error": {
+    "common": {
+      "mandatory": "{{field}} သည် လိုအပ်ပါသည်။"
+    }
+  }
+}

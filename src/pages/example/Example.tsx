@@ -1,5 +1,6 @@
 import Button from '@/components/common/Button'
 import Input from '@/components/common/Input'
+import LanguageToggle from '@/components/common/LanguageToggle'
 import { AppConstantRoutes } from '@/services/routes/path'
 import {
   decrement,
@@ -7,10 +8,12 @@ import {
   selectCount,
   useCountStore,
 } from '@/zustand/countStore'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router'
 
 const Example = () => {
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   const count = useCountStore(selectCount)
   return (
@@ -34,6 +37,17 @@ const Example = () => {
               Decrease
             </button>
           </div>
+        </div>
+        <div className='mt-5 flex flex-col gap-y-3 rounded p-10'>
+          <LanguageToggle />
+          <p>
+            {t('common.greeting', {
+              name: 'Aung',
+            })}
+          </p>
+          <p>{t('error.common.mandatory', {
+            field: "Name"
+          })}</p>
         </div>
         <div className='mt-5 flex flex-col gap-y-3 rounded p-10'>
           <Input placeholder='example' />
