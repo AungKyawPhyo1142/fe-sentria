@@ -1,3 +1,4 @@
+import Button from '@/components/common/Button'
 import { AppConstantRoutes } from '@/services/routes/path'
 import { useNavigate } from 'react-router'
 
@@ -14,6 +15,13 @@ const Login = () => {
         >
           Go to Example
         </button>
+
+        <Button
+          onClick={() => navigate(AppConstantRoutes.paths.auth.register)}
+          className='w-full border-2 border-blue-500 !text-blue-500'
+        >
+          New here? Create an account
+        </Button>
       </div>
     </div>
   )
