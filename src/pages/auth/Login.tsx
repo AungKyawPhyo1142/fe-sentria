@@ -7,10 +7,10 @@ import { useTranslation } from 'react-i18next'
 const Login = () => {
   const { t } = useTranslation()
   return (
-    <div className='m-5 flex min-h-screen items-center justify-center'>
-      <div className='flex w-[1000px] max-w-5xl overflow-hidden shadow-lg'>
+    <div className='flex max-h-screen items-center justify-center'>
+      <div className='mt-20 flex w-[1000px] max-w-5xl overflow-hidden rounded-[10px] shadow-sm'>
         {/* Slider */}
-        <div className='w-1/2'>
+        <div className='w-1/2 rounded-[10px]'>
           <ImageSlider />
         </div>
         {/* Login form */}
