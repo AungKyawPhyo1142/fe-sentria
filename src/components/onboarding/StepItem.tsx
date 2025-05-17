@@ -21,7 +21,7 @@ const StepItem: React.FC<StepItemProps> = ({
       <div className='mr-7 flex flex-col items-center'>
         <button
           onClick={() => click(id)}
-          className={`bg-primary flex h-16 w-16 items-center justify-center rounded-full text-[24px] text-white ${isActive ? '' : 'opacity-55 hover:opacity-100'}`}
+          className={`bg-primary flex h-16 w-16 cursor-pointer items-center justify-center rounded-full text-[24px] text-white ${isActive ? '' : 'opacity-55 hover:opacity-100'}`}
         >
           {id}
         </button>

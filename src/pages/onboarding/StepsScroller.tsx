@@ -110,7 +110,7 @@ const StepsScroller: React.FC = () => {
   return (
     <div className='ml-20 flex min-h-screen justify-center bg-white pl-10'>
       {/* Left step bar */}
-      <div className='flex w-1/2 flex-col p-8'>
+      <div className='mt-8 flex w-1/2 flex-col p-8'>
         <div className='mb-16'>
           <h2 className='text-primary'>
             <SentriaLogo className={'h-16 w-60 object-contain'} />
@@ -137,7 +137,7 @@ const StepsScroller: React.FC = () => {
       {/* Right step content area with smooth scrolling */}
       <div
         ref={scrollContainerRef}
-        className='custom-scrollbar flex h-screen w-1/2 flex-col overflow-y-auto scroll-smooth p-8 pb-45'
+        className='custom-scrollbar flex h-screen w-1/2 flex-col overflow-y-auto scroll-smooth p-8 pb-40'
         onScroll={handleScroll}
       >
         {/* Content container */}

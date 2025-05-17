@@ -17,7 +17,7 @@ const StepContent: React.FC<StepContentProps> = ({
 }) => {
   return (
     <div
-      className={`border-grey-5 mb-8 w-xl rounded-lg border px-8 py-6 hover:brightness-120 ${isActive ? '' : 'opacity-40'}`}
+      className={`mb-8 w-xl rounded-lg border-[1px] border-[#3333344D] px-8 py-6 hover:brightness-120 ${isActive ? '' : 'opacity-40'}`}
     >
       <div className='text-primary mb-8 flex items-center'>
         {iconPath ? (
