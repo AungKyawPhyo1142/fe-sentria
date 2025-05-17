@@ -1,5 +1,14 @@
 {
   "common": {
     "greeting": "Hello, {{name}}!"
+  },
+  "Login": {
+    "welcome": "Welcome to Sentria.",
+    "instruction": "Please fill all the fields to login.",
+    "email": "Email",
+    "password": "Password",
+    "login": "Login",
+    "forgot": "Forgot password?",
+    "create": "New here? Create an account"
   }
 }
