@@ -108,7 +108,7 @@ const StepsScroller: React.FC = () => {
   }
 
   return (
-    <div className='ml-20 flex min-h-screen justify-center bg-white pl-10'>
+    <div className='flex min-h-screen justify-center bg-white pl-30'>
       {/* Left step bar */}
       <div className='mt-8 flex w-1/2 flex-col p-8'>
         <div className='mb-16'>
@@ -156,6 +156,7 @@ const StepsScroller: React.FC = () => {
               />
             </div>
           ))}
+
           <div className=''>
             <Button
               onClick={handleStart}
