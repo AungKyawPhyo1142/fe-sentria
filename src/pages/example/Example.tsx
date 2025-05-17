@@ -45,9 +45,11 @@ const Example = () => {
               name: 'Aung',
             })}
           </p>
-          <p>{t('error.common.mandatory', {
-            field: "Name"
-          })}</p>
+          <p>
+            {t('error.common.mandatory', {
+              field: 'Name',
+            })}
+          </p>
         </div>
         <div className='mt-5 flex flex-col gap-y-3 rounded p-10'>
           <Input placeholder='example' />
