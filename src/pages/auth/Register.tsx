@@ -1,11 +1,20 @@
 import Button from '@/components/common/Button'
+import DropDown from '@/components/common/DropDown'
 import Input from '@/components/common/Input'
 import { AppConstantRoutes } from '@/services/routes/path'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router'
+import countryList from 'react-select-country-list'
+
 const Register = () => {
   const navigate = useNavigate()
   const { t } = useTranslation()
+  const countryOptions = new Map(
+    countryList()
+      .getData()
+      .map((country) => [country.value, country.label]),
+  )
+
   return (
     <form className='w-[85%] items-center justify-center space-y-5'>
       <div>
@@ -26,12 +35,8 @@ const Register = () => {
         type='date'
         className='text-zinc-500'
       />
-      <select className="w-full rounded border border-gray-300 p-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500">
-        <option value="item1">|| 'Example Item 1'</option>
-        <option value="item2"> || 'Example Item 2'</option>
-        <option value="item3">'Example Item 3'</option>
-      </select>
-      <Input placeholder={t('Register.email')} type='email' />
+      <DropDown itemList={countryOptions} placeholder='Country' />
+
       <Input placeholder={t('Register.password')} type='password' />
       <Input placeholder={t('Register.confirm')} type='password' />
 
