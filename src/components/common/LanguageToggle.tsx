@@ -1,7 +1,7 @@
 import i18next from 'i18next'
-import Button from './Button'
+import { ChevronDown, ChevronUp, Globe } from 'lucide-react'
 import { useState } from 'react'
-import { Globe, ChevronDown, ChevronUp } from 'lucide-react'
+import Button from './Button'
 
 const LanguageToggle = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -15,7 +15,7 @@ const LanguageToggle = () => {
   }
 
   return (
-    <div className='relative inline-block text-left'>
+    <div className='relative inline-block text-left '>
       {/* <div>
         <Button primary onClick={() => changeLanguage('mm')}>mm</Button>
         <Button secondary onClick={() => changeLanguage('en')}>en</Button>

@@ -10,5 +10,20 @@
     "login": "Login",
     "forgot": "Forgot password?",
     "create": "New here? Create an account"
+  },
+  "Register": {
+    "welcome": "Welcome to Sentria.",
+    "instruction": "Please fill all the fields to register.",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "username": "Username",
+    "dateOfBirth": "Date of Birth",
+    "country": "Country",
+    "email": "Email",
+    "password": "Password",
+    "confirm": "Confirm Password",
+    "register": "Register",
+    "terms": "Agree to terms and conditions",
+    "sentrian": "Already a Sentrian? Go back to login"
   }
 }

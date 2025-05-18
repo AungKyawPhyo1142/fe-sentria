@@ -1,97 +1,68 @@
 import Button from '@/components/common/Button'
-import ImageSlide from '@/components/common/ImageSlide'
 import Input from '@/components/common/Input'
 import { AppConstantRoutes } from '@/services/routes/path'
+import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router'
-
 const Register = () => {
   const navigate = useNavigate()
+  const { t } = useTranslation()
   return (
-    <div className='flex h-screen flex-col items-center justify-center bg-gray-100'>
-      <div className='justsify-center flex w-[60%] flex-row items-center rounded bg-white shadow-md'>
-        <div className='flex-1'>
-          <ImageSlide />
-        </div>
-
-        <div className='flex flex-1 flex-col p-6'>
-          {/* Header  */}
-          <div className='mb-10 flex flex-col items-start'>
-            <h2 className='text-center text-4xl font-bold'>
-              Welcome to Sentria!
-            </h2>
-            <span className='text-[16px] text-gray-400'>
-              Please fill all the fields to register.
-            </span>
-          </div>
-
-          {/* Centered form */}
-          <div className='flex flex-1 flex-col items-center justify-center'>
-            <form className='flex w-full flex-col gap-y-6'>
-              <Input
-                type='email'
-                id='email'
-                placeholder='Email'
-                onChange={undefined}
-                value={undefined}
-                error={undefined}
-              />
-
-              <Input
-                type='password'
-                id='password'
-                placeholder='Password'
-                onChange={undefined}
-                value={undefined}
-                error={undefined}
-              />
-
-              <Input
-                type='password'
-                id='confirmPassword'
-                placeholder='Confirm Password'
-                onChange={undefined}
-                value={undefined}
-                error={undefined}
-              />
-
-              <div className='flex w-full flex-row items-center justify-between'>
-                <label className='flex items-center gap-x-2'>
-                  <input
-                    type='checkbox'
-                    id='remember'
-                    onChange={undefined}
-                    checked={undefined}
-                    className='h-6 w-6 accent-white'
-                    style={{ accentColor: 'green' }}
-                  />
-                  <span className='text-[16px]'>
-                    Agree to terms and conditions
-                  </span>
-                </label>
-                <Button
-                  type='submit'
-                  onClick={undefined}
-                  className='w-40 bg-green-500'
-                >
-                  Register
-                </Button>
-              </div>
-            </form>
-            {/* divider */}
-            <div className='my-6 flex w-full items-center justify-center'>
-              <div className='h-[1px] w-full bg-gray-300' />
-            </div>
-
-            <Button
-              onClick={() => navigate(AppConstantRoutes.paths.auth.login)}
-              className='m-0 mt-4 w-full rounded-lg border-2 border-blue-400 bg-white px-4 py-2 text-center !text-blue-500 shadow-sm'
-            >
-              Already a Sentrian? Go back to Login
-            </Button>
-          </div>
-        </div>
+    <form className='w-[85%] items-center justify-center space-y-5'>
+      <div>
+        <h1 className='text-[32px] font-medium text-[#333334]'>
+          {t('Register.welcome')}
+        </h1>
+        <h3 className='text-[16px] font-light text-[#333334]/50'>
+          {t('Register.instruction')}
+        </h3>
       </div>
-    </div>
+      <div className='flex flex-row gap-x-5'>
+        <Input placeholder={t('Register.firstName')} type='text' />
+        <Input placeholder={t('Register.lastName')} type='text' />
+      </div>
+      <Input placeholder={t('Register.username')} type='text' />
+      <Input
+        placeholder={t('Register.dateOfBirth')}
+        type='date'
+        className='text-zinc-500'
+      />
+      <select className="w-full rounded border border-gray-300 p-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500">
+        <option value="item1">|| 'Example Item 1'</option>
+        <option value="item2"> || 'Example Item 2'</option>
+        <option value="item3">'Example Item 3'</option>
+      </select>
+      <Input placeholder={t('Register.email')} type='email' />
+      <Input placeholder={t('Register.password')} type='password' />
+      <Input placeholder={t('Register.confirm')} type='password' />
+
+      <div className='flex w-full justify-between'>
+        <label className='flex items-center gap-x-2'>
+          <input
+            type='checkbox'
+            id='remember'
+            onChange={undefined}
+            checked={undefined}
+            className='h-6 w-6 accent-white'
+            style={{ accentColor: 'green' }}
+          />
+          <span className='text-[13px] font-light text-[#333334]/50'>
+            {t('Register.terms')}
+          </span>
+        </label>
+        <Button primary type='submit' className='w-30'>
+          {t('Register.register')}
+        </Button>
+      </div>
+      <div className='mt-5 border-t border-[#333334]/30 pt-8 text-center'>
+        <Button
+          outline
+          className='w-full'
+          onClick={() => navigate(AppConstantRoutes.paths.auth.login)}
+        >
+          {t('Register.sentrian')}
+        </Button>
+      </div>
+    </form>
   )
 }
 

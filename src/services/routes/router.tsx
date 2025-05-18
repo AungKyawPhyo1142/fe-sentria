@@ -1,5 +1,4 @@
-import Login from '@/pages/auth/Login'
-import Register from '@/pages/auth/Register'
+import Container from '@/pages/auth/Container'
 import Example from '@/pages/example/Example'
 import { createBrowserRouter, Navigate } from 'react-router'
 import { AppConstantRoutes } from './path'
@@ -27,11 +26,11 @@ export const router = createBrowserRouter([
   },
   {
     path: AppConstantRoutes.paths.auth.login,
-    element: <Login />,
+    element: <Container />,
   },
   {
     path: AppConstantRoutes.paths.auth.register,
-    element: <Register />,
+    element: <Container />,
   },
   {
     path: AppConstantRoutes.paths.example.default,
