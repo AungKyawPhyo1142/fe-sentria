@@ -1,65 +1,65 @@
 @import 'tailwindcss';
 
 @theme {
-    --color-primary: #2E8B57;
-    --color-secondary: #1560BD;
-    --color-accent: #FFF176;
-    --color-black: #333334;
-    --color-white: #F5FEFD;
-    --color-red: #B22222;
+  --color-primary: #2e8b57;
+  --color-secondary: #1560bd;
+  --color-accent: #fff176;
+  --color-black: #333334;
+  --color-white: #f5fefd;
+  --color-red: #b22222;
 
-    --font-poppins: 'Poppins', sans-serif;
+  --font-poppins: 'Poppins', sans-serif;
 }
 
 @font-face {
-    font-family: Poppins;
-    font-weight: 400;
-    src: url(/fonts/Poppins-Regular.ttf);
+  font-family: Poppins;
+  font-weight: 400;
+  src: url(/fonts/Poppins-Regular.ttf);
 }
 
 /* Light at weight 300 */
 @font-face {
-    font-family: Poppins;
-    font-weight: 300;
-    src: url(/fonts/Poppins-Light.ttf);
+  font-family: Poppins;
+  font-weight: 300;
+  src: url(/fonts/Poppins-Light.ttf);
 }
 
 /* SemiBold at weight 600 */
 @font-face {
-    font-family: Poppins;
-    font-weight: 600;
-    src: url(/fonts/Poppins-SemiBold.ttf);
+  font-family: Poppins;
+  font-weight: 600;
+  src: url(/fonts/Poppins-SemiBold.ttf);
 }
 
 /* Bold at weight 700 */
 @font-face {
-    font-family: Poppins;
-    font-weight: 700;
-    src: url(/fonts/Poppins-Bold.ttf);
+  font-family: Poppins;
+  font-weight: 700;
+  src: url(/fonts/Poppins-Bold.ttf);
 }
 
 /* animation */
 .fade-in {
-    -webkit-animation: fade-in 0.75s cubic-bezier(0.39, 0.575, 0.565, 1) both;
-    animation: fade-in 0.75s cubic-bezier(0.39, 0.575, 0.565, 1) both;
+  -webkit-animation: fade-in 0.75s cubic-bezier(0.39, 0.575, 0.565, 1) both;
+  animation: fade-in 0.75s cubic-bezier(0.39, 0.575, 0.565, 1) both;
 }
 
 @-webkit-keyframes fade-in {
-    0% {
-        opacity: 0;
-    }
+  0% {
+    opacity: 0;
+  }
 
-    100% {
-        opacity: 1;
-    }
+  100% {
+    opacity: 1;
+  }
 }
 
 @keyframes fade-in {
-    0% {
-        opacity: 0;
-    }
+  0% {
+    opacity: 0;
+  }
 
-    100% {
-        opacity: 1;
-    }
+  100% {
+    opacity: 1;
+  }
 }
