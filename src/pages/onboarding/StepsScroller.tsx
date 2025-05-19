@@ -162,7 +162,7 @@ const StepsScroller: React.FC = () => {
               onClick={handleStart}
               secondary={true}
               type={'button'}
-              className='w-[560px] rounded-md px-10 py-2 text-white transition-colors hover:opacity-80'
+              className='w-[560px] rounded-md px-10 py-2 text-white'
             >
               {t('onboarding.startExploring')}
             </Button>

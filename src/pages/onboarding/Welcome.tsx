@@ -23,7 +23,7 @@ function Welcome() {
           }}
           primary={true}
           type={'button'}
-          className='cursor-pointer rounded-l px-12 py-3 text-lg text-white transition-colors hover:bg-[#26724b] md:text-xl'
+          className='cursor-pointer rounded-l px-12 py-3 text-lg text-white md:text-xl'
         >
           {t('onboarding.letsTakeFirstStep')}
         </Button>
