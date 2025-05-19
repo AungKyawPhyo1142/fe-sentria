@@ -13,6 +13,20 @@ export const AppConstantRoutes = {
         },
       }
     },
+    get onboarding() {
+      return {
+        get default() {
+          return '/onboarding'
+        },
+        get welcome() {
+          return `${this.default}/welcome`
+        },
+        get steps() {
+          return `${this.default}/steps`
+        },
+      }
+    },
+
     get home() {
       return '/home'
     },

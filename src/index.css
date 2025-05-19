@@ -63,3 +63,16 @@
     opacity: 1;
   }
 }
+
+/* for custom scrollbar*/
+.custom-scrollbar::-webkit-scrollbar {
+  @apply w-1.5;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  @apply rounded-full bg-gray-100;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-primary rounded-full;
+}

@@ -45,7 +45,6 @@ const Example = () => {
               name: 'Aung',
             })}
           </p>
-          <p>{t('Login.login')}</p>
           <p>
             {t('error.common.mandatory', {
               field: 'Name',
