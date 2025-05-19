@@ -21,7 +21,7 @@ interface Step {
 const StepsScroller: React.FC = () => {
   const [activeStep, setActiveStep] = useState<number>(1)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation() // import i18n to test translation
 
   const steps: Step[] = [
     {
