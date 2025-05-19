@@ -7,9 +7,12 @@ const LanguageToggle = () => {
   return (
     <div>
       <div>
-        <Button primary onClick={() => changeLanguage('mm')}>mm</Button>
-        <Button secondary onClick={() => changeLanguage('en')}>en</Button>
-        
+        <Button primary onClick={() => changeLanguage('mm')}>
+          mm
+        </Button>
+        <Button secondary onClick={() => changeLanguage('en')}>
+          en
+        </Button>
       </div>
     </div>
   )
