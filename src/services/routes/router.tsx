@@ -3,6 +3,9 @@ import Example from '@/pages/example/Example'
 import { createBrowserRouter, Navigate } from 'react-router'
 import { AppConstantRoutes } from './path'
 
+import Welcome from '@/pages/onboarding/Welcome'
+import StepsScroller from '@/pages/onboarding/StepsScroller'
+
 /*
   This file is where you define the routes
 */
@@ -35,6 +38,14 @@ export const router = createBrowserRouter([
   {
     path: AppConstantRoutes.paths.example.default,
     element: <Example />,
+  },
+  {
+    path: AppConstantRoutes.paths.onboarding.welcome,
+    element: <Welcome />,
+  },
+  {
+    path: AppConstantRoutes.paths.onboarding.steps,
+    element: <StepsScroller />,
   },
 
   // ** The following paths are all protected by SecureRoute component
