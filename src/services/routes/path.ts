@@ -26,6 +26,19 @@ export const AppConstantRoutes = {
         },
       }
     },
+    get verifyEmail() {
+      return {
+        get default() {
+          return '/verify-email'
+        },
+        get sent() {
+          return `${this.default}/sent`
+        },
+        get confirmed() {
+          return `${this.default}/:token`
+        },
+      }
+    },
 
     get home() {
       return '/home'

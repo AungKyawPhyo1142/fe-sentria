@@ -9,8 +9,18 @@ const ImageSlider: React.FC = () => {
   const [current, setCurrent] = useState(0)
   const slides = [
     <Slide1 key='slide1' />,
-    <img src={Slide2} alt='Slide 2' key='slide2' className='h-full w-fit object-cover'/>,
-    <img src={Slide3} alt='Slide 3' key='slide3' className='h-full w-fit object-cover'/>,
+    <img
+      src={Slide2}
+      alt='Slide 2'
+      key='slide2'
+      className='h-full w-fit object-cover'
+    />,
+    <img
+      src={Slide3}
+      alt='Slide 3'
+      key='slide3'
+      className='h-full w-fit object-cover'
+    />,
   ]
 
   const slideCount = slides.length

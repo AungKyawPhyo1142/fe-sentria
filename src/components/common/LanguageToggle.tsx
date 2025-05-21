@@ -15,7 +15,7 @@ const LanguageToggle = () => {
   }
 
   return (
-    <div className='relative inline-block text-left '>
+    <div className='relative inline-block text-left'>
       {/* <div>
         <Button primary onClick={() => changeLanguage('mm')}>mm</Button>
         <Button secondary onClick={() => changeLanguage('en')}>en</Button>
@@ -24,7 +24,7 @@ const LanguageToggle = () => {
       <Button
         outline
         onClick={() => setIsOpen(!isOpen)}
-        className='flex items-center gap-1 rounded-l-full rounded-r-full px-2 text-[14px] py-1 '
+        className='flex items-center gap-1 rounded-l-full rounded-r-full px-2 py-1 text-[14px]'
       >
         <Globe size={25} className='pr-1' />
         <span className='capitalize'>

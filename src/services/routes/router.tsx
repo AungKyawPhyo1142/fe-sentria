@@ -5,6 +5,8 @@ import { AppConstantRoutes } from './path'
 
 import Welcome from '@/pages/onboarding/Welcome'
 import StepsScroller from '@/pages/onboarding/StepsScroller'
+import VerificationSent from '@/pages/verifyEmail/VerificationSent'
+import Confirmed from '@/pages/verifyEmail/VerifyEmail'
 
 /*
   This file is where you define the routes
@@ -46,6 +48,14 @@ export const router = createBrowserRouter([
   {
     path: AppConstantRoutes.paths.onboarding.steps,
     element: <StepsScroller />,
+  },
+  {
+    path: AppConstantRoutes.paths.verifyEmail.sent,
+    element: <VerificationSent email={null} />,
+  },
+  {
+    path: AppConstantRoutes.paths.verifyEmail.confirmed,
+    element: <Confirmed />,
   },
 
   // ** The following paths are all protected by SecureRoute component
