@@ -11,6 +11,12 @@ export const AppConstantRoutes = {
         get register() {
           return `${this.default}/register`
         },
+        get sent() {
+          return `${this.default}/verify-email/sent`
+        },
+        get confirmed() {
+          return `${this.default}/verify-email/:token`
+        },
       }
     },
     get onboarding() {
@@ -23,19 +29,6 @@ export const AppConstantRoutes = {
         },
         get steps() {
           return `${this.default}/steps`
-        },
-      }
-    },
-    get verifyEmail() {
-      return {
-        get default() {
-          return '/verify-email'
-        },
-        get sent() {
-          return `${this.default}/sent`
-        },
-        get confirmed() {
-          return `${this.default}/:token`
         },
       }
     },
