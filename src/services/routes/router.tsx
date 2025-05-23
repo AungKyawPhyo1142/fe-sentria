@@ -1,7 +1,7 @@
+import Container from '@/pages/auth/Container'
+import Example from '@/pages/example/Example'
 import { createBrowserRouter, Navigate } from 'react-router'
 import { AppConstantRoutes } from './path'
-import Login from '@/pages/auth/Login'
-import Example from '@/pages/example/Example'
 
 import Welcome from '@/pages/onboarding/Welcome'
 import StepsScroller from '@/pages/onboarding/StepsScroller'
@@ -32,7 +32,11 @@ export const router = createBrowserRouter([
   },
   {
     path: AppConstantRoutes.paths.auth.login,
-    element: <Login />,
+    element: <Container />,
+  },
+  {
+    path: AppConstantRoutes.paths.auth.register,
+    element: <Container />,
   },
   {
     path: AppConstantRoutes.paths.example.default,

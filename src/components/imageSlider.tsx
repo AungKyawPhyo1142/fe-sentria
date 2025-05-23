@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react'
-import Slide1 from './common/Slide1'
 import Slide2 from '@/assets/img2.svg'
 import Slide3 from '@/assets/img3.svg'
 import clsx from 'clsx'
+import React, { useEffect, useState } from 'react'
+import Slide1 from './common/Slide1'
 
 const Slide_Interval = 4000
 const ImageSlider: React.FC = () => {
   const [current, setCurrent] = useState(0)
   const slides = [
     <Slide1 key='slide1' />,
-    <img src={Slide2} alt='Slide 2' key='slide2' />,
-    <img src={Slide3} alt='Slide 3' key='slide3' />,
+    <img src={Slide2} alt='Slide 2' key='slide2' className='h-full w-fit object-cover'/>,
+    <img src={Slide3} alt='Slide 3' key='slide3' className='h-full w-fit object-cover'/>,
   ]
 
   const slideCount = slides.length
@@ -28,7 +28,7 @@ const ImageSlider: React.FC = () => {
     setCurrent(index)
   }
   return (
-    <div className='relative h-full w-[513px] overflow-hidden'>
+    <div className='relative h-[825px] w-[513px] overflow-hidden'>
       {/* Slide Track */}
       <div
         className='flex h-full w-full transition-transform duration-500 ease-in-out'
