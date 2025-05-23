@@ -53,7 +53,7 @@ const Example = () => {
         </div>
         <div className='mt-5 flex flex-col gap-y-3 rounded p-10'>
           <Input placeholder='example' />
-          <Input placeholder='Password' type='password' />
+          {/* <Input placeholder='Password' type='password' /> */}
           <Button primary>Primary Button</Button>
           <Button secondary>Secondary Button</Button>
           <Button destructive>Destructive Button</Button>
