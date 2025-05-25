@@ -43,6 +43,9 @@
     "emailSent": "A verification email has been sent to <bold>{{email}}</bold>",
     "confirmDescription": "Please check your inbox and click on the verification link to complete your registration. Check your spam folder if you didn’t find it.",
     "resendEmail": "Resend Email",
-    "verified": "Your email has been successfully verified!"
+    "verified": "Your email has been successfully verified!",
+    "verificationFailed": "Email verification failed. Please try again.",
+    "verifying": "Verifying your email...",
+    "redirecting": "Redirecting you now..."
   }
 }

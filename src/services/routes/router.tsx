@@ -39,7 +39,7 @@ export const router = createBrowserRouter([
   },
   {
     path: AppConstantRoutes.paths.auth.sent,
-    element: <VerificationSent email={null} />,
+    element: <VerificationSent />,
   },
   {
     path: AppConstantRoutes.paths.auth.confirmed,
