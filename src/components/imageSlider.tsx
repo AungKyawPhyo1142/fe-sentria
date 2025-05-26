@@ -21,7 +21,7 @@ const ImageSlider: React.FC = () => {
       // triggerTransition();
     }, Slide_Interval)
     return () => clearInterval(interval)
-  }, [])
+  }, [slideCount])
 
   //Manual Slide
   const goToSlide = (index: number) => {

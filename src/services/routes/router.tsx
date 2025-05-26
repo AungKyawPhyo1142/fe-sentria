@@ -5,6 +5,9 @@ import { AppConstantRoutes } from './path'
 
 import Welcome from '@/pages/onboarding/Welcome'
 import StepsScroller from '@/pages/onboarding/StepsScroller'
+import SecureRoute from '@/components/auth/SecureRoute'
+import LayoutWithAuth from '@/components/layout/LayoutWithAuth'
+import Home from '@/pages/user/Home'
 
 /*
   This file is where you define the routes
@@ -49,42 +52,22 @@ export const router = createBrowserRouter([
   },
 
   // ** The following paths are all protected by SecureRoute component
-  //   {
-  //     path: AppConstantRoutes.paths.default,
-  //     element: (
-  //       <SecureRoute>
-  //         <LayoutWithAuth />
-  //       </SecureRoute>
-  //     ),
-  //     children: [
-  //       {
-  //         path: AppConstantRoutes.paths.home,
-  //         element: <Home />,
-  //       },
-  //       {
-  //         path: AppConstantRoutes.paths.searchPage,
-  //         element: <SearchPage />,
-  //       },
-  //       {
-  //         path: AppConstantRoutes.paths.musictypePage(':title'), // <-- Dynamic Path
-  //         element: <MusictypePage />,
-  //       },
-  //       {
-  //         path: '',
-  //         element: <Navigate to={AppConstantRoutes.paths.home} replace />,
-  //       },
-  //       {
-  //         path: AppConstantRoutes.paths.profile,
-  //         element: <Profile />,
-  //       },
-  //       {
-  //         path: AppConstantRoutes.paths.songDetailPage(':id'), // <-- Dynamic Path
-  //         element: <SongDetail />,
-  //       },
-  //       {
-  //         path: AppConstantRoutes.paths.librabryPage,
-  //         element: <Library />,
-  //       },
-  //     ],
-  //   },
+  {
+    path: AppConstantRoutes.paths.default,
+    element: (
+      <SecureRoute>
+        <LayoutWithAuth />
+      </SecureRoute>
+    ),
+    children: [
+      {
+        path: AppConstantRoutes.paths.home,
+        element: <Home />,
+      },
+      {
+        path: '',
+        element: <Navigate to={AppConstantRoutes.paths.home} replace />,
+      },
+    ],
+  },
 ])

@@ -1,53 +1,55 @@
 import i18next from 'i18next'
-import { ChevronDown, ChevronUp, Globe } from 'lucide-react'
 import { useState } from 'react'
-import Button from './Button'
+import MnFlag from '@/assets/MnFlag.png'
+import EnFlag from '@/assets/EnFlag.png'
 
 const LanguageToggle = () => {
-  const [isOpen, setIsOpen] = useState(false)
   const [currentLang, setCurrentLang] = useState<'en' | 'mm'>(
     i18next.language as 'en' | 'mm',
   )
   const changeLanguage = (lng: 'en' | 'mm') => {
     i18next.changeLanguage(lng)
     setCurrentLang(lng)
-    setIsOpen(false)
   }
+  const isEnglish = currentLang === 'en'
 
+  const toggleLanguage = () => {
+    changeLanguage(isEnglish ? 'mm' : 'en')
+  }
   return (
-    <div className='relative inline-block text-left '>
-      {/* <div>
-        <Button primary onClick={() => changeLanguage('mm')}>mm</Button>
-        <Button secondary onClick={() => changeLanguage('en')}>en</Button>
-        
-      </div> */}
-      <Button
-        outline
-        onClick={() => setIsOpen(!isOpen)}
-        className='flex items-center gap-1 rounded-l-full rounded-r-full px-2 text-[14px] py-1 '
+    <div className='flex items-center justify-center'>
+      <div
+        role='button'
+        onClick={toggleLanguage}
+        className='border-secondary relative flex h-10 w-22 cursor-pointer items-center rounded-[10px] border transition-colors select-none focus:outline-none'
       >
-        <Globe size={25} className='pr-1' />
-        <span className='capitalize'>
-          {currentLang === 'en' ? 'English' : 'Myanmar'}
-        </span>
-        {isOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-      </Button>
-      {isOpen && (
-        <div className='border-secondary text-secondary absolute z-10 m-1 rounded-lg border bg-white px-2 shadow-lg'>
-          <button
-            className='block w-full px-5 py-2 text-left hover:cursor-pointer hover:underline'
-            onClick={() => changeLanguage('en')}
-          >
-            English
-          </button>
-          <button
-            className='block w-full px-5 py-2 text-left hover:cursor-pointer hover:underline'
-            onClick={() => changeLanguage('mm')}
-          >
-            Myanmar
-          </button>
+        {/* MN Text - shown on right when MN is active */}
+        {!isEnglish && (
+          <span className='text-secondary absolute right-3 text-lg font-semibold'>
+            MM
+          </span>
+        )}
+
+        {/* EN Text - shown on left when EN is active */}
+        {isEnglish && (
+          <span className='text-secondary absolute left-3 text-lg font-semibold'>
+            EN
+          </span>
+        )}
+
+        {/* Toggle knob with flag */}
+        <div
+          className={`flex h-10 w-10 transform items-center justify-center rounded-[10px] transition-transform duration-300 ${
+            isEnglish ? 'translate-x-12' : 'translate-x-0'
+          }`}
+        >
+          <img
+            src={isEnglish ? EnFlag : MnFlag}
+            alt='Flag'
+            className='border-secondary h-8 w-8 rounded-[10px] border-2 object-cover'
+          />
         </div>
-      )}
+      </div>
     </div>
   )
 }
