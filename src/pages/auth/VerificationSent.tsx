@@ -1,49 +1,24 @@
 import Button from '@/components/common/Button'
 import { MailCheck, RotateCw } from 'lucide-react'
 import { useLocation } from 'react-router'
-import axios from 'axios'
 import { useTranslation, Trans } from 'react-i18next'
-import { useState } from 'react'
+import { useResendEmail } from '@/services/network/lib/auth'
 
 // http://localhost:8080/auth/verify-email/sent?email=hello@gmail.com
 function VerificationSent() {
   const { t } = useTranslation()
-  const [isResending, setIsResending] = useState(false)
   const location = useLocation()
   const query = new URLSearchParams(location.search)
   const email = query.get('email') // Get email from query parameters
+
+  const resendMutation = useResendEmail()
 
   const handleResend = () => {
     if (!email) {
       console.error('No email provided for resend action')
       return
     }
-    const resendEmail = async () => {
-      try {
-        setIsResending(true)
-        const response = await axios.post(
-          `${import.meta.env.VITE_API_URL}/auth/resend-verification-email`,
-          { email },
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-            },
-          },
-        )
-
-        if (response.status !== 200) {
-          throw new Error('Network response was not ok')
-        }
-
-        console.log('Verification email resent successfully:', response.data)
-        setIsResending(false)
-      } catch (error) {
-        console.error('Error resending verification email:', error)
-        setIsResending(false)
-      }
-    }
-    resendEmail()
+    resendMutation.mutate(email)
   }
 
   return (
@@ -73,8 +48,8 @@ function VerificationSent() {
 
         <Button
           onClick={handleResend}
-          disabled={isResending}
-          aria-busy={isResending}
+          disabled={resendMutation.isPending}
+          aria-busy={resendMutation.isPending}
           className='h-13 w-51 bg-black px-3 py-3 text-[20px] text-white'
           type='button'
         >

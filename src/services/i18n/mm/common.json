@@ -43,13 +43,13 @@
     "startExploring": "စတင်ကြည့်ရှုရန်"
   },
   "emailVerification": {
-    "sent": "အတည်ပြုအီးမေးလ် ပို့ပြီးပါပြီ",
-    "emailSent": "<bold>{{email}}</bold> သို့ အတည်ပြုအီးမေးလ် ပို့ပြီးပါပြီ။",
+    "sent": "အတည်ပြု Email ပို့ပြီးပါပြီ",
+    "emailSent": "<bold>{{email}}</bold> သို့ အတည်ပြု Email ပို့ပြီးပါပြီ။",
     "confirmDescription": "ကျေးဇူးပြု၍ သင်၏ Email Inbox ကိုစစ်ဆေးပြီး သင်၏မှတ်ပုံတင်ခြင်းကို အပြီးသတ်ရန် အတည်ပြုခြင်း Link ကို နှိပ်ပါ။ Email ကို ရှာမတွေ့ပါက Spam Folder ကို စစ်ဆေးပါ",
-    "resendEmail": "အီးမေးလ် ပြန်ပို့ပါ",
-    "verified": "အီးမေးလ် အတည်ပြုပြီးပါပြီ",
-    "verificationFailed": "အီးမေးလ် အတည်ပြုမှု မအောင်မြင်ပါ။ ပြန်လည်ကြိုးစားပါ။",
-    "verifying": "သင့်အီးမေးလ်ကို အတည်ပြုနေပါသည်...",
-    "redirecting": "Redirect လုပ်နေပါသည်"
+    "resendEmail": "Email ပြန်ပို့ပါ",
+    "verified": "Email အတည်ပြုပြီးပါပြီ",
+    "verificationFailed": "Email အတည်ပြုမှု မအောင်မြင်ပါ။ ပြန်လည်ကြိုးစားပါ။",
+    "verifying": "သင့် Email ကို အတည်ပြုနေပါသည်...",
+    "redirecting": "Redirect လုပ်နေပါသည်..."
   }
 }

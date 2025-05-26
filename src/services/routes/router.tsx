@@ -11,6 +11,7 @@ import Home from '@/pages/user/Home'
 
 import VerificationSent from '@/pages/auth/VerificationSent'
 import Confirmed from '@/pages/auth/VerifyEmail'
+
 /*
   This file is where you define the routes
 */

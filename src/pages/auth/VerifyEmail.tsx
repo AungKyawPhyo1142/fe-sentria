@@ -1,17 +1,10 @@
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router'
-import axios from 'axios'
 import { AppConstantRoutes } from '@/services/routes/path'
 import { useEffect, useState } from 'react'
 import CheckCircleAnimated from '@/components/CheckCircleAnimated'
 import { XCircle } from 'lucide-react'
-
-interface VerifyEmailResponse {
-  data: {
-    message: string
-  }
-  status: string
-}
+import { useVerifyEmail } from '@/services/network/lib/auth'
 
 type VerifyEmailStatus = 'loading' | 'success' | 'error'
 
@@ -27,42 +20,22 @@ function VerifyEmail() {
 
   const animationDuration = 3000 // 3 seconds to animate after verification success
 
+  const { data, error, isLoading } = useVerifyEmail(token || '')
+
   useEffect(() => {
-    if (token) {
-      const verifyEmail = async () => {
-        try {
-          const response = await axios.get<VerifyEmailResponse>(
-            `${import.meta.env.VITE_API_URL}/auth/verify-email/${token}`,
-            {
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${localStorage.getItem('access_token')}`,
-              },
-            },
-          )
-
-          if (response.status !== 200) {
-            setErrorMessage(t('emailVerification.verificationFailed'))
-            setVerificationStatus('error')
-            return
-          }
-
-          // if success
-          setVerificationStatus('success')
-        } catch (error) {
-          console.error('Error verifying email:', error)
-          setVerificationStatus('error')
-          setErrorMessage(
-            error instanceof Error
-              ? error.message
-              : t('emailVerification.verificationFailed'),
-          )
-        }
-      }
-
-      verifyEmail()
+    if (isLoading) {
+      setVerificationStatus('loading')
+    } else if (error) {
+      setVerificationStatus('error')
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : t('emailVerification.verificationFailed'),
+      )
+    } else if (data) {
+      setVerificationStatus('success')
     }
-  }, [token, t])
+  }, [isLoading, error, data, t])
 
   // Redirect after animation completes
   useEffect(() => {
@@ -75,7 +48,6 @@ function VerifyEmail() {
     }
   }, [animationComplete, navigate])
 
-  // Render different UI based on status
   return (
     <div className='fade-in flex min-h-screen flex-col items-center justify-center space-y-10 bg-white p-4'>
       <div className='flex w-full flex-col items-center justify-center space-y-8 px-4'>
