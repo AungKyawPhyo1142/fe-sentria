@@ -36,12 +36,18 @@ export const AppConstantRoutes = {
     get home() {
       return '/home'
     },
+    get profile() {
+      return '/profile'
+    },
     get example() {
       return {
         get default() {
           return '/example'
         },
       }
+    },
+    get default() {
+      return '/'
     },
   },
 }

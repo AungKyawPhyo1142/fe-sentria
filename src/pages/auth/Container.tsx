@@ -2,6 +2,7 @@ import ImageSlider from '@/components/imageSlider'
 import { useLocation } from 'react-router'
 import Login from './Login'
 import Register from './Register'
+import LanguageToggle from '@/components/common/LanguageToggle'
 
 const Container = () => {
   const route = useLocation()
@@ -14,12 +15,12 @@ const Container = () => {
         </div>
         {/* Login form */}
         <div className='relative flex w-1/2 flex-col items-center justify-center rounded-r-[10px] border border-l-0 border-[#333334]/30 bg-[#F5FEFD] p-5'>
-          {/* 
+          
           <div className='flex justify-end w-full'>
             <LanguageToggle />
           </div>
           
-          */}
+         
           {route.pathname === '/auth/login' ? <Login /> : <Register />}
         </div>
       </div>
