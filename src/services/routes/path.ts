@@ -11,6 +11,12 @@ export const AppConstantRoutes = {
         get register() {
           return `${this.default}/register`
         },
+        get sent() {
+          return `${this.default}/verify-email/sent`
+        },
+        get confirmed() {
+          return `${this.default}/verify-email/:token`
+        },
       }
     },
     get onboarding() {

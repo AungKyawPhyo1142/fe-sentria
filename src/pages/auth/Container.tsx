@@ -7,8 +7,8 @@ import LanguageToggle from '@/components/common/LanguageToggle'
 const Container = () => {
   const route = useLocation()
   return (
-    <div className='fade-in flex h-screen items-center justify-center '>
-      <div className=' flex w-full max-w-5xl overflow-hidden rounded-[10px] shadow-sm'>
+    <div className='fade-in flex h-screen items-center justify-center'>
+      <div className='flex w-full max-w-5xl overflow-hidden rounded-[10px] shadow-sm'>
         {/* Slider */}
         <div className='w-1/2 rounded-[10px]'>
           <ImageSlider />

@@ -8,6 +8,12 @@ export const ApiConstantRoutes = {
         get login() {
           return `${this.default}/login`
         },
+        get resendEmail() {
+          return `${this.default}/resend-email`
+        },
+        get verifyEmail() {
+          return `${this.default}/verify-email/:token`
+        },
       }
     },
   },

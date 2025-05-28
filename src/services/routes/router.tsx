@@ -9,6 +9,9 @@ import SecureRoute from '@/components/auth/SecureRoute'
 import LayoutWithAuth from '@/components/layout/LayoutWithAuth'
 import Home from '@/pages/user/Home'
 
+import VerificationSent from '@/pages/auth/VerificationSent'
+import Confirmed from '@/pages/auth/VerifyEmail'
+
 /*
   This file is where you define the routes
 */
@@ -37,6 +40,14 @@ export const router = createBrowserRouter([
   {
     path: AppConstantRoutes.paths.auth.register,
     element: <Container />,
+  },
+  {
+    path: AppConstantRoutes.paths.auth.sent,
+    element: <VerificationSent />,
+  },
+  {
+    path: AppConstantRoutes.paths.auth.confirmed,
+    element: <Confirmed />,
   },
   {
     path: AppConstantRoutes.paths.example.default,
