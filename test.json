@@ -1,0 +1,10 @@
+[SocketIO
+] Emitted factCheck update to room cmb80a2ci0003it7d6rtaqc2w.Payload: {
+    "reportId": "cmb80a2ci0003it7d6rtaqc2w",
+    "factCheck": {
+        "overallPercentage": 1,
+        "status": "STRONGLY_CORROBORATED_BY_GDACS",
+        "narrative": "GDACS Analysis: Best match in GDACS: Earthquake in Myanmar (ID: 1474479, Type: EQ, Alert: Red, Country: Myanmar, Severity: 6.7 M). GDACS event 'Earthquake in Myanmar'(1474479) considered. Exact disaster type match. Event time within +/-24 hours (3.5 hours diff). Country match. Distance: 31km. Close proximity. High alert level (Red). GDACS Severity: 6.7 M.",
+        "lastCalculatedAt": "2025-05-28T20:53:36.123648+07:00"
+    }
+}

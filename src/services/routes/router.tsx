@@ -11,6 +11,7 @@ import Home from '@/pages/user/Home'
 
 import VerificationSent from '@/pages/auth/VerificationSent'
 import Confirmed from '@/pages/auth/VerifyEmail'
+import WebSocketExample from '@/pages/example/WebSocketExample'
 
 /*
   This file is where you define the routes
@@ -52,6 +53,10 @@ export const router = createBrowserRouter([
   {
     path: AppConstantRoutes.paths.example.default,
     element: <Example />,
+  },
+  {
+    path: AppConstantRoutes.paths.example.webSocket,
+    element: <WebSocketExample />,
   },
   {
     path: AppConstantRoutes.paths.onboarding.welcome,

@@ -16,5 +16,12 @@ export const ApiConstantRoutes = {
         },
       }
     },
+    get report() {
+      return {
+        get default() {
+          return `/report`
+        },
+      }
+    },
   },
 }

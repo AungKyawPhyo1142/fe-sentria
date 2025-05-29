@@ -44,6 +44,9 @@ export const AppConstantRoutes = {
         get default() {
           return '/example'
         },
+        get webSocket() {
+          return `${this.default}/websocket`
+        },
       }
     },
     get default() {
