@@ -1,15 +1,15 @@
 import Button from '@/components/common/Button'
-import { MailCheck, RotateCw } from 'lucide-react'
-import { useLocation } from 'react-router'
-import { useTranslation, Trans } from 'react-i18next'
 import { useResendEmail } from '@/services/network/lib/auth'
+import { MailCheck, RotateCw } from 'lucide-react'
+import { Trans, useTranslation } from 'react-i18next'
+import { useLocation } from 'react-router'
 
 // http://localhost:8080/auth/verify-email/sent?email=hello@gmail.com
 function VerificationSent() {
   const { t } = useTranslation()
   const location = useLocation()
   const query = new URLSearchParams(location.search)
-  const email = query.get('email') // Get email from query parameters
+  const email = query.get('email')?.replace(/ /g, '+') // Get email from query parameters
 
   const resendMutation = useResendEmail()
 
@@ -18,6 +18,9 @@ function VerificationSent() {
       console.error('No email provided for resend action')
       return
     }
+
+    console.log('Resending verification email to:', email)
+
     resendMutation.mutate(email)
   }
 
