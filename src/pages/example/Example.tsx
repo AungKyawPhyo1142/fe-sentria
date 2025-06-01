@@ -1,6 +1,7 @@
 import Button from '@/components/common/Button'
 import Input from '@/components/common/Input'
 import LanguageToggle from '@/components/common/LanguageToggle'
+import PostCard from '@/components/posts/PostCard'
 import { AppConstantRoutes } from '@/services/routes/path'
 import {
   decrement,
@@ -11,11 +12,61 @@ import {
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router'
 
+const samplePosts = [
+  {
+    id: '1',
+    user: {
+      name: 'Scarlett Johansson',
+      avatar: null,
+      isVerified: true,
+    },
+    trustScore: 19,
+    isDebunked: true,
+    location: 'London, UK',
+    content:
+      'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using Content here, content here, making it look like readable English.',
+    images: [
+      'https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=400',
+      'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=400',
+      'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=400',
+      'https://images.unsplash.com/photo-1519904981063-b0cf448d479e?w=400',
+    ],
+    disasterType: 'flood' as const,
+    upvotes: 3800,
+    downvotes: 1200,
+    comments: 8120,
+    createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
+  },
+  {
+    id: '2',
+    user: {
+      name: 'John Doe',
+      avatar: null,
+      isVerified: false,
+    },
+    trustScore: 80,
+    isDebunked: false,
+    location: 'London',
+    content:
+      'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.',
+    images: [
+      'https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=400',
+      'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=400',
+    ],
+    disasterType: 'earthquake' as const,
+    upvotes: 1000,
+    downvotes: 1200,
+    comments: 4350,
+    createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000), // 5 hours ago
+  },
+]
+
 const Example = () => {
   const navigate = useNavigate()
   const { t } = useTranslation()
 
   const count = useCountStore(selectCount)
+
   return (
     <div className='fade-in flex h-screen flex-col bg-white'>
       <div className='w-96 rounded-xl border border-black/30 bg-white p-8'>
@@ -67,6 +118,18 @@ const Example = () => {
             Go to Login
           </button>
         </div>
+      </div>
+      {/* Sample Post Cards */}
+      <div className='mt-10 flex w-full flex-col items-center gap-y-4'>
+        {samplePosts.map((post, index) => (
+          <PostCard
+            key={index}
+            {...post}
+            onUpvote={() => alert('Upvoted post')}
+            onDownvote={() => alert('Downvoted post')}
+            onComment={() => alert('Comment on post')}
+          />
+        ))}
       </div>
     </div>
   )
