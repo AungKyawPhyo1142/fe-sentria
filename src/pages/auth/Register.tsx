@@ -15,7 +15,7 @@ import { object, ObjectSchema, string } from 'yup'
 const Register = () => {
   const navigate = useNavigate()
   const { t } = useTranslation()
-  const [errorModal, setErrorModal] = useState(false)
+  const [errorModal, setErrorModal] = useState(true)
 
   const countryOptions = countryList()
     .getData()
