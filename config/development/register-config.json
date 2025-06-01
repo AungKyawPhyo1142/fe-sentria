@@ -1,5 +1,6 @@
 {
   "env": "development",
   "lang": "en",
-  "endpoint": "http://localhost:3000"
+  "endpoint": "http://localhost:3000",
+  "socket_report_name": "report_factcheck_update"
 }

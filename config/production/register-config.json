@@ -1,5 +1,6 @@
 {
   "env": "production",
   "lang": "en",
-  "endpoint": "https://api.myapp.com"
+  "endpoint": "https://api.myapp.com",
+  "socket_report_name": "report_factcheck_update"
 }

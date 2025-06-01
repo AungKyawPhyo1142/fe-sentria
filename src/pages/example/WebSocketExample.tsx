@@ -1,5 +1,5 @@
 import { useGetAllDisasterReports } from '@/services/network/lib/reports'
-import { socket } from '@/services/socketio/socket'
+import { useReportWebSocket } from '@/services/socketio/hooks/useReportWebSocket'
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 
@@ -13,6 +13,10 @@ const WebSocketExample = () => {
   } = useGetAllDisasterReports()
 
   const queryClient = useQueryClient()
+  const reportSocketCleanup = useReportWebSocket(reportData?.pages)
+
+  // * Cleanup
+  useEffect(() => reportSocketCleanup, [])
 
   const handleScroll = () => {
     const { scrollHeight, scrollTop, clientHeight } = document.documentElement
@@ -22,72 +26,72 @@ const WebSocketExample = () => {
   }
 
   // * WebSocket logic
-  useEffect(() => {
-    if (!reportData) return
+  // useEffect(() => {
+  //   if (!reportData) return
 
-    socket.connect()
+  //   socket.connect()
 
-    socket.on('connect', () => {
-      console.log('✅ Connected to socket server:', socket.id)
+  //   socket.on('connect', () => {
+  //     console.log('✅ Connected to socket server:', socket.id)
 
-      // Subscribe to all report IDs
-      reportData.pages.forEach((page) => {
-        page.data.reports.data.forEach((report) => {
-          socket.emit('subscribe_to_report', report.id, (res: any) => {
-            console.log(`📡 Subscribed to ${report.id}:`, res)
-          })
-        })
-      })
-    })
+  //     // Subscribe to all report IDs
+  //     reportData.pages.forEach((page) => {
+  //       page.data.reports.data.forEach((report) => {
+  //         socket.emit('subscribe_to_report', report.id, (res: any) => {
+  //           console.log(`📡 Subscribed to ${report.id}:`, res)
+  //         })
+  //       })
+  //     })
+  //   })
 
-    // Listen for updates
-    socket.on('report_factcheck_update', (data) => {
-      console.log('📥 Fact-check update received:', data)
+  //   // Listen for updates
+  //   socket.on('report_factcheck_update', (data) => {
+  //     console.log('📥 Fact-check update received:', data)
 
-      // Update React Query cache
-      queryClient.setQueryData(['get-all-disaster-reports'], (oldData: any) => {
-        if (!oldData) return oldData
+  //     // Update React Query cache
+  //     queryClient.setQueryData(['get-all-disaster-reports'], (oldData: any) => {
+  //       if (!oldData) return oldData
 
-        return {
-          ...oldData,
-          pages: oldData.pages.map((page: any) => ({
-            ...page,
-            data: {
-              ...page.data,
-              reports: {
-                ...page.data.reports,
-                data: page.data.reports.data.map((report: any) => {
-                  if (report.id === data.reportId) {
-                    return {
-                      ...report,
-                      factCheckStatus: data.status,
-                      factCheckOverallPercentage: data.overallPercentage,
-                      factCheckLastUpdatedAt: data.lastCalculatedAt,
-                    }
-                  }
-                  return report
-                }),
-              },
-            },
-          })),
-        }
-      })
-    })
+  //       return {
+  //         ...oldData,
+  //         pages: oldData.pages.map((page: any) => ({
+  //           ...page,
+  //           data: {
+  //             ...page.data,
+  //             reports: {
+  //               ...page.data.reports,
+  //               data: page.data.reports.data.map((report: any) => {
+  //                 if (report.id === data.reportId) {
+  //                   return {
+  //                     ...report,
+  //                     factCheckStatus: data.status,
+  //                     factCheckOverallPercentage: data.overallPercentage,
+  //                     factCheckLastUpdatedAt: data.lastCalculatedAt,
+  //                   }
+  //                 }
+  //                 return report
+  //               }),
+  //             },
+  //           },
+  //         })),
+  //       }
+  //     })
+  //   })
 
-    return () => {
-      // Unsubscribe from all report IDs
-      reportData.pages.forEach((page) => {
-        page.data.reports.data.forEach((report) => {
-          socket.emit('unsubscribe_from_report', report.id, (res: any) => {
-            console.log(`📴 Unsubscribed from ${report.id}:`, res)
-          })
-        })
-      })
+  //   return () => {
+  //     // Unsubscribe from all report IDs
+  //     reportData.pages.forEach((page) => {
+  //       page.data.reports.data.forEach((report) => {
+  //         socket.emit('unsubscribe_from_report', report.id, (res: any) => {
+  //           console.log(`📴 Unsubscribed from ${report.id}:`, res)
+  //         })
+  //       })
+  //     })
 
-      socket.off('report_factcheck_update')
-      socket.disconnect()
-    }
-  }, [reportData])
+  //     socket.off('report_factcheck_update')
+  //     socket.disconnect()
+  //   }
+  // }, [reportData])
 
   // Scroll listener
   useEffect(() => {
@@ -112,7 +116,7 @@ const WebSocketExample = () => {
                 {report.name}
                 <div>
                   OverallPercentage: {report.factCheckOverallPercentage} |{' '}
-                  {report.factCheckOverallPercentage ?? 'NO'}%
+                  {report.factCheckOverallPercentage !== undefined && report.factCheckOverallPercentage !== null ? `${report.factCheckOverallPercentage}%` : 'NO'}
                 </div>
                 <div className='flex flex-col'>
                   <div>Severity: {report.parameters.severity}</div>
