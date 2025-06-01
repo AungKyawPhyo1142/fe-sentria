@@ -20,6 +20,7 @@ export interface LoginFormValues {
   password: string
 }
 
+
 export interface RegisterResponse {
   data: {
     firstName: string
@@ -28,6 +29,17 @@ export interface RegisterResponse {
     email: string
   }
   status: STATUS
+}
+
+export interface RegisterFormValues {
+  email: string
+  firstName: string
+  lastName: string
+  username: string
+  password: string
+  confirmPassword: string
+  birthday: string
+  country: string
 }
 
 interface VerifyEmailResponse {
@@ -40,6 +52,9 @@ interface VerifyEmailResponse {
 export const authRequest = {
   async Login(v: LoginFormValues): Promise<LoginResponse> {
     return apiClient.post(ApiConstantRoutes.paths.auth.login, v)
+  },
+  async Register(v: RegisterFormValues): Promise<RegisterResponse> {
+    return apiClient.post(ApiConstantRoutes.paths.auth.register, v)
   },
 }
 export const useIsUserAuthenticated = () => {
