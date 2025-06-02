@@ -12,6 +12,9 @@ import {
 
 import VerifyBadge from '@/assets/VerifiedBadge.svg?react'
 
+import { formatNumber } from '@/helpers/helpers'
+import PostImages from './PostImages'
+import TrustScoreBadge from './TrustScoreBadge'
 interface User {
   name: string
   avatar: string | null
@@ -22,7 +25,7 @@ interface PostCardProps {
   id: string
   user: User
   trustScore: number
-  isDebunked?: boolean | false
+  isDebunked: boolean
   location: string
   content: string
   images?: string[]
@@ -37,7 +40,6 @@ interface PostCardProps {
 }
 
 const PostCard = ({
-  id,
   user,
   trustScore,
   isDebunked = false,
@@ -48,7 +50,6 @@ const PostCard = ({
   upvotes = 0,
   downvotes = 0,
   comments = 0,
-  createdAt,
   onUpvote,
   onDownvote,
   onComment,
@@ -71,19 +72,13 @@ const PostCard = ({
     return { show: false }
   }
 
-  const getTrustScoreColor = (score: number) => {
-    if (score <= 20) return 'bg-[#B22222]'
-    if (score <= 69) return 'bg-[#F6BD16]'
-    return 'bg-[#09CD5F]'
-  }
-
   const getDisasterIcon = (type: string) => {
-    const iconClass = 'w-4 h-4 text-white bg-red'
+    const iconClass = 'w-4 h-4 text-white'
     switch (type) {
       case 'earthquake':
         return <AlertTriangle className={iconClass} />
       case 'flood':
-        return <Waves className='h-4 w-4 rounded'></Waves>
+        return <Waves className={iconClass}></Waves>
       case 'fire':
         return <Flame className={iconClass} />
       case 'storm':
@@ -92,34 +87,6 @@ const PostCard = ({
       default:
         return <AlertTriangle className={iconClass} />
     }
-  }
-
-  const formatNumber = (num: number) => {
-    if (num < 1000) return num.toString()
-    if (num < 1000000) return (num / 1000).toFixed(1).replace('.0', '') + 'k'
-    if (num < 1000000000)
-      return (num / 1000000).toFixed(1).replace('.0', '') + 'M'
-    return (num / 1000000000).toFixed(1).replace('.0', '') + 'B'
-  }
-
-  const renderImages = () => {
-    if (!images || images.length === 0) return null
-
-    const displayImages = images.slice(0, 4)
-
-    return (
-      <div className='mt-1 grid grid-cols-4 gap-3'>
-        {displayImages.map((image, index) => (
-          <div key={index} className='relative'>
-            <img
-              src={image}
-              alt={`Disaster image ${index + 1}`}
-              className='h-34 w-full rounded-lg object-cover'
-            />
-          </div>
-        ))}
-      </div>
-    )
   }
 
   const trustWarning = getTrustWarning(trustScore, isDebunked)
@@ -138,11 +105,11 @@ const PostCard = ({
       )}
 
       <div className='rounded-lg border border-[#33333430] px-8 py-7'>
-        {/* Header */}
+        {/* header */}
         <div className='mb-2'>
           <div className='mb-4 flex items-center justify-between'>
             <div className='flex items-center space-x-3'>
-              {/* Avatar */}
+              {/* avatar */}
               <div className='relative'>
                 {user.avatar ? (
                   <img
@@ -159,9 +126,9 @@ const PostCard = ({
                 )}
               </div>
 
-              {/* User Name and Badge */}
+              {/* username and Badge */}
               <div className='flex items-center space-x-2'>
-                <h3 className='text-[16px] font-medium text-gray-900'>
+                <h3 className='text-[16px] font-medium text-black'>
                   {user.name}
                 </h3>
                 {user.isVerified && (
@@ -172,11 +139,7 @@ const PostCard = ({
 
             {/* Trust Score and Disaster Badge */}
             <div className='flex items-center space-x-3'>
-              <div
-                className={`flex h-[30px] w-[30px] items-center justify-center rounded-full px-2 py-1 text-xs font-medium text-white ${getTrustScoreColor(trustScore)}`}
-              >
-                {trustScore}%
-              </div>
+              <TrustScoreBadge score={trustScore} />
               {isDebunked && (
                 <div className='flex h-7 items-center space-x-1 rounded-sm bg-[#B22222] px-2 py-1 text-xs font-medium text-white'>
                   <span>Debunked</span>
@@ -218,10 +181,10 @@ const PostCard = ({
             )}
           </p>
           <div className='flex items-center space-x-2 text-xs text-gray-500'></div>
-          {renderImages()}
+          <PostImages images={images} />
         </div>
 
-        {/* Actions */}
+        {/* actions */}
         <div className='border-gray-100 pt-3'>
           <div className='flex items-center text-[9px] font-semibold text-[#33333430]'>
             {upvotes > downvotes ? (
