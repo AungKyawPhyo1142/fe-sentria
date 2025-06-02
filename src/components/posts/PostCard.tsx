@@ -93,6 +93,7 @@ const PostCard = ({
 
   return (
     <div className='mb-4 max-w-2xl bg-white'>
+      {/* bg-white */}
       {/* Trust Score Warning - Outside border */}
       {trustWarning.show && (
         <div
@@ -103,7 +104,6 @@ const PostCard = ({
           </span>
         </div>
       )}
-
       <div className='rounded-lg border border-[#33333430] px-8 py-7'>
         {/* header */}
         <div className='mb-2'>
@@ -185,7 +185,7 @@ const PostCard = ({
         </div>
 
         {/* actions */}
-        <div className='border-gray-100 pt-3'>
+        <div className='pt-3'>
           <div className='flex items-center text-[9px] font-semibold text-[#33333430]'>
             {upvotes > downvotes ? (
               <span className='text-primary'>
@@ -200,8 +200,7 @@ const PostCard = ({
             <Dot className='h-5 w-5 text-[#33333430]' />
             <span>{formatNumber(comments)} comments</span>
           </div>
-          <div className='mt-2 flex w-full items-center space-x-4 border-t pt-2'>
-            {/* Upvote */}
+          <div className='mt-2 flex w-full items-center space-x-4 border-t border-[#33333430] pt-2'>
             <button
               onClick={onUpvote}
               className={`flex min-h-0 items-center space-x-1 border-none bg-transparent p-0 ${upvotes > downvotes ? 'text-primary hover:text-primary/80' : 'text-[#33333430] hover:text-[3333430]/80'}`}
@@ -209,7 +208,6 @@ const PostCard = ({
               <CircleArrowUp className='h-6 w-6 stroke-1' />
             </button>
 
-            {/* Downvote */}
             <button
               onClick={onDownvote}
               className={`flex items-center space-x-1 ${downvotes > upvotes ? 'text-[#B22222] hover:text-[#B22222]/80' : 'text-[#33333430] hover:text-[#33333430]/80'}`}
@@ -217,7 +215,6 @@ const PostCard = ({
               <CircleArrowDown className='h-6 w-6 stroke-1' />
             </button>
 
-            {/* Comments */}
             <button
               onClick={onComment}
               className='flex items-center space-x-1 text-[#33333430] hover:text-[#33333430]/80'

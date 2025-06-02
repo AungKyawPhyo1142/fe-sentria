@@ -7,7 +7,7 @@ const TrustScoreBadge = ({ score }: { score: number }) => {
 
   return (
     <div
-      className={`flex h-[30px] w-[30px] items-center justify-center rounded-full px-2 py-1 text-xs font-medium text-white ${getTrustScoreColor(score)}`}
+      className={`flex h-[30px] w-[30px] items-center justify-center rounded-full px-1 text-[10px] font-medium text-white ${getTrustScoreColor(score)}`}
     >
       {score}%
     </div>
