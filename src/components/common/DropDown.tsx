@@ -25,7 +25,7 @@ const DropDown: React.FC<Props> = (props) => {
 
   return (
     <div className='w-full'>
-      <div className='relative flex items-start flex-col '>
+      <div className='relative flex flex-col items-start'>
         <select
           name={name}
           value={value}
@@ -35,7 +35,7 @@ const DropDown: React.FC<Props> = (props) => {
             'min-h-[50px] w-full rounded-lg border-1 px-3 py-2 text-base font-light ring-0 transition-colors duration-200 outline-none placeholder:text-zinc-400 focus:border-zinc-500',
             disabled ? 'text-zinc-500' : 'border-zinc-300 text-black',
             value === '' ? 'text-zinc-400' : 'text-black',
-            className
+            className,
           )}
         >
           <option value='' disabled hidden>

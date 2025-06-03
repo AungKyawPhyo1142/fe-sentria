@@ -8,8 +8,8 @@ export const ApiConstantRoutes = {
         get login() {
           return `${this.default}/login`
         },
-        get register(){
-          return `${this.default}/register` 
+        get register() {
+          return `${this.default}/register`
         },
         get resendEmail() {
           return `${this.default}/resend-email`
