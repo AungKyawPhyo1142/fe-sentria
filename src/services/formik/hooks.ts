@@ -16,7 +16,7 @@ function useCustomEvents<T>(formikProps: FormikProps<T>) {
     formikProps.setFieldValue(id, value)
   }
 
-   const onSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const onSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const elementName = e.currentTarget.getAttribute('name') ?? ''
     formikProps.setFieldError(elementName, '')
     formikProps.setFieldValue(elementName, e.target.value)
@@ -26,4 +26,3 @@ function useCustomEvents<T>(formikProps: FormikProps<T>) {
 }
 
 export { useCustomEvents }
-

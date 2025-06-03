@@ -20,7 +20,6 @@ export interface LoginFormValues {
   password: string
 }
 
-
 export interface RegisterResponse {
   data: {
     firstName: string
