@@ -4,17 +4,18 @@ import NavBar from '../common/NavBar'
 
 const LayoutWithAuth = () => {
   const location = useLocation()
+  const isMapPage = location.pathname === '/map'
 
   return (
     <div className='flex min-h-screen flex-col'>
       <div className='flex flex-1'>
         {location.pathname !== '/profile' && <Sidebar />}
-        <div className='flex-col w-full'>
+        <div className='w-full flex-col'>
           <div>
             {/* NavBar */}
             <NavBar />
           </div>
-          <main className='p-5 ml-68 mt-26'>
+          <main className={`mt-26 ${isMapPage ? 'ml-26' : 'ml-68'} p-5`}>
             <Outlet />
           </main>
         </div>
