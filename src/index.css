@@ -76,3 +76,18 @@
 .custom-scrollbar::-webkit-scrollbar-thumb {
   @apply bg-primary rounded-full;
 }
+
+/* Navbar  */
+.icon-svg {
+  transition: all 0.2s ease;
+}
+.icon-svg:hover {
+  fill: #2e8b57;
+  stroke: #f5fefd;
+  cursor: pointer;
+  color: #f5fefd;
+}
+.icon-svg--active {
+  fill: #2e8b57;
+  stroke: #f5fefd;
+}

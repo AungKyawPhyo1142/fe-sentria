@@ -22,14 +22,14 @@ const Sidebar = () => {
   const isMapPage = location.pathname === '/map'
   return (
     <aside
-      className={`fixed left-0 z-40 hidden h-full ${isMapPage ? 'w-22' : 'w-64'} rounded-2xl border-r-1 border-black/30 bg-white pt-8 shadow-md transition-all duration-300 ease-in-out md:block`}
+      className={`fixed left-0 z-40 hidden h-full ${isMapPage ? 'w-22' : 'w-64'} rounded-2xl border-r-1 border-black/30 bg-white pt-3 shadow-md transition-all duration-300 ease-in-out md:block`}
     >
       {isMapPage ? (
         <CircleLogo className='mx-auto mt-3 w-12 transition-all duration-300 ease-in-out' />
       ) : (
         <Logo className='mx-4 w-38 transition-all duration-300 ease-in-out' />
       )}
-      <div className='mt-12 flex h-[80%] flex-col justify-between'>
+      <div className='mt-10 flex h-[87%] flex-col justify-between'>
         {/* SideBar items */}
         <div className='text-primary space-y-6 pl-6 text-[16px]'>
           <span className='flex px-2 hover:cursor-pointer'>
