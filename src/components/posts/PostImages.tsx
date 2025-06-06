@@ -9,7 +9,7 @@ const PostImages = ({ images }: { images?: string[] }) => {
           <img
             src={image}
             alt={`Disaster image ${index + 1}`}
-            className='h-34 w-full rounded-lg object-cover'
+            className='h-60 w-full rounded-lg object-cover'
           />
         </div>
       ))}

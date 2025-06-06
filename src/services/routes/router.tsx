@@ -11,6 +11,7 @@ import Home from '@/pages/user/Home'
 
 import VerificationSent from '@/pages/auth/VerificationSent'
 import Confirmed from '@/pages/auth/VerifyEmail'
+import Profile from '@/pages/profile/Profile'
 
 /*
   This file is where you define the routes
@@ -61,6 +62,10 @@ export const router = createBrowserRouter([
     path: AppConstantRoutes.paths.onboarding.steps,
     element: <StepsScroller />,
   },
+  {
+    path: AppConstantRoutes.paths.profile,
+    element: <Profile />,
+  },
 
   // ** The following paths are all protected by SecureRoute component
   {
@@ -79,6 +84,10 @@ export const router = createBrowserRouter([
         path: '',
         element: <Navigate to={AppConstantRoutes.paths.home} replace />,
       },
+      // {
+      //   path: AppConstantRoutes.paths.profile,
+      //   element: <Navigate to={AppConstantRoutes.paths.profile} replace />,
+      // },
     ],
   },
 ])
