@@ -20,8 +20,7 @@ const samplePosts = [
       'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using Content here, content here, making it look like readable English.',
     images: [
       'https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=400',
-      'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=400',
-      'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=400',
+
       'https://images.unsplash.com/photo-1519904981063-b0cf448d479e?w=400',
     ],
     disasterType: 'storm' as const,
@@ -42,11 +41,55 @@ const samplePosts = [
     location: 'London',
     content:
       'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.',
+    images: ['https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=400'],
+    disasterType: 'flood' as const,
+    upvotes: 1000,
+    downvotes: 1200,
+    comments: 4350,
+    createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000), // 5 hours ago
+  },
+  {
+    id: '3',
+    user: {
+      name: 'John Doe',
+      avatar: null,
+      isVerified: false,
+    },
+    trustScore: 80,
+    isDebunked: false,
+    location: 'London',
+    content:
+      'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.',
     images: [
       'https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=400',
       'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=400',
+      'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=400',
     ],
-    disasterType: 'flood' as const,
+    disasterType: 'fire' as const,
+    upvotes: 1000,
+    downvotes: 1200,
+    comments: 4350,
+    createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000), // 5 hours ago
+  },
+  {
+    id: '4',
+    user: {
+      name: 'John Doe',
+      avatar: null,
+      isVerified: false,
+    },
+    trustScore: 80,
+    isDebunked: false,
+    location: 'London',
+    content:
+      'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.',
+    images: [
+      'https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=400',
+      'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=400',
+      'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=400',
+      'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=400',
+    ],
+    disasterType: 'earthquake' as const,
     upvotes: 1000,
     downvotes: 1200,
     comments: 4350,
@@ -56,9 +99,17 @@ const samplePosts = [
 
 const Profile = () => {
   const [posts, setPosts] = useState(samplePosts)
-  const [filteredPosts, setFilteredPosts] = useState([])
+  // const [filteredPosts, setFilteredPosts] = useState([])
   const [sortBy, setSortBy] = useState('recent')
   const [filterBy, setFilterBy] = useState('all')
+
+  // sample user profile data
+  const userProfile = {
+    name: 'John Doe',
+    location: 'UK',
+    isVerified: true,
+    imageUrl: 'https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=400',
+  }
 
   // // Fetch user profile
   // const { data: userProfile, isLoading: profileLoading } = useUserProfile(userId)
@@ -79,8 +130,12 @@ const Profile = () => {
   return (
     <div className='mt-5 bg-white px-20 py-6'>
       <div className='mb-8 flex items-start justify-items-start space-x-10 border-b border-[#33333430] pb-12'>
-        <ImgSelection imageUrl='https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=400' />
-        <InfoSection name={'John'} location={'UK'} isVerified={true} />
+        <ImgSelection imageUrl={userProfile.imageUrl} />
+        <InfoSection
+          name={userProfile.name}
+          location={userProfile.location}
+          isVerified={userProfile.isVerified}
+        />
       </div>
       <div>
         <PostsControls
@@ -88,7 +143,7 @@ const Profile = () => {
           setSortBy={setSortBy}
           filterBy={filterBy}
           setFilterBy={setFilterBy}
-          isVerified={true} // Assuming the profile is verified
+          isVerified={userProfile.isVerified}
         />
         <div className='mt-10'>
           {posts.length > 0 ? (

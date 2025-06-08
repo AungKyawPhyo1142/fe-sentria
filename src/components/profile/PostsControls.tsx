@@ -26,7 +26,7 @@ export default function PostsControls({
           id='sort'
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}
-          className='py-3text-[16px] h-12 w-75 rounded border border-black px-3 font-medium text-black'
+          className='h-12 w-75 rounded border border-black px-3 py-3 text-[16px] font-medium text-black'
         >
           <option value='recent'>Latest</option>
           <option value='popular'>Popular</option>

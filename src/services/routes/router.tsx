@@ -62,6 +62,7 @@ export const router = createBrowserRouter([
     path: AppConstantRoutes.paths.onboarding.steps,
     element: <StepsScroller />,
   },
+  // temporary test route for profile page
   {
     path: AppConstantRoutes.paths.profile,
     element: <Profile />,

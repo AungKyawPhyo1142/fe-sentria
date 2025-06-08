@@ -1,11 +1,10 @@
 import { PencilLine } from 'lucide-react'
-import ImageSelectModal from './ImaSelectModal'
+import ImageSelectModal from './ImageSelectModal'
 import React from 'react'
 
 export default function ImageSelection({ imageUrl }: { imageUrl?: string }) {
   const [isOpen, setIsOpen] = React.useState(false)
   const handleEditClick = () => {
-    // Logic to open the image selection modal
     setIsOpen(true)
   }
   return (
@@ -20,14 +19,14 @@ export default function ImageSelection({ imageUrl }: { imageUrl?: string }) {
           onClick={handleEditClick}
           className='h-13 w-13 stroke-1 text-white'
         />
-        <ImageSelectModal
-          isOpen={isOpen}
-          setIsOpen={setIsOpen}
-          onSave={() => {
-            setIsOpen(false)
-          }}
-        />
       </div>
+      <ImageSelectModal
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        onSave={() => {
+          setIsOpen(false)
+        }}
+      />
     </div>
   )
 }
