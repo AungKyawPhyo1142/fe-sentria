@@ -24,7 +24,7 @@ const NavbarItems = [
   {
     icon: (active: boolean) => (
       <Phone
-        size={38}
+        size={28}
         strokeWidth={1}
         className={`icon-svg text-black/30 ${active ? 'icon-svg--active' : ''}`}
       />
@@ -35,7 +35,7 @@ const NavbarItems = [
   {
     icon: (active: boolean) => (
       <Map
-        size={40}
+        size={30}
         strokeWidth={1}
         className={`icon-svg text-black/30 ${active ? 'icon-svg--active' : ''}`}
       />
@@ -46,7 +46,7 @@ const NavbarItems = [
   {
     icon: (active: boolean) => (
       <HeartHandshake
-        size={40}
+        size={30}
         strokeWidth={1}
         className={`icon-svg text-black/30 ${active ? 'icon-svg--active' : ''}`}
       />
@@ -57,7 +57,7 @@ const NavbarItems = [
   {
     icon: (active: boolean) => (
       <HandHelping
-        size={42}
+        size={32}
         strokeWidth={1}
         className={`icon-svg text-black/30 ${active ? 'icon-svg--active' : ''}`}
       />
@@ -92,30 +92,32 @@ const Navbar = () => {
 
   return (
     <div
-      className={`fixed top-0 right-0 ${isMapPage ? 'left-30' : 'left-68'} flex items-center justify-between bg-white mr-6 ml-3 py-4 text-black transition-all duration-300 ease-in-out`}
+      className={`fixed top-0 right-0 ${isMapPage ? 'left-30' : 'left-68'} mr-6 flex items-center justify-between bg-white py-4 text-black transition-all duration-300 ease-in-out`}
     >
-      {/* Navbar Icons */}
-      <div className='flex h-14 w-150 items-center justify-between rounded-xl border border-black/30 px-12 mr-5'>
-        {NavbarItems.map((item) => (
-          <button
-            key={item.title}
-            onClick={() => handleIconClick(item.title, item.path)}
-            disabled={!item.path}
-          >
-            {item.icon(activeIcon === item.title)}
-          </button>
-        ))}
+      <div className='mx-6 ml-6 flex flex-1/2 space-x-8'>
+        {/* Navbar Icons */}
+        <div className='flex h-12.5 w-100 items-center justify-between rounded-xl border border-black/30 p-4 px-12 shadow-md'>
+          {NavbarItems.map((item) => (
+            <button
+              key={item.title}
+              onClick={() => handleIconClick(item.title, item.path)}
+              disabled={!item.path}
+            >
+              {item.icon(activeIcon === item.title)}
+            </button>
+          ))}
+        </div>
+
+        {/* Create Post */}
+        <button className='bg-primary flex h-12.5 w-60 items-center justify-center rounded-xl px-4 py-1 font-light text-white shadow-md hover:cursor-pointer'>
+          <CirclePlus size={26} strokeWidth={1} />
+          <span className='ml-3 text-[16px]'>Report a disaster</span>
+        </button>
       </div>
 
-      {/* Create Post */}
-      <button className='bg-primary flex h-14 w-60 items-center justify-center rounded-xl px-4 py-1 font-light text-white hover:cursor-pointer'>
-        <CirclePlus size={30} strokeWidth={1} />
-        <span className='ml-3 text-[18px]'>Report a disaster</span>
-      </button>
-
       {/* Profile */}
-      <div className='flex h-14 w-60 ml-5 items-center justify-center space-x-2 rounded-xl border border-black/30 px-4 py-1'>
-        <Profile className='h-12 w-12 rounded-full border-1 border-black/30 object-cover' />
+      <div className='ml-5 flex h-12.5 w-60 items-center justify-center space-x-2 rounded-xl border border-black/30 px-4 py-1 shadow-md'>
+        <Profile className='h-11 w-11 rounded-full object-cover' />
         <span className='ml-3 text-[16px]'>Sweeny Sydney</span>
       </div>
     </div>
