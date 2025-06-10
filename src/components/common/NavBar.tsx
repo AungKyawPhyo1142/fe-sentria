@@ -1,15 +1,10 @@
 import { useEffect, useState } from 'react'
 import Profile from '@/assets/Profile.svg?react'
-import {
-  CirclePlus,
-  HandHelping,
-  HeartHandshake,
-  Map,
-  Phone,
-} from 'lucide-react'
+import { CirclePlus, HeartHandshake, Map, Phone } from 'lucide-react'
 import { AppConstantRoutes } from '@/services/routes/path'
 import { useLocation, useNavigate } from 'react-router'
 import Home from '@/assets/icons/home.svg?react'
+import Hand from '@/assets/icons/OfferHand2.svg?react'
 
 const NavbarItems = [
   {
@@ -56,9 +51,7 @@ const NavbarItems = [
   },
   {
     icon: (active: boolean) => (
-      <HandHelping
-        size={32}
-        strokeWidth={1}
+      <Hand
         className={`icon-svg text-black/30 ${active ? 'icon-svg--active' : ''}`}
       />
     ),
@@ -94,9 +87,11 @@ const Navbar = () => {
     <div
       className={`fixed top-0 right-0 ${isMapPage ? 'left-30' : 'left-68'} mr-6 flex items-center justify-between bg-white py-4 text-black transition-all duration-300 ease-in-out`}
     >
-      <div className='mx-6 ml-6 flex flex-1/2 space-x-8'>
+      <div
+        className={`mx-6 ml-6 flex flex-1/2 ${isMapPage ? 'space-x-16' : 'space-x-8'}`}
+      >
         {/* Navbar Icons */}
-        <div className='flex h-12.5 w-100 items-center justify-between rounded-xl border border-black/30 p-4 px-12 shadow-md'>
+        <div className='flex h-12.5 w-100 items-center justify-between rounded-xl border border-black/30 p-4 px-12'>
           {NavbarItems.map((item) => (
             <button
               key={item.title}
@@ -109,14 +104,14 @@ const Navbar = () => {
         </div>
 
         {/* Create Post */}
-        <button className='bg-primary flex h-12.5 w-60 items-center justify-center rounded-xl px-4 py-1 font-light text-white shadow-md hover:cursor-pointer'>
+        <button className='bg-primary flex h-12.5 w-60 items-center justify-center rounded-xl px-4 py-1 font-light text-white hover:cursor-pointer'>
           <CirclePlus size={26} strokeWidth={1} />
           <span className='ml-3 text-[16px]'>Report a disaster</span>
         </button>
       </div>
 
       {/* Profile */}
-      <div className='ml-5 flex h-12.5 w-60 items-center justify-center space-x-2 rounded-xl border border-black/30 px-4 py-1 shadow-md'>
+      <div className='ml-5 flex h-12.5 w-60 items-center justify-center space-x-2 rounded-xl border border-black/30 px-4 py-1'>
         <Profile className='h-11 w-11 rounded-full object-cover' />
         <span className='ml-3 text-[16px]'>Sweeny Sydney</span>
       </div>
