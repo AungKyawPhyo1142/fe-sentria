@@ -1,6 +1,7 @@
 import Button from '@/components/common/Button'
 import Input from '@/components/common/Input'
 import LanguageToggle from '@/components/common/LanguageToggle'
+import Map from '@/components/common/Map'
 import PostCard from '@/components/posts/PostCard'
 import { AppConstantRoutes } from '@/services/routes/path'
 import {
@@ -130,6 +131,11 @@ const Example = () => {
             onComment={() => alert('Comment on post')}
           />
         ))}
+      </div>
+
+      {/*Map component*/}
+      <div className='flex w-full flex-col items-center p-10'>
+        <Map />
       </div>
     </div>
   )
