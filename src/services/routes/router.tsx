@@ -12,6 +12,7 @@ import Home from '@/pages/user/Home'
 import VerificationSent from '@/pages/auth/VerificationSent'
 import Confirmed from '@/pages/auth/VerifyEmail'
 import Profile from '@/pages/profile/Profile'
+import MapPage from '@/pages/user/MapPage'
 
 /*
   This file is where you define the routes
@@ -84,6 +85,10 @@ export const router = createBrowserRouter([
       {
         path: '',
         element: <Navigate to={AppConstantRoutes.paths.home} replace />,
+      },
+      {
+        path: AppConstantRoutes.paths.map,
+        element: <MapPage />,
       },
       // {
       //   path: AppConstantRoutes.paths.profile,

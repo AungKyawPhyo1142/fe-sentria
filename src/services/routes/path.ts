@@ -36,6 +36,9 @@ export const AppConstantRoutes = {
     get home() {
       return '/home'
     },
+    get map(){
+      return '/map'
+    },
     get profile() {
       return '/profile'
     },
