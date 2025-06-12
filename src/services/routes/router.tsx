@@ -11,7 +11,7 @@ import Home from '@/pages/user/Home'
 
 import VerificationSent from '@/pages/auth/VerificationSent'
 import Confirmed from '@/pages/auth/VerifyEmail'
-import Profile from '@/pages/profile/Profile'
+import Profile from '@/pages/user/Profile'
 import MapPage from '@/pages/user/MapPage'
 
 /*
@@ -63,7 +63,6 @@ export const router = createBrowserRouter([
     path: AppConstantRoutes.paths.onboarding.steps,
     element: <StepsScroller />,
   },
-  // temporary test route for profile page
   {
     path: AppConstantRoutes.paths.profile,
     element: <Profile />,
@@ -92,7 +91,7 @@ export const router = createBrowserRouter([
       },
       // {
       //   path: AppConstantRoutes.paths.profile,
-      //   element: <Navigate to={AppConstantRoutes.paths.profile} replace />,
+      //   element: <Profile />,
       // },
     ],
   },

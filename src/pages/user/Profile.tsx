@@ -3,7 +3,9 @@ import ImgSelection from '@/components/profile/ImageSelection'
 import InfoSection from '@/components/profile/InfoSection'
 import PostsControls from '@/components/profile/PostsControls'
 import PostCard from '@/components/posts/PostCard'
-//import { applyFiltersAndSort } from '@/services/profileService' // Assuming this function exists
+import { useUserProfile } from '@/services/network/lib/user'
+import { useUpdateProfileImage } from '@/services/network/lib/user'
+import { selectAuth, useAuthStore } from '@/zustand/authStore'
 
 const samplePosts = [
   {
@@ -48,71 +50,24 @@ const samplePosts = [
     comments: 4350,
     createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000), // 5 hours ago
   },
-  {
-    id: '3',
-    user: {
-      name: 'John Doe',
-      avatar: null,
-      isVerified: false,
-    },
-    trustScore: 80,
-    isDebunked: false,
-    location: 'London',
-    content:
-      'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.',
-    images: [
-      'https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=400',
-      'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=400',
-      'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=400',
-    ],
-    disasterType: 'fire' as const,
-    upvotes: 1000,
-    downvotes: 1200,
-    comments: 4350,
-    createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000), // 5 hours ago
-  },
-  {
-    id: '4',
-    user: {
-      name: 'John Doe',
-      avatar: null,
-      isVerified: false,
-    },
-    trustScore: 80,
-    isDebunked: false,
-    location: 'London',
-    content:
-      'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.',
-    images: [
-      'https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=400',
-      'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=400',
-      'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=400',
-      'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=400',
-    ],
-    disasterType: 'earthquake' as const,
-    upvotes: 1000,
-    downvotes: 1200,
-    comments: 4350,
-    createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000), // 5 hours ago
-  },
 ]
 
 const Profile = () => {
+  const { userId } = useAuthStore(selectAuth)
+  const updateUserProfileImage = useUpdateProfileImage()
+
   const [posts, setPosts] = useState(samplePosts)
   // const [filteredPosts, setFilteredPosts] = useState([])
   const [sortBy, setSortBy] = useState('recent')
   const [filterBy, setFilterBy] = useState('all')
 
-  // sample user profile data
-  const userProfile = {
-    name: 'John Doe',
-    location: 'UK',
-    isVerified: true,
-    imageUrl: 'https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=400',
-  }
-
-  // // Fetch user profile
-  // const { data: userProfile, isLoading: profileLoading } = useUserProfile(userId)
+  // Fetch user profile
+  const {
+    data,
+    isLoading: profileLoading,
+    error: profileError,
+  } = useUserProfile(userId)
+  const userProfile = data?.data
 
   // // Fetch user posts with filters
   // const { data: postsData, isLoading: postsLoading } = useUserPosts(userId, {
@@ -124,17 +79,42 @@ const Profile = () => {
   // useEffect(() => {
   //   // Apply filters and sorting to posts
   //   // const filtered = applyFiltersAndSort(posts, filterBy, sortBy)
-  //   setFilteredPosts()
+  //   setFilteredPosts(filtered)
   // }, [posts, filterBy, sortBy])
+
+  const handleUpdateProfileImage = async (file: File) => {
+    try {
+      await updateUserProfileImage.mutateAsync({ userId, file })
+    } catch (error) {
+      console.error('Failed to update profile image:', error)
+    }
+  }
+
+  if (profileLoading)
+    return <p className='text-primary p-4'>Loading Profile...</p>
+
+  if (profileError)
+    return (
+      <p className='text-red'>Error loading profile: {profileError.message}</p>
+    )
+
+  if (!userProfile) return <p className='text-primary'>No user profile found</p>
 
   return (
     <div className='mt-5 bg-white px-20 py-6'>
       <div className='mb-8 flex items-start justify-items-start space-x-10 border-b border-[#33333430] pb-12'>
-        <ImgSelection imageUrl={userProfile.imageUrl} />
+        <ImgSelection
+          imageUrl={
+            userProfile.profile_image !== null
+              ? userProfile.profile_image
+              : undefined
+          }
+          handleUpdateProfileImage={handleUpdateProfileImage}
+        />
         <InfoSection
-          name={userProfile.name}
-          location={userProfile.location}
-          isVerified={userProfile.isVerified}
+          name={userProfile.firstName + ' ' + userProfile.lastName}
+          location={userProfile.country}
+          isVerified={userProfile.verified_profile}
         />
       </div>
       <div>
@@ -143,7 +123,7 @@ const Profile = () => {
           setSortBy={setSortBy}
           filterBy={filterBy}
           setFilterBy={setFilterBy}
-          isVerified={userProfile.isVerified}
+          isVerified={userProfile.verified_profile}
         />
         <div className='mt-10'>
           {posts.length > 0 ? (

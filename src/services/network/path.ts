@@ -19,5 +19,19 @@ export const ApiConstantRoutes = {
         },
       }
     },
+    get user() {
+      return {
+        get default() {
+          return '/users'
+        },
+        get getProfile() {
+          return `${this.default}/:id`
+        },
+
+        get updateProfile() {
+          return `${this.default}/:id`
+        },
+      }
+    },
   },
 }
