@@ -111,7 +111,10 @@ const Navbar = () => {
       </div>
 
       {/* Profile */}
-      <div className='ml-5 flex h-12.5 w-60 items-center justify-center space-x-2 rounded-xl border border-black/30 px-4 py-1'>
+      <div
+        onClick={() => navigate(AppConstantRoutes.paths.profile)}
+        className='ml-5 flex h-12.5 w-60 cursor-pointer items-center justify-center space-x-2 rounded-xl border border-black/30 px-4 py-1'
+      >
         <Profile className='h-11 w-11 rounded-full object-cover' />
         <span className='ml-3 text-[16px]'>Sweeny Sydney</span>
       </div>

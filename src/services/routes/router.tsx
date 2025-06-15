@@ -63,10 +63,6 @@ export const router = createBrowserRouter([
     path: AppConstantRoutes.paths.onboarding.steps,
     element: <StepsScroller />,
   },
-  {
-    path: AppConstantRoutes.paths.profile,
-    element: <Profile />,
-  },
 
   // ** The following paths are all protected by SecureRoute component
   {
@@ -89,10 +85,10 @@ export const router = createBrowserRouter([
         path: AppConstantRoutes.paths.map,
         element: <MapPage />,
       },
-      // {
-      //   path: AppConstantRoutes.paths.profile,
-      //   element: <Profile />,
-      // },
+      {
+        path: AppConstantRoutes.paths.profile,
+        element: <Profile />,
+      },
     ],
   },
 ])
