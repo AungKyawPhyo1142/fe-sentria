@@ -5,6 +5,7 @@ import { AppConstantRoutes } from '@/services/routes/path'
 import { useLocation, useNavigate } from 'react-router'
 import Home from '@/assets/icons/home.svg?react'
 import Hand from '@/assets/icons/OfferHand2.svg?react'
+import CreatePostModal from './CreatePostModal'
 
 const NavbarItems = [
   {
@@ -64,6 +65,9 @@ const Navbar = () => {
   const [activeIcon, setActiveIcon] = useState<string>('home')
   const navigate = useNavigate()
 
+  //open create post
+  const [createPost, setCreatePost] = useState(false)
+
   const handleIconClick = (title: string, path?: string) => {
     setActiveIcon(title)
     if (path) navigate(path) /**will chang it later */
@@ -104,10 +108,16 @@ const Navbar = () => {
         </div>
 
         {/* Create Post */}
-        <button className='bg-primary flex h-12.5 w-60 items-center justify-center rounded-xl px-4 py-1 font-light text-white hover:cursor-pointer'>
+        <button
+          onClick={() => setCreatePost(true)}
+          className='bg-primary flex h-12.5 w-60 items-center justify-center rounded-xl px-4 py-1 font-light text-white hover:cursor-pointer'
+        >
           <CirclePlus size={26} strokeWidth={1} />
           <span className='ml-3 text-[16px]'>Report a disaster</span>
         </button>
+        {createPost && (
+          <CreatePostModal isOpen={createPost} setIsOpen={setCreatePost} />
+        )}
       </div>
 
       {/* Profile */}
