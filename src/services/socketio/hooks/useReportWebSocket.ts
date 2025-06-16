@@ -5,9 +5,12 @@ import { config } from '@config/register'
 
 interface FactCheckUpdate {
   reportId: string
-  status: string
-  overallPercentage: number
-  lastCalculatedAt: number
+  factCheck: {
+    status: string
+    factCheckOverallPercentage: number
+    lastCalculatedAt: number
+    narrative: string
+  }
 }
 
 class ReportSocketManager {
@@ -44,18 +47,18 @@ class ReportSocketManager {
                   if (report.id === data.reportId) {
                     console.log('Updating report:', report.id)
                     console.log('New values:', {
-                      factCheckStatus: data.status,
-                      factCheckOverallPercentage: data.overallPercentage,
-                      factCheckLastUpdatedAt: data.lastCalculatedAt
+                      factCheckStatus: data.factCheck.status,
+                      factCheckOverallPercentage: data.factCheck.factCheckOverallPercentage,
+                      factCheckLastUpdatedAt: data.factCheck.lastCalculatedAt
                     })
                     return {
                       ...report,
-                      factCheckStatus: data.status,
-                      factCheckOverallPercentage: data.overallPercentage,
-                      factCheckLastUpdatedAt: data.lastCalculatedAt,
+                      factCheckStatus: data.factCheck.status,
+                      factCheckOverallPercentage: data.factCheck.factCheckOverallPercentage,
+                      factCheckLastUpdatedAt: data.factCheck.lastCalculatedAt,
                       factCheck: {
                         ...report.factCheck,
-                        factCheckOverallPercentage: data.overallPercentage
+                        factCheckOverallPercentage: data.factCheck.factCheckOverallPercentage
                       }
                     }
                   }
