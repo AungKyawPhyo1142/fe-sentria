@@ -1,4 +1,4 @@
-import Button from "@/components/common/Button"
+import Button from '@/components/common/Button'
 
 const MapPage = () => {
   return (
@@ -6,7 +6,7 @@ const MapPage = () => {
       <h1>Map Page</h1>
       <Button className='my-5 w-25' primary>
         Map Page
-      </Button> 
+      </Button>
       <p className='text-xl'>
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellat soluta
         tempore, nostrum animi porro minima. Necessitatibus repellendus nam
