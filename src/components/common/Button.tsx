@@ -13,6 +13,7 @@ interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
   secondary?: boolean
   destructive?: boolean
   outline?: boolean
+  primaryOutline?: boolean
   children: ReactNode
   type?: 'button' | 'submit' | 'reset'
 }
@@ -48,6 +49,7 @@ const Button: React.FC<Props> = (props) => {
     secondary,
     destructive,
     outline,
+    primaryOutline,
     children,
     ...rest // rest of the props, this comes from ButtonHTMLAttributes<HTMLButtonElement>
   } = props
@@ -60,6 +62,8 @@ const Button: React.FC<Props> = (props) => {
         primary && 'bg-primary text-black disabled:bg-[#B3B3B3]',
         secondary && 'bg-secondary disabled:bg-[#B3B3B3]',
         destructive && 'bg-red disabled:bg-[#B3B3B3]',
+        primaryOutline &&
+          'border-primary !text-primary border hover:bg-black/8',
         outline &&
           'border-secondary !text-secondary hover:bg-secondary border hover:!text-white disabled:bg-[#B3B3B3]',
         className,

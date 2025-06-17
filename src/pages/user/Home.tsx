@@ -1,9 +1,11 @@
 import Button from '@/components/common/Button'
+import { useTranslation } from 'react-i18next'
 
 const Home = () => {
+  const { t } = useTranslation()
   return (
     <div>
-      <h1>Home Page</h1>
+      <h1>{t('sidebar.Home')}</h1>
       <Button className='my-5 w-25' primary>
         Home Page
       </Button>

@@ -5,6 +5,7 @@ import { AppConstantRoutes } from '@/services/routes/path'
 import { useLocation, useNavigate } from 'react-router'
 import Home from '@/assets/icons/home.svg?react'
 import Hand from '@/assets/icons/OfferHand2.svg?react'
+import { useTranslation } from 'react-i18next'
 import CreatePostModal from './CreatePostModal'
 
 const NavbarItems = [
@@ -64,6 +65,7 @@ const NavbarItems = [
 const Navbar = () => {
   const [activeIcon, setActiveIcon] = useState<string>('home')
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   //open create post
   const [createPost, setCreatePost] = useState(false)
@@ -113,7 +115,7 @@ const Navbar = () => {
           className='bg-primary flex h-12.5 w-60 items-center justify-center rounded-xl px-4 py-1 font-light text-white hover:cursor-pointer'
         >
           <CirclePlus size={26} strokeWidth={1} />
-          <span className='ml-3 text-[16px]'>Report a disaster</span>
+          <span className='ml-3 text-[16px]'>{t('sidebar.ReportPost')}</span>
         </button>
         {createPost && (
           <CreatePostModal isOpen={createPost} setIsOpen={setCreatePost} />
