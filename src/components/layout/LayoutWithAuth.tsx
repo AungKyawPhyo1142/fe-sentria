@@ -9,13 +9,13 @@ const LayoutWithAuth = () => {
   return (
     <div className='flex min-h-screen flex-col'>
       <div className='flex flex-1'>
-        {location.pathname !== '/profile' && <Sidebar />}
+        <Sidebar />
         <div className='w-full flex-col'>
           <div>
             {/* NavBar */}
-            <NavBar />
+            {location.pathname !== '/profile' && <NavBar />}
           </div>
-          <main className={`mt-26 ${isMapPage ? 'ml-26' : 'ml-68'} p-5`}>
+          <main className={`mt-18 ${isMapPage ? 'ml-26' : 'ml-68'} p-5`}>
             <Outlet />
           </main>
         </div>
