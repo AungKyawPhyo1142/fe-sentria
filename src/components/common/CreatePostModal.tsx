@@ -150,20 +150,21 @@ const CreatePostModal: React.FC<createPostProps> = ({
           variants={backdropVariants}
         >
           <motion.div
-            className='relative h-auto max-h-10/11 w-189 overflow-y-auto rounded-lg bg-white px-8 py-6 shadow-xl'
+            className='relative max-h-[90vh] w-189 overflow-y-auto rounded-lg bg-white px-8 shadow-xl'
             variants={modalVariants}
             initial='hidden'
             animate='visible'
             exit='exit'
           >
-            <div className='border-b-1 border-black/30 pb-5'>
+            {/* Header */}
+            <div className='sticky top-0 z-20 flex items-baseline justify-between border-b-1 border-black/30 bg-white py-5'>
               <h1 className='text-2xl font-semibold'>
                 {t('createPost.create')}
               </h1>
 
               <button
                 onClick={() => setIsOpen(false)}
-                className='absolute top-6 right-4 text-white hover:cursor-pointer hover:opacity-20'
+                className='absolute right-0 text-white hover:cursor-pointer hover:opacity-20'
               >
                 <X
                   className='h-8 w-8 rounded-full bg-black/30 p-1.5'
@@ -297,7 +298,7 @@ const CreatePostModal: React.FC<createPostProps> = ({
               </div>
 
               {/* Buttons */}
-              <div className='flex justify-end space-x-5 pt-4'>
+              <div className='sticky bottom-0 z-20 flex justify-end space-x-5 bg-white py-4'>
                 <Button
                   className='w-29'
                   tertiary

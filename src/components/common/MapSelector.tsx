@@ -82,7 +82,7 @@ const MapSelector = ({ onLocationChange }: MapSelectorProps) => {
   }
 
   return (
-    <div className='relative'>
+    <div className='relative z-0'>
       <MapContainer
         center={position}
         zoom={13}

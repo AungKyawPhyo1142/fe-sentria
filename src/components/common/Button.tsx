@@ -63,7 +63,7 @@ const Button: React.FC<Props> = (props) => {
         'min-h-[50px] cursor-pointer rounded-lg py-2 text-base font-light text-white transition-all duration-200 ease-in-out hover:opacity-[90%] active:opacity-100',
         primary && 'bg-primary text-black disabled:bg-[#B3B3B3]',
         secondary && 'bg-secondary disabled:bg-[#B3B3B3]',
-        tertiary && 'bg-black/25 text-white',
+        tertiary && 'bg-[#B3B3B3] text-white',
         destructive && 'bg-red disabled:bg-[#B3B3B3]',
         primaryOutline &&
           'border-primary !text-primary border hover:bg-black/8',
