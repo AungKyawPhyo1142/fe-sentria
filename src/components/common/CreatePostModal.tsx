@@ -86,6 +86,7 @@ const CreatePostModal: React.FC<createPostProps> = ({
     setDescription('')
     setLocation(null)
     setPreviewImages([])
+    setIsOpen(false)
 
     // set current locaiotn
     // navigator.geolocation.getCurrentPosition(async (pos) => {
@@ -149,14 +150,16 @@ const CreatePostModal: React.FC<createPostProps> = ({
           variants={backdropVariants}
         >
           <motion.div
-            className='relative h-auto max-h-screen w-189 overflow-y-auto rounded-lg bg-white px-8 py-6 shadow-xl'
+            className='relative h-auto max-h-10/11 w-189 overflow-y-auto rounded-lg bg-white px-8 py-6 shadow-xl'
             variants={modalVariants}
             initial='hidden'
             animate='visible'
             exit='exit'
           >
             <div className='border-b-1 border-black/30 pb-5'>
-              <h1 className='text-2xl font-bold'>{t('createPost.create')}</h1>
+              <h1 className='text-2xl font-semibold'>
+                {t('createPost.create')}
+              </h1>
 
               <button
                 onClick={() => setIsOpen(false)}
@@ -174,7 +177,7 @@ const CreatePostModal: React.FC<createPostProps> = ({
               <div>
                 <label
                   htmlFor='disasterType'
-                  className='mb-2 block text-2xl font-bold'
+                  className='mb-2 block text-xl font-semibold'
                 >
                   {t('createPost.disaster')} <span className='text-red'>*</span>
                 </label>
@@ -203,9 +206,9 @@ const CreatePostModal: React.FC<createPostProps> = ({
               <div>
                 <label
                   htmlFor='description'
-                  className='mb-2 block text-2xl font-bold'
+                  className='mb-2 block text-xl font-semibold'
                 >
-                  {t('createPost.description')}{' '}
+                  {t('createPost.description')}
                   <span className='text-red'>*</span>
                 </label>
                 {/* <Input
@@ -219,24 +222,28 @@ const CreatePostModal: React.FC<createPostProps> = ({
                   id='description'
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className='block min-h-[50px] w-full appearance-none rounded-[10px] border border-zinc-300 px-4 py-2 text-base font-light text-black transition-colors duration-200 focus:outline-black/30'
+                  className='block min-h-28 w-full appearance-none rounded-[10px] border border-zinc-300 px-4 py-2 text-base font-light text-black transition-colors duration-200 focus:outline-black/30'
                   required
                 ></textarea>
               </div>
 
               {/* Pick the location where the disaster occurred */}
               <div>
-                <label className='mb-2 block text-2xl font-bold'>
+                <label className='mb-2 block text-xl font-semibold'>
                   {t('createPost.location')}
                   <span className='text-red'>*</span>
                 </label>
+                <p className='mb-2 text-sm font-thin text-black/50'>
+                  {t('createPost.dragPin')}
+                </p>
+
                 {/* Placeholder for Leaflet map */}
                 <MapSelector onLocationChange={(loc) => setLocation(loc)} />
               </div>
 
               {/* drop or upload images */}
               <div>
-                <label className='mb-2 block text-2xl font-bold'>
+                <label className='mb-2 block text-xl font-semibold'>
                   {t('createPost.images')}
                 </label>
                 <div
@@ -293,7 +300,7 @@ const CreatePostModal: React.FC<createPostProps> = ({
               <div className='flex justify-end space-x-5 pt-4'>
                 <Button
                   className='w-29'
-                  primaryOutline
+                  tertiary
                   type='button'
                   onClick={handleCancel}
                 >

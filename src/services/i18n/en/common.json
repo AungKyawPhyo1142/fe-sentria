@@ -35,7 +35,7 @@
     "ReportPost": "Report a disaster"
   },
   "createPost": {
-    "create": "Create Post ",
+    "create": "Create Disaster Report Post ",
     "disaster": "Pick Disaster Type",
     "earthquake": "Earthquake",
     "fire": "Fire",
@@ -49,7 +49,8 @@
     "dropFile": "Drop the files here",
     "upload": "Drag a file here to upload",
     "or": "or",
-    "browse": "Browse"
+    "browse": "Browse",
+    "dragPin" : "Drag the pin to set your exact location"
   },
   "onboarding": {
     "letsTakeFirstStep": "Let's take the first step together",
