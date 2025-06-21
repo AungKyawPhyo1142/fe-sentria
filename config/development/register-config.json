@@ -2,5 +2,7 @@
   "env": "development",
   "lang": "en",
   "endpoint": "http://localhost:3000",
-  "socket_report_name": "report_factcheck_update"
+  "socket_report_name": "report_factcheck_update",
+  "socket_user_location": "update_location",
+  "socket_earthquake_alert": "earthquake_alert"
 }

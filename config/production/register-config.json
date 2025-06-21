@@ -2,5 +2,7 @@
   "env": "production",
   "lang": "en",
   "endpoint": "https://api.myapp.com",
-  "socket_report_name": "report_factcheck_update"
+  "socket_report_name": "report_factcheck_update",
+  "socket_user_location": "update_location",
+  "socket_earthquake_alert": "earthquake_alert"
 }
