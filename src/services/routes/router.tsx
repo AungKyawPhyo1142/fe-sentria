@@ -11,6 +11,7 @@ import Home from '@/pages/user/Home'
 
 import VerificationSent from '@/pages/auth/VerificationSent'
 import Confirmed from '@/pages/auth/VerifyEmail'
+import Profile from '@/pages/user/Profile'
 import MapPage from '@/pages/user/MapPage'
 
 /*
@@ -83,6 +84,10 @@ export const router = createBrowserRouter([
       {
         path: AppConstantRoutes.paths.map,
         element: <MapPage />,
+      },
+      {
+        path: AppConstantRoutes.paths.profile,
+        element: <Profile />,
       },
     ],
   },

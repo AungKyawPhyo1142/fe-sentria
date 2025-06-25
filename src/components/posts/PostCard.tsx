@@ -92,7 +92,7 @@ const PostCard = ({
   const trustWarning = getTrustWarning(trustScore, isDebunked)
 
   return (
-    <div className='mb-4 max-w-2xl bg-white'>
+    <div className='mb-4 max-w-full bg-white'>
       {/* bg-white */}
       {/* Trust Score Warning - Outside border */}
       {trustWarning.show && (
