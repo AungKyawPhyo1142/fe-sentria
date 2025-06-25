@@ -69,7 +69,8 @@
     "or": "or",
     "browse": "Browse",
     "dragPin": "Drag the pin to set your exact location",
-    "severity" : "Pick Severity Type"
+    "severity" : "Pick Severity Type",
+    "title" : "Post Title"
   },
   "onboarding": {
     "letsTakeFirstStep": "Let's take the first step together",

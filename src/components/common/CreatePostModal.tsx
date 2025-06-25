@@ -7,6 +7,7 @@ import { useDropzone } from 'react-dropzone'
 import Button from './Button'
 import MapSelector from './MapSelector'
 import { useTranslation } from 'react-i18next'
+import Input from './Input'
 
 // Create Post Modal Interfaace
 interface createPostProps {
@@ -63,6 +64,7 @@ const CreatePostModal: React.FC<createPostProps> = ({
 }) => {
   const [disasterType, setDisasterType] = useState<string>('earthquake')
   const [severityType, setSeverityType] = useState<string>('moderate')
+  const [title, setTitle] = useState<string>('')
   const [description, setDescription] = useState<string>('')
   const [location, setLocation] = useState<any>(null)
   const [uploadedImages, setUploadedImages] = useState<File[]>([])
@@ -116,6 +118,7 @@ const CreatePostModal: React.FC<createPostProps> = ({
     const formData = {
       disasterType,
       severityType,
+      title,
       description,
       location,
       uploadedImages,
@@ -230,6 +233,23 @@ const CreatePostModal: React.FC<createPostProps> = ({
                     <ChevronDown />
                   </div>
                 </div>
+              </div>
+              {/* title */}
+              <div>
+                <label
+                  htmlFor='title'
+                  className='mb-2 block text-xl font-semibold'
+                >
+                  {t('createPost.title')}
+                  <span className='text-red'>*</span>
+                </label>
+                <Input
+                  type='title'
+                  name='title'
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  required
+                />
               </div>
               {/* description */}
               <div>
