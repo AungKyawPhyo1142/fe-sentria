@@ -42,6 +42,9 @@ export const AppConstantRoutes = {
     get profile() {
       return '/profile'
     },
+    get resources() {
+      return '/resources'
+    },
     get example() {
       return {
         get default() {

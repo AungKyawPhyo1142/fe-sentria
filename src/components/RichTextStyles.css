@@ -1,0 +1,146 @@
+/* Combined styles for Tiptap editor and rendered rich text content */
+
+/* EDITOR STYLES (ProseMirror)  */
+
+.ProseMirror {
+  min-height: 100px;
+  padding: 0.5rem;
+  outline: none;
+}
+
+.ProseMirror:focus {
+  outline: none;
+}
+
+.ProseMirror p {
+  margin-bottom: 0.75rem;
+}
+
+.ProseMirror ul,
+.ProseMirror ol {
+  padding-left: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.ProseMirror ul li {
+  list-style-type: disc;
+}
+
+.ProseMirror ol li {
+  list-style-type: decimal;
+}
+
+.ProseMirror h1 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 0.75rem;
+}
+
+.ProseMirror h2 {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 0.75rem;
+}
+
+.ProseMirror h3 {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 0.75rem;
+}
+
+.ProseMirror blockquote {
+  border-left: 3px solid #ddd;
+  padding-left: 1rem;
+  font-style: italic;
+  color: #555;
+}
+
+.ProseMirror a {
+  color: #0066cc;
+  text-decoration: underline;
+}
+
+.ProseMirror pre {
+  background: #f4f4f4;
+  border-radius: 0.25rem;
+  padding: 0.5rem;
+  font-family: monospace;
+  overflow-x: auto;
+}
+
+/* RENDERED CONTENT STYLES (rich-text-content) */
+
+.rich-text-content {
+  /* Base styling */
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.rich-text-content p {
+  margin-bottom: 0.75rem;
+}
+
+.rich-text-content ul,
+.rich-text-content ol {
+  padding-left: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.rich-text-content ul li {
+  list-style-type: disc;
+}
+
+.rich-text-content ol li {
+  list-style-type: decimal;
+}
+
+.rich-text-content a {
+  color: #0066cc;
+  text-decoration: underline;
+}
+
+.rich-text-content blockquote {
+  border-left: 3px solid #ddd;
+  padding-left: 1rem;
+  font-style: italic;
+  color: #555;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.rich-text-content strong,
+.rich-text-content b {
+  font-weight: bold;
+}
+
+.rich-text-content em,
+.rich-text-content i {
+  font-style: italic;
+}
+
+/* Add any missing styles for heading elements in rich-text-content */
+.rich-text-content h1 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 0.75rem;
+}
+
+.rich-text-content h2 {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 0.75rem;
+}
+
+.rich-text-content h3 {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 0.75rem;
+}
+
+.rich-text-content pre {
+  background: #f4f4f4;
+  border-radius: 0.25rem;
+  padding: 0.5rem;
+  font-family: monospace;
+  overflow-x: auto;
+}

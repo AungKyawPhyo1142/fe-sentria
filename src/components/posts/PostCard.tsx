@@ -15,6 +15,7 @@ import VerifyBadge from '@/assets/VerifiedBadge.svg?react'
 import { formatNumber } from '@/helpers/helpers'
 import PostImages from './PostImages'
 import TrustScoreBadge from './TrustScoreBadge'
+
 interface User {
   name: string
   avatar: string | null
@@ -180,8 +181,9 @@ const PostCard = ({
               content
             )}
           </p>
-          <div className='flex items-center space-x-2 text-xs text-gray-500'></div>
-          <PostImages images={images} />
+          <div className='flex items-center space-x-2 text-xs text-gray-500'>
+            <PostImages images={images} />
+          </div>
         </div>
 
         {/* actions */}
