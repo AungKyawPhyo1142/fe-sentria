@@ -18,7 +18,7 @@
     "clsx": "^2.1.1",
     "crypto-js": "^4.2.0",
     "formik": "^2.4.6",
-    "framer-motion": "^12.17.3",
+    "framer-motion": "^12.18.1",
     "i18next": "^25.0.0",
     "lucide-react": "^0.488.0",
     "react": "^19.0.0",

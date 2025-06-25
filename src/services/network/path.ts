@@ -17,6 +17,9 @@ export const ApiConstantRoutes = {
         get verifyEmail() {
           return `${this.default}/verify-email/:token`
         },
+        getReports() {
+          return `/report`
+        },
       }
     },
     get user() {
