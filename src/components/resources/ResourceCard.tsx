@@ -1,9 +1,10 @@
 import VerifyBadge from '@/assets/VerifiedBadge.svg?react'
-import { Contact, MapPinned } from 'lucide-react'
+import { MapPinned } from 'lucide-react'
 import Survival from '@/assets/icons/Survival.svg?react'
 import Hotline from '@/assets/icons/Hotline.svg?react'
 import FirstAid from '@/assets/icons/FirstAid.svg?react'
 import PostImages from '../posts/PostImages'
+import '../RichTextStyles.css'
 
 interface User {
   name: string
@@ -14,11 +15,9 @@ interface User {
 interface ResourceCardProps {
   user: User
   location: string
-  content: string
+  description: string
   images?: string[]
   resourceTypes: string[]
-  hotlineNumbers?: string[]
-  hotlineEmail?: string
   createdAt?: Date
   onReadMore?: () => void // open full post modal
 }
@@ -26,20 +25,36 @@ interface ResourceCardProps {
 const ResourceCard = ({
   user,
   location,
-  content,
+  description,
   resourceTypes,
   images,
-  hotlineNumbers,
-  hotlineEmail,
   onReadMore,
 }: ResourceCardProps) => {
+  const stripHtml = (html: string) => {
+    const doc = new DOMParser().parseFromString(html, 'text/html')
+    return doc.body.textContent || ''
+  }
+
+  const getPreviewHtml = (html: string, maxLength: number) => {
+    const stripped = stripHtml(html)
+    if (stripped.length <= maxLength) return html
+
+    const ratio = html.length / stripped.length
+    const estimatedPosition = Math.floor(maxLength * ratio)
+
+    const closeTagPos = html.indexOf('>', estimatedPosition)
+    return closeTagPos !== -1
+      ? html.substring(0, closeTagPos + 1) + '...'
+      : html.substring(0, estimatedPosition) + '...'
+  }
+
   const getResourceIcon = (resource: string) => {
     switch (resource.toLowerCase()) {
       case 'survival':
         return <Survival className='h-4 w-4' />
       case 'hotline':
         return <Hotline className='h-4 w-4' />
-      case 'first aid':
+      case 'first_aid':
         return <FirstAid className='h-4 w-4' />
       default:
         return null
@@ -47,7 +62,7 @@ const ResourceCard = ({
   }
 
   return (
-    <div className='mx-6 flex flex-col space-y-10 rounded-lg border border-[#33333430] px-8 py-7'>
+    <div className='mx-6 flex w-full flex-col space-y-10 rounded-lg border border-[#33333430] px-8 py-7'>
       {/* header */}
       <div className='mb-2'>
         <div className='mb-4 flex items-center justify-between'>
@@ -109,70 +124,29 @@ const ResourceCard = ({
 
       {/* Content */}
       <div className='mb-2'>
-        <p className='mb-3 text-[12px] leading-relaxed font-extralight text-[#333334]'>
-          {content && content.length > 300 ? (
-            <>
-              {content.slice(0, 300)}...
-              <button
-                className='text-primary hover:text-primary/80 ml-1 text-[13px] font-medium'
-                onClick={onReadMore}
-                aria-label='Read more about this resource'
-              >
-                Read More
-              </button>
-            </>
-          ) : (
-            content
-          )}
-        </p>
-      </div>
-
-      {/* Hotline Information */}
-      {((hotlineNumbers && hotlineNumbers.length > 0) || hotlineEmail) && (
-        <div className='mb-6 rounded-md'>
-          <div className='mt-2 mb-4 flex items-center text-sm text-black'>
-            <Contact className='mr-1 h-6 w-6 stroke-1' aria-hidden='true' />
-            <span className='ml-2 text-[16px] font-semibold'>
-              Emergency Contact Information
-            </span>
+        {description && stripHtml(description).length > 300 ? (
+          <div className='rich-text-content'>
+            <div
+              className='mb-3 text-[12px] leading-relaxed font-extralight text-[#333334]'
+              dangerouslySetInnerHTML={{
+                __html: getPreviewHtml(description, 300),
+              }}
+            />
+            <button
+              className='text-primary hover:text-primary/80 ml-1 text-[13px] font-medium'
+              onClick={onReadMore}
+              aria-label='Read more about this resource'
+            >
+              Read More
+            </button>
           </div>
-
-          {hotlineNumbers && hotlineNumbers.length > 0 && (
-            <div className='mb-3'>
-              <p className='mb-2 text-[13px] font-medium text-black'>
-                Hotline Numbers:
-              </p>
-              <div className='flex flex-wrap gap-2'>
-                {hotlineNumbers.map((number, index) => (
-                  <a
-                    key={index}
-                    href={`tel:${number}`}
-                    className='bg-secondary/20 rounded-full px-3 py-1 text-[12px]'
-                    aria-label={`Call hotline number: ${number}`}
-                  >
-                    <span className='font-semibold'>{number}</span>
-                  </a>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {hotlineEmail && (
-            <div>
-              <p className='mb-2 text-[13px] font-medium text-black'>
-                Email Contact:
-              </p>
-              <a
-                href={`mailto:${hotlineEmail}`}
-                className='bg-secondary/20 rounded-full px-3 py-1 text-[12px] font-semibold hover:underline'
-                aria-label={`Send email to ${hotlineEmail}`}
-              >
-                {hotlineEmail}
-              </a>
-            </div>
-          )}
-        </div>
-      )}
+        ) : (
+          <div
+            className='rich-text-content mb-3 text-[12px] leading-relaxed font-extralight text-[#333334]'
+            dangerouslySetInnerHTML={{ __html: description }}
+          />
+        )}
+      </div>
 
       {/* Images */}
       <div className='flex items-center space-x-2 text-xs'>

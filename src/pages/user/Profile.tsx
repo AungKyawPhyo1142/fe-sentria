@@ -63,11 +63,10 @@ const Profile = () => {
 
   // Fetch user profile
   const {
-    data,
+    data: userProfile,
     isLoading: profileLoading,
     error: profileError,
   } = useUserProfile(userId)
-  const userProfile = data?.data
 
   // // Fetch user posts with filters
   // const { data: postsData, isLoading: postsLoading } = useUserPosts(userId, {

@@ -1,25 +1,19 @@
 import { useState, useRef, useEffect } from 'react'
-import { X, MapPin, Trash, CloudUpload, ChevronDown } from 'lucide-react'
+import { X, MapPin, CloudUpload, ChevronDown } from 'lucide-react'
 import clsx from 'clsx'
+import Button from '../common/Button'
+import Input from '../common/Input'
+import RichTextEditor from '../RichTextEditor'
+import {
+  ResourceType,
+  CreateResourceFormValues,
+  CreateResourceFormValuesWithFiles,
+} from '@/services/network/lib/resources'
 
 interface Props {
   isOpen: boolean
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
-  onSave?: (resourceData: ResourceFormData) => void
-}
-
-interface ResourceFormData {
-  title: string
-  description: string
-  resourceType: string
-  images: File[]
-  location: {
-    lat: number
-    lng: number
-    address: string
-  } | null
-  hotlineNumbers: string[]
-  hotlineEmail: string
+  onSave?: (resourceData: CreateResourceFormValuesWithFiles) => void
 }
 
 const CreateResourceModal: React.FC<Props> = ({
@@ -27,30 +21,46 @@ const CreateResourceModal: React.FC<Props> = ({
   setIsOpen,
   onSave,
 }) => {
-  const [formData, setFormData] = useState<ResourceFormData>({
-    title: '',
-    description: '',
-    resourceType: '',
-    images: [],
-    location: null,
-    hotlineNumbers: [''],
-    hotlineEmail: '',
+  const [formData, setFormData] = useState<CreateResourceFormValues>({
+    name: '',
+    resourceType: ResourceType.SURVIVAL,
+    parameters: {
+      description: '',
+      location: {
+        city: 'Bangkok',
+        country: 'Thailand',
+        latitude: 0,
+        longitude: 0,
+      },
+      address: {
+        street: '123 Main St',
+        district: 'Central',
+        fullAddress: '123 Main St, Central, Bangkok, Thailand',
+      },
+    },
   })
+
+  const handleDescriptionChange = (html: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      parameters: {
+        ...prev.parameters,
+        description: html,
+      },
+    }))
+  }
 
   const [isDragOver, setIsDragOver] = useState(false)
   const [previewUrls, setPreviewUrls] = useState<string[]>([])
+  const [images, setImages] = useState<File[]>([])
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const resourceTypes = [
-    'First Aid',
-    'Shelter',
-    'Water',
-    'Food',
-    'Medical',
-    'Emergency Contact',
+    { value: ResourceType.SURVIVAL, label: 'Survival' },
+    { value: ResourceType.FIRST_AID, label: 'First Aid' },
+    { value: ResourceType.HOTLINE, label: 'Hotline' },
   ]
 
-  // Cleanup preview URLs
   useEffect(() => {
     return () => {
       previewUrls.forEach((url) => URL.revokeObjectURL(url))
@@ -59,16 +69,27 @@ const CreateResourceModal: React.FC<Props> = ({
 
   function resetModal() {
     setFormData({
-      title: '',
-      description: '',
-      resourceType: '',
-      images: [],
-      location: null,
-      hotlineNumbers: [''],
-      hotlineEmail: '',
+      name: '',
+      resourceType: ResourceType.SURVIVAL,
+      parameters: {
+        description: '',
+        location: {
+          city: '',
+          country: '',
+          latitude: 0,
+          longitude: 0,
+        },
+        address: {
+          street: '',
+          district: '',
+          fullAddress: '',
+        },
+      },
     })
+
     previewUrls.forEach((url) => URL.revokeObjectURL(url))
     setPreviewUrls([])
+    setImages([])
     setIsDragOver(false)
   }
 
@@ -78,11 +99,25 @@ const CreateResourceModal: React.FC<Props> = ({
   }
 
   function handleSave() {
-    if (!formData.title.trim() || !formData.resourceType) {
+    if (!formData.name.trim() || !formData.resourceType) {
       alert('Please fill in required fields')
       return
     }
-    onSave?.(formData)
+
+    const formDataToSubmit = {
+      ...formData,
+      parameters: {
+        ...formData.parameters,
+      },
+    }
+    //  add the images to the form data
+    const dataWithFiles: CreateResourceFormValuesWithFiles = {
+      ...formDataToSubmit,
+
+      imageFiles: images.length > 0 ? images : undefined,
+    }
+
+    onSave?.(dataWithFiles)
     closeModal()
   }
 
@@ -93,22 +128,31 @@ const CreateResourceModal: React.FC<Props> = ({
 
     if (imageFiles.length === 0) return
 
-    const newImages = [...formData.images, ...imageFiles]
+    const newImages = [...images, ...imageFiles]
+
     const newPreviewUrls = [
       ...previewUrls,
       ...imageFiles.map((file) => URL.createObjectURL(file)),
     ]
 
-    setFormData((prev) => ({ ...prev, images: newImages }))
+    // Update states
+    setImages(newImages)
     setPreviewUrls(newPreviewUrls)
+
+    setFormData((prev) => ({
+      ...prev,
+      parameters: {
+        ...prev.parameters,
+        imageFiles: newImages,
+      },
+    }))
   }
 
   function removeImage(index: number) {
     URL.revokeObjectURL(previewUrls[index])
-    setFormData((prev) => ({
-      ...prev,
-      images: prev.images.filter((_, i) => i !== index),
-    }))
+
+    // Remove from preview arrays
+    setImages((prev) => prev.filter((_, i) => i !== index))
     setPreviewUrls((prev) => prev.filter((_, i) => i !== index))
   }
 
@@ -139,31 +183,6 @@ const CreateResourceModal: React.FC<Props> = ({
     }
   }
 
-  function addHotlineNumber() {
-    setFormData((prev) => ({
-      ...prev,
-      hotlineNumbers: [...prev.hotlineNumbers, ''],
-    }))
-  }
-
-  function updateHotlineNumber(index: number, value: string) {
-    setFormData((prev) => ({
-      ...prev,
-      hotlineNumbers: prev.hotlineNumbers.map((num, i) =>
-        i === index ? value : num,
-      ),
-    }))
-  }
-
-  function removeHotlineNumber(index: number) {
-    if (formData.hotlineNumbers.length > 1) {
-      setFormData((prev) => ({
-        ...prev,
-        hotlineNumbers: prev.hotlineNumbers.filter((_, i) => i !== index),
-      }))
-    }
-  }
-
   if (!isOpen) return null
 
   return (
@@ -176,13 +195,32 @@ const CreateResourceModal: React.FC<Props> = ({
           <h2 className='text-[24px] font-semibold'>Create Resource</h2>
           <button
             onClick={closeModal}
-            className='text-gray-500 hover:text-gray-700'
+            className='cursor-pointer text-gray-500 hover:text-gray-700'
           >
             <X className='h-8 w-8' />
           </button>
         </div>
 
         <div className='space-y-6 p-6'>
+          {/* Resource Name */}
+          <div>
+            <label className='mb-2 block text-[20px] font-medium text-black'>
+              Resource Name <span className='text-red'>*</span>
+            </label>
+            <Input
+              type='text'
+              value={formData.name}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  name: e.target.value,
+                }))
+              }
+              placeholder='Enter resource name'
+              className='w-full rounded-lg border border-[#33333410] text-[16px] font-light'
+            />
+          </div>
+
           {/* Resource Type Selection */}
           <div>
             <label className='mb-2 block text-[20px] font-medium text-black'>
@@ -198,15 +236,15 @@ const CreateResourceModal: React.FC<Props> = ({
                 onChange={(e) =>
                   setFormData((prev) => ({
                     ...prev,
-                    resourceType: e.target.value,
+                    resourceType: e.target.value as ResourceType,
                   }))
                 }
                 className='w-full appearance-none rounded-lg border border-[#33333430] p-3 text-[16px] font-normal'
               >
                 <option value=''>Select the types of resource</option>
                 {resourceTypes.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
+                  <option key={type.value} value={type.value}>
+                    {type.label}
                   </option>
                 ))}
               </select>
@@ -214,39 +252,38 @@ const CreateResourceModal: React.FC<Props> = ({
             </div>
           </div>
 
-          {/* Title/Description */}
+          {/* Title/Description with Rich Text Editor */}
           <div>
             <label className='mb-2 block text-[20px] font-medium text-black'>
               Add a First Aid Tip or share your experience{' '}
               <span className='text-red'>*</span>
             </label>
-            <textarea
-              value={formData.description}
-              onChange={(e) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  description: e.target.value,
-                }))
-              }
-              placeholder='Write your tip or experience here...'
-              className='h-32 w-full resize-none rounded-lg border border-[#33333430] p-3 text-[16px] font-extralight focus:border-transparent focus:ring-2 focus:ring-blue-500'
+
+            <RichTextEditor
+              content={formData.parameters.description}
+              onChange={handleDescriptionChange}
+              minHeight='128px'
+              className='h-48'
             />
           </div>
 
-          {/* Location */}
+          {/* Location & Address Placeholder */}
           <div>
             <div className='mb-3 flex items-baseline justify-between'>
               <label className='mb-2 text-[20px] font-medium text-black'>
-                Your location
+                Location
               </label>
-              <p className='mb-3 text-[14px] font-normal text-[#33333450]'>
-                Drag the pin to set your exact location
-              </p>
             </div>
             <div className='flex h-48 items-center justify-center rounded-lg border bg-gray-50 p-4'>
               <div className='text-center text-gray-500'>
                 <MapPin className='mx-auto mb-2 h-8 w-8' />
-                <p className='text-sm'>Map view would go here</p>
+                <p className='text-sm font-medium'>
+                  Map integration coming soon
+                </p>
+                <p className='mt-2 text-xs text-[#33333480]'>
+                  Location and address information will be provided through the
+                  map interface
+                </p>
               </div>
             </div>
           </div>
@@ -274,13 +311,13 @@ const CreateResourceModal: React.FC<Props> = ({
                 {isDragOver ? 'Drop images here' : 'Drop a file here to upload'}
               </p>
               <p className='mb-2 text-sm'>or</p>
-              <button className='mt-2 flex h-7 w-21 items-center justify-center rounded-lg px-4 py-2 text-[12px] font-medium'>
+              <button className='mt-2 flex h-7 w-21 items-center justify-center rounded-lg border-1 px-4 py-2 text-[12px] font-medium hover:bg-[#33333425]'>
                 Browse
               </button>
             </div>
 
-            <input
-              ref={fileInputRef}
+            <Input
+              inputRef={fileInputRef}
               type='file'
               multiple
               accept='image/*'
@@ -309,79 +346,24 @@ const CreateResourceModal: React.FC<Props> = ({
               </div>
             )}
           </div>
-
-          {/* Hotline Numbers */}
-          <div>
-            <label className='text-[24px] font-medium text-black'>
-              Enter Your Hotline Number
-            </label>
-            <div className='mt-4 space-y-3'>
-              {formData.hotlineNumbers.map((number, index) => (
-                <div
-                  key={index}
-                  className='flex w-[45%] items-center space-x-2'
-                >
-                  <input
-                    type='tel'
-                    value={number}
-                    onChange={(e) => updateHotlineNumber(index, e.target.value)}
-                    placeholder='+12345'
-                    className='flex-1 rounded-lg border border-[#33333410] p-3 text-[13px] font-semibold focus:border-transparent'
-                  />
-                  {formData.hotlineNumbers.length > 1 && (
-                    <button
-                      onClick={() => removeHotlineNumber(index)}
-                      className='text-red p-2 hover:text-red-700'
-                    >
-                      <Trash className='h-5 w-5' />
-                    </button>
-                  )}
-                </div>
-              ))}
-              <button
-                onClick={addHotlineNumber}
-                className='border-primary/60 flex items-center rounded-lg border px-4 py-2 text-sm font-semibold text-[#33333450] hover:text-[#333334]'
-              >
-                <span>Add another number</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Email */}
-          <div>
-            <label className='mb-2 block text-[24px] font-medium text-black'>
-              Enter Your Hotline Email (if Available)
-            </label>
-            <input
-              type='email'
-              value={formData.hotlineEmail}
-              onChange={(e) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  hotlineEmail: e.target.value,
-                }))
-              }
-              placeholder='your.email@example.com'
-              className='w-full rounded-lg border border-[#33333410] p-3 text-[13px] font-semibold focus:border-transparent focus:ring-2'
-            />
-          </div>
         </div>
 
         {/* Footer */}
-        <div className='sticky bottom-0 flex justify-end space-x-4 border-t border-[#33333410] bg-white px-6 py-4'>
-          <div className='flex space-x-4'>
-            <button
+        <div className='sticky bottom-0 space-x-4 border-t border-[#33333410] bg-white px-6 py-4'>
+          <div className='flex justify-between space-x-4'>
+            <Button
               onClick={closeModal}
-              className='border-primary flex h-8 w-30 items-center justify-center rounded-lg border bg-white px-6 py-3 text-[15px] font-medium text-black hover:bg-gray-50'
+              className='flex h-8 w-30 items-center justify-center rounded-lg border bg-[#33333425] px-6 py-3 text-[15px] font-medium text-white'
             >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={handleSave}
-              className='bg-primary/60 hover:bg-primary flex h-8 w-30 items-center justify-center rounded-lg px-6 py-3 font-medium text-white'
+              primary={true}
+              className='flex h-8 w-30 items-center justify-center rounded-lg px-6 py-3 font-medium text-white'
             >
               Create
-            </button>
+            </Button>
           </div>
         </div>
       </div>
