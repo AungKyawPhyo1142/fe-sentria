@@ -28,6 +28,7 @@ interface PostCardProps {
   trustScore: number
   isDebunked: boolean
   location: string
+  title: string
   content: string
   images?: string[]
   disasterType: 'earthquake' | 'flood' | 'fire' | 'storm' | 'other'
@@ -45,6 +46,7 @@ const PostCard = ({
   trustScore,
   isDebunked = false,
   location,
+  title,
   content,
   images,
   disasterType,
@@ -163,6 +165,7 @@ const PostCard = ({
             <MapPinned className='mr-1 h-6 w-6 stroke-1' />
             <span className='ml-2 text-[16px] font-semibold'>{location}</span>
           </div>
+          <div className='mt-2 text-[14px]'>{title}</div>
         </div>
 
         {/* Content */}

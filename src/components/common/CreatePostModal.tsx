@@ -62,6 +62,7 @@ const CreatePostModal: React.FC<createPostProps> = ({
   setIsOpen,
 }) => {
   const [disasterType, setDisasterType] = useState<string>('earthquake')
+  const [severityType, setSeverityType] = useState<string>('moderate')
   const [description, setDescription] = useState<string>('')
   const [location, setLocation] = useState<any>(null)
   const [uploadedImages, setUploadedImages] = useState<File[]>([])
@@ -114,6 +115,7 @@ const CreatePostModal: React.FC<createPostProps> = ({
     e.preventDefault()
     const formData = {
       disasterType,
+      severityType,
       description,
       location,
       uploadedImages,
@@ -203,6 +205,32 @@ const CreatePostModal: React.FC<createPostProps> = ({
                 </div>
               </div>
 
+              {/* Pick Severity type */}
+              <div>
+                <label
+                  htmlFor='severityType'
+                  className='mb-2 block text-xl font-semibold'
+                >
+                  {t('createPost.severity')} <span className='text-red'>*</span>
+                </label>
+                <div className='relative w-full'>
+                  <select
+                    id='severityType'
+                    className='block min-h-[50px] w-full appearance-none rounded-[10px] border border-zinc-300 px-4 py-2 text-base font-light text-black transition-colors duration-200 focus:outline-black/30'
+                    value={severityType}
+                    onChange={(e) => setSeverityType(e.target.value)}
+                    required
+                  >
+                    <option value='unknown'>{t('severity.unknown')} </option>
+                    <option value='minor'>{t('severity.minor')}</option>
+                    <option value='moderate'>{t('severity.moderate')}</option>
+                    <option value='severe'>{t('severity.severe')}</option>
+                  </select>
+                  <div className='absolute inset-y-0 right-0 flex items-center px-4 text-black'>
+                    <ChevronDown />
+                  </div>
+                </div>
+              </div>
               {/* description */}
               <div>
                 <label

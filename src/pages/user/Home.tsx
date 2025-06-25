@@ -29,20 +29,22 @@ const Home = () => {
           key={report.id}
           id={report.id}
           user={{
-            name: 'Name', //cause userId id null in response 
-            avatar: null,
+            name:
+              report.generatedBy.firstName + ' ' + report.generatedBy.lastName,
+            avatar: report.generatedBy.profile_image,
             isVerified: false,
           }}
-          trustScore={report.parameters?.severity === 'SEVERE' ? 10 : 80}
+          trustScore={report.factCheck.overallPercentage}
           isDebunked={false}
-          location={`${report.city}, ${report.country}`}
-          content={report.name}
-          disasterType={getDisasterType(report.parameters?.incidentType)}
+          location={`${report.location.city}, ${report.location.country}`}
+          title={report.name}
+          content={report.description}
+          disasterType={getDisasterType(report?.incidentType)}
           images={[]}
-          upvotes={report.upvoteCount}
-          downvotes={report.downvoteCount}
-          comments={report.commentCount}
-          createdAt={new Date(report.created_at)}
+          upvotes={report.factCheck.communityScore?.upvotes}
+          downvotes={report.factCheck.communityScore?.downvotes}
+          comments={report.factCheck.communityScore?.commentCount}
+          createdAt={new Date(report.createdAt)}
           onUpvote={() => {
             console.log(`Upvote for ${report.id}`)
           }}

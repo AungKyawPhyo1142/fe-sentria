@@ -13,6 +13,12 @@
     "storm": "Storm",
     "other": "Other"
   },
+  "severity":{
+    "unknown": "Unknown",
+    "minor" : "Minor",
+    "moderate" : "Moderate",
+    "severe" : "Severe"
+  },
   "Login": {
     "welcome": "Welcome to Sentria.",
     "instruction": "Please fill all the fields to login.",
@@ -62,7 +68,8 @@
     "upload": "Drag a file here to upload",
     "or": "or",
     "browse": "Browse",
-    "dragPin": "Drag the pin to set your exact location"
+    "dragPin": "Drag the pin to set your exact location",
+    "severity" : "Pick Severity Type"
   },
   "onboarding": {
     "letsTakeFirstStep": "Let's take the first step together",

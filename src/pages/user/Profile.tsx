@@ -20,7 +20,8 @@ const samplePosts = [
     location: 'London, UK',
     content:
       'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using Content here, content here, making it look like readable English.',
-    images: [
+    title: 'Title1',
+      images: [
       'https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=400',
 
       'https://images.unsplash.com/photo-1519904981063-b0cf448d479e?w=400',
@@ -43,6 +44,7 @@ const samplePosts = [
     location: 'London',
     content:
       'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.',
+    title: 'Title2 testing 123',
     images: ['https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=400'],
     disasterType: 'flood' as const,
     upvotes: 1000,
