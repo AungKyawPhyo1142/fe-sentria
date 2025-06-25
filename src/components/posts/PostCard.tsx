@@ -15,6 +15,7 @@ import VerifyBadge from '@/assets/VerifiedBadge.svg?react'
 import { formatNumber } from '@/helpers/helpers'
 import PostImages from './PostImages'
 import TrustScoreBadge from './TrustScoreBadge'
+import { useTranslation } from 'react-i18next'
 interface User {
   name: string
   avatar: string | null
@@ -54,18 +55,19 @@ const PostCard = ({
   onDownvote,
   onComment,
 }: PostCardProps) => {
+  const { t } = useTranslation()
   const getTrustWarning = (score: number, isDebunked: boolean) => {
     if (isDebunked) {
       return {
         show: true,
-        message: 'Content debunked - Will be removed soon',
+        message: t('common.contentDebunked'),
         bgColor: 'bg-[#B22222]',
       }
     }
     if (score <= 20) {
       return {
         show: true,
-        message: 'Very low trust rate - Be cautious!',
+        message: t('common.lowTrust'),
         bgColor: 'bg-[#B22222]',
       }
     }
@@ -142,14 +144,16 @@ const PostCard = ({
               <TrustScoreBadge score={trustScore} />
               {isDebunked && (
                 <div className='flex h-7 items-center space-x-1 rounded-sm bg-[#B22222] px-2 py-1 text-xs font-medium text-white'>
-                  <span>Debunked</span>
+                  <span>{t('common.debunked')}</span>
                 </div>
               )}
               <div
                 className={`flex h-7 items-center space-x-1 rounded-sm px-2 py-1 text-xs font-medium text-white ${isDebunked ? 'bg-[#33333430]' : 'bg-[#B22222]'}`}
               >
                 {getDisasterIcon(disasterType)}
-                <span className='capitalize'>{disasterType}</span>
+                <span className='capitalize'>
+                  {t(`disasters.${disasterType}`)}
+                </span>
               </div>
             </div>
           </div>

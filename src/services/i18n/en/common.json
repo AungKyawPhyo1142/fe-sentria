@@ -1,6 +1,17 @@
 {
   "common": {
-    "greeting": "Hello, {{name}}!"
+    "greeting": "Hello, {{name}}!",
+    "contentDebunked": "Content debunked - Will be removed soon",
+    "lowTrust": "Very low trust rate - Be cautious!",
+    "debunked": "Debunked"
+  },
+
+  "disasters": {
+    "earthquake": "Earthquake",
+    "flood": "Flood",
+    "fire": "Fire",
+    "storm": "Storm",
+    "other": "Other"
   },
   "Login": {
     "welcome": "Welcome to Sentria.",
@@ -32,7 +43,8 @@
     "Home": "Home Page",
     "LogOut": "LogOut",
     "Language": "English",
-    "ReportPost": "Report a disaster"
+    "ReportPost": "Report a disaster",
+    "SearchPost": "Search disaster..."
   },
   "createPost": {
     "create": "Create Disaster Report Post ",
@@ -50,7 +62,7 @@
     "upload": "Drag a file here to upload",
     "or": "or",
     "browse": "Browse",
-    "dragPin" : "Drag the pin to set your exact location"
+    "dragPin": "Drag the pin to set your exact location"
   },
   "onboarding": {
     "letsTakeFirstStep": "Let's take the first step together",
