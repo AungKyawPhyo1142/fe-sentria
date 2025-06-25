@@ -285,7 +285,7 @@ const Map = () => {
                   popupAnchor: [1, -34],
                 })}
               >
-                <Popup>{`Help Type: ${help.disasterType}`}</Popup>
+                <Popup>{`${help.disasterType} ${help.helpType === 'available' ? 'available' : 'needed'}`}</Popup>
               </Marker>
             )
           })}
