@@ -1,6 +1,8 @@
 import Button from '@/components/common/Button'
 import Input from '@/components/common/Input'
 import LanguageToggle from '@/components/common/LanguageToggle'
+import Map from '@/components/common/Map'
+import { MapFilterProvider } from '@/components/common/MapFilterContext'
 import PostCard from '@/components/posts/PostCard'
 import ActivityPostCard from '@/components/posts/ActivityPostCard'
 import ResourceCard from '@/components/resources/ResourceCard'
@@ -234,6 +236,14 @@ const Example = () => {
       {/* Resource Modal */}
       <div className='mt-10 flex w-full flex-col items-center gap-y-4'>
         <CreateResourceModal isOpen={isOpen} setIsOpen={setIsOpen} />
+      </div>
+
+      {/*Map component*/}
+      <div className='flex w-full flex-row items-start p-10'>
+       <MapFilterProvider>
+         <Map />
+       </MapFilterProvider>
+       
       </div>
     </div>
   )
