@@ -1,6 +1,9 @@
 import { useGetAllDisasterReports } from '@/services/network/lib/reports'
 import { useReportWebSocket } from '@/services/socketio/hooks/useReportWebSocket'
-import { UserLocation, useSendLocationWebSocket } from '@/services/socketio/hooks/useSendLocationWebSocket'
+import {
+  UserLocation,
+  useSendLocationWebSocket,
+} from '@/services/socketio/hooks/useSendLocationWebSocket'
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 
@@ -34,7 +37,7 @@ const WebSocketExample = () => {
     // you can replace this with the above geolocation code when testing in a real environment
     setUserLocation({
       lat: 16.0544,
-      lng: 108.2022
+      lng: 108.2022,
     })
   }, [])
 
@@ -48,7 +51,6 @@ const WebSocketExample = () => {
       disconnect()
     }
   }, [userLocation])
-
 
   // * Cleanup
   useEffect(() => reportSocketCleanup, [])
@@ -72,11 +74,13 @@ const WebSocketExample = () => {
     <>
       <div>
         {userLocation ? (
-          <p>📍 You’re at: {userLocation.lat}, {userLocation.lng}</p>
+          <p>
+            📍 You’re at: {userLocation.lat}, {userLocation.lng}
+          </p>
         ) : (
           <p>📡 Locating you...</p>
         )}
-      </div >
+      </div>
       <div>
         {reportData?.pages.map((page, index) => (
           <div key={index} className='grid grid-cols-3 gap-4'>
@@ -90,7 +94,10 @@ const WebSocketExample = () => {
                 {report.name}
                 <div>
                   OverallPercentage: {report.factCheckOverallPercentage} |{' '}
-                  {report.factCheckOverallPercentage !== undefined && report.factCheckOverallPercentage !== null ? `${report.factCheckOverallPercentage}%` : 'NO'}
+                  {report.factCheckOverallPercentage !== undefined &&
+                  report.factCheckOverallPercentage !== null
+                    ? `${report.factCheckOverallPercentage}%`
+                    : 'NO'}
                 </div>
                 <div className='flex flex-col'>
                   <div>Severity: {report.parameters.severity}</div>
