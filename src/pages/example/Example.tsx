@@ -17,6 +17,7 @@ import {
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router'
 import { useState } from 'react'
+import ActivityPostModal from '@/components/posts/ActivityPostModal'
 
 const samplePosts = [
   {
@@ -153,7 +154,9 @@ const Example = () => {
   const { t } = useTranslation()
 
   const count = useCountStore(selectCount)
-  const [isOpen, setIsOpen] = useState(true)
+  const [isCreateResourceModalOpen, setIsCreateResourceModalOpen] =
+    useState(false)
+  const [isActivityPostModalOpen, setIsActivityPostModalOpen] = useState(false)
 
   return (
     <div className='fade-in flex h-screen flex-col bg-white'>
@@ -207,8 +210,27 @@ const Example = () => {
           </button>
         </div>
       </div>
+
+      {/* open modals */}
+      <button
+        className='bg-secondary'
+        onClick={() => {
+          setIsActivityPostModalOpen(true)
+        }}
+      >
+        Open Activity Post Modal
+      </button>
+      <button
+        className='bg-primary'
+        onClick={() => {
+          setIsCreateResourceModalOpen(true)
+        }}
+      >
+        Open Create Resource Modal
+      </button>
+
       {/* Sample Post Cards */}
-      {/* <div className='mt-10 flex w-full flex-col items-center gap-y-4'>
+      <div className='mt-10 flex w-full flex-col items-center gap-y-4'>
         {samplePosts.map((post, index) => (
           <PostCard
             key={index}
@@ -218,7 +240,16 @@ const Example = () => {
             onComment={() => alert('Comment on post')}
           />
         ))}
-      </div> */}
+      </div>
+
+      <ActivityPostModal
+        isOpen={isActivityPostModalOpen}
+        setIsOpen={setIsActivityPostModalOpen}
+        onSubmit={(data) => {
+          console.log('Activity data:', data)
+          // Handle the form submission
+        }}
+      />
 
       {/* Sample activity feed Cards */}
       <div className='mt-10 flex w-full flex-col items-center gap-y-4'>
@@ -235,15 +266,17 @@ const Example = () => {
 
       {/* Resource Modal */}
       <div className='mt-10 flex w-full flex-col items-center gap-y-4'>
-        <CreateResourceModal isOpen={isOpen} setIsOpen={setIsOpen} />
+        <CreateResourceModal
+          isOpen={isCreateResourceModalOpen}
+          setIsOpen={setIsCreateResourceModalOpen}
+        />
       </div>
 
       {/*Map component*/}
       <div className='flex w-full flex-row items-start p-10'>
-       <MapFilterProvider>
-         <Map />
-       </MapFilterProvider>
-       
+        <MapFilterProvider>
+          <Map />
+        </MapFilterProvider>
       </div>
     </div>
   )
