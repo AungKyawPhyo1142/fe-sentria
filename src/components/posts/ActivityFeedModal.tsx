@@ -108,41 +108,41 @@ const ActivityPostModal: React.FC<Props> = ({
       className='fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4'
       onClick={(e) => e.target === e.currentTarget && closeModal()}
     >
-      <div className='relative max-h-[90vh] w-full max-w-md overflow-y-auto rounded-lg bg-white'>
-        <div className='sticky top-0 z-10 flex items-center justify-between border-b border-gray-200 bg-white p-4'>
-          <h2 className='text-lg font-medium text-gray-600'>
+      <div className='relative max-h-[90vh] w-full max-w-[50%] overflow-y-auto rounded-lg bg-white px-10'>
+        <div className='sticky top-0 z-10 flex items-center justify-between border-b border-black/30 bg-white py-6'>
+          <h2 className='text-2xl font-medium text-black'>
             Request / Offer Help
           </h2>
           <button
             onClick={closeModal}
-            className='text-gray-500 hover:text-gray-700'
+            className='cursor-pointer text-black hover:text-gray-700'
           >
-            <X className='h-6 w-6' />
+            <X className='h-7 w-7' />
           </button>
         </div>
 
-        <div className='space-y-6 p-6'>
+        <div className='space-y-6 py-5'>
           <div>
-            <h3 className='mb-4 text-xl font-medium'>
+            <h3 className='mb-3 text-[32px] font-semibold'>
               {formData.type === 'request' ? 'Request for help' : 'Offer help'}
             </h3>
-            <p className='mb-4 text-sm text-gray-500'>
+            <p className='mb-6 text-[20px] font-medium text-black/50'>
               Please fill up the following form to{' '}
               {formData.type === 'request' ? 'request' : 'offer'} help.
             </p>
 
             <div className='space-y-2'>
-              <p className='text-sm font-medium'>I want to:</p>
-              <div className='flex gap-4'>
+              <p className='text-[24px] font-medium'>I want to:</p>
+              <div className='ml-2 flex gap-4'>
                 <label className='flex items-center'>
                   <input
                     type='radio'
                     name='activityType'
                     checked={formData.type === 'offer'}
                     onChange={() => handleTypeChange('offer')}
-                    className='mr-2'
+                    className='accent-primary mr-2 h-[30px] w-[30px]'
                   />
-                  <span className='text-sm'>Offer help</span>
+                  <span className='text-[20px] font-medium'>Offer help</span>
                 </label>
                 <label className='flex items-center'>
                   <input
@@ -150,39 +150,39 @@ const ActivityPostModal: React.FC<Props> = ({
                     name='activityType'
                     checked={formData.type === 'request'}
                     onChange={() => handleTypeChange('request')}
-                    className='mr-2'
+                    className='accent-primary mr-2 h-[30px] w-[30px]'
                   />
-                  <span className='text-sm'>Request for help</span>
+                  <span className='text-[20px] font-medium'>
+                    Request for help
+                  </span>
                 </label>
               </div>
             </div>
           </div>
 
           <div>
-            <p className='mb-3 text-sm font-medium'>
-              What kind of help do you need?
+            <p className='mb-3 text-2xl font-medium'>
+              What kind of help can you provide?
             </p>
-            <div className='space-y-3'>
+            <div className='space-y-3 rounded-xl border border-black/30 px-8 py-6'>
               {helpOptions.map((option) => (
-                <div
-                  key={option.id}
-                  className='flex items-center justify-between'
-                >
+                <div key={option.id} className='flex flex-col space-y-2'>
                   <label className='flex items-center'>
                     <input
                       type='checkbox'
                       checked={formData.helpTypes.includes(option.id)}
                       onChange={() => handleHelpTypeToggle(option.id)}
-                      className='mr-3 h-4 w-4 text-blue-600'
+                      className='accent-primary mr-3 h-6 w-6'
                     />
-                    <span className='text-sm'>{option.label}</span>
+                    <span className='text-[20px] font-medium'>
+                      {option.label}
+                    </span>
                   </label>
-
                   {formData.helpTypes.includes(option.id) &&
                     option.id !== 'wifi' && (
-                      <div className='flex items-center gap-2'>
-                        <span className='text-xs text-gray-500'>
-                          For how many people
+                      <div className='ml-9 flex items-center gap-2'>
+                        <span className='text-[16px] font-medium text-black'>
+                          For how many people:
                         </span>
                         <input
                           type='number'
@@ -194,7 +194,7 @@ const ActivityPostModal: React.FC<Props> = ({
                               parseInt(e.target.value) || 1,
                             )
                           }
-                          className='w-12 rounded border border-gray-300 px-2 py-1 text-xs'
+                          className='h-8 w-12 rounded border border-black/30 px-2 py-2 text-[16px]'
                         />
                       </div>
                     )}
@@ -204,7 +204,7 @@ const ActivityPostModal: React.FC<Props> = ({
           </div>
 
           <div>
-            <label className='mb-2 block text-sm font-medium'>
+            <label className='mb-2 block text-2xl font-medium'>
               Description
             </label>
             <textarea
@@ -216,16 +216,21 @@ const ActivityPostModal: React.FC<Props> = ({
                 }))
               }
               placeholder='Some texts here'
-              className='h-24 w-full resize-none rounded-lg border border-gray-300 px-3 py-2 text-sm'
+              className='h-42 w-full resize-none rounded-lg border border-gray-300 px-3 py-2 text-[16px]'
             />
           </div>
 
           <div>
-            <label className='mb-2 block text-sm font-medium'>
-              Your location
-            </label>
+            <div className='mb-3 flex items-center justify-between'>
+              <label className='mb-2 block text-2xl font-medium'>
+                Your location
+              </label>
+              <div className='text-sm font-medium text-black/50'>
+                Drag this pin to set your exact location
+              </div>
+            </div>
             <div className='relative'>
-              <MapPin className='absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 transform text-gray-400' />
+              <MapPin className='absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-gray-400' />
               <input
                 type='text'
                 value={formData.location}
@@ -238,21 +243,24 @@ const ActivityPostModal: React.FC<Props> = ({
             </div>
           </div>
 
-          <div className='flex gap-3 pt-4'>
-            <Button outline onClick={closeModal} className='flex-1'>
+          <div className='flex items-center justify-between pt-4 text-[20px]'>
+            <Button onClick={closeModal} className='h-16 w-35 bg-black/25'>
               Cancel
             </Button>
             <Button
-              destructive
+              destructive={formData.type === 'request'}
+              primary={formData.type === 'offer'}
               onClick={handleSubmit}
-              className='flex-1'
+              className={`h-16 w-60`}
               disabled={
                 !formData.description.trim() ||
                 !formData.location.trim() ||
                 formData.helpTypes.length === 0
               }
             >
-              {formData.type === 'request' ? 'Request for help' : 'Offer help'}
+              {formData.type === 'request'
+                ? 'Request for help'
+                : 'Help people in need'}
             </Button>
           </div>
         </div>

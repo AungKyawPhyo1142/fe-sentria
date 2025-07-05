@@ -17,7 +17,7 @@ import {
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router'
 import { useState } from 'react'
-import ActivityPostModal from '@/components/posts/ActivityPostModal'
+import ActivityPostModal from '@/components/posts/ActivityFeedModal'
 
 const samplePosts = [
   {
@@ -156,7 +156,7 @@ const Example = () => {
   const count = useCountStore(selectCount)
   const [isCreateResourceModalOpen, setIsCreateResourceModalOpen] =
     useState(false)
-  const [isActivityPostModalOpen, setIsActivityPostModalOpen] = useState(false)
+  const [isActivityFeedModalOpen, setIsActivityFeedModalOpen] = useState(false)
 
   return (
     <div className='fade-in flex h-screen flex-col bg-white'>
@@ -215,7 +215,7 @@ const Example = () => {
       <button
         className='bg-secondary'
         onClick={() => {
-          setIsActivityPostModalOpen(true)
+          setIsActivityFeedModalOpen(true)
         }}
       >
         Open Activity Post Modal
@@ -243,8 +243,8 @@ const Example = () => {
       </div>
 
       <ActivityPostModal
-        isOpen={isActivityPostModalOpen}
-        setIsOpen={setIsActivityPostModalOpen}
+        isOpen={isActivityFeedModalOpen}
+        setIsOpen={setIsActivityFeedModalOpen}
         onSubmit={(data) => {
           console.log('Activity data:', data)
           // Handle the form submission
