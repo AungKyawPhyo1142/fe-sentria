@@ -8,7 +8,7 @@ const MapPage = () => {
       id: 1,
       label: 'Map',
       component: (
-        <div className='flex w-full flex-row items-start p-10'>
+        <div className='flex w-full flex-row items-start py-10'>
           <MapFilterProvider>
             <Map />
           </MapFilterProvider>
@@ -20,8 +20,8 @@ const MapPage = () => {
   ]
 
   return (
-    <div className='flex h-screen flex-col items-center justify-start'>
-      <div className='flex w-full flex-row items-center justify-between gap-x-5 rounded-lg bg-[#33333430] p-2 shadow-md'>
+    <div className='fade-in flex h-screen flex-col items-center justify-start '>
+      <div className='flex w-full flex-row items-center justify-between gap-x-5 rounded-lg bg-[#3333340e] p-2 '>
         {pageList.map((item) => (
           <button
             key={item.id}
