@@ -5,21 +5,21 @@ import { useNavigate } from 'react-router'
 const Home = () => {
   const navigate = useNavigate()
   return (
-    <div>
+    <div className='fade-in'>
       <h1>Home Page</h1>
-      <div className={'flex items-center justify-center'}>
-        <Button className='my-5 w-25' primary>
+      <div className='my-10 flex items-center gap-x-3'>
+        <Button className='px-10' primary>
           Home Page
         </Button>
         <Button
-          className='my-5 w-25'
+          className='px-10'
           primary
           onClick={() => navigate(AppConstantRoutes.paths.resources)}
         >
           Resource Page
         </Button>
       </div>
-      <p className='text-2xl'>
+      <p className='text-base'>
         Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quam sed
         facilis fuga illo alias laboriosam? Earum atque esse deserunt nihil,
         pariatur mollitia nobis consequatur voluptatibus sequi excepturi tempora

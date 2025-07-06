@@ -213,19 +213,20 @@ const Map = () => {
   }
 
   return (
-    <div className='flex w-full items-start justify-center gap-x-10'>
-      <div className='flex w-auto items-center justify-center rounded-md border border-[#33333430] p-10'>
+    <div className='flex w-full justify-between gap-x-[100px] items-start '>
+      <div className='flex w-full items-center justify-center rounded-md border border-[#33333430] p-10'>
         <MapContainer
           center={position || [0, 0]}
           zoom={13}
           scrollWheelZoom={true}
-          style={{ height: '60vh', width: '50vw' }}
+          style={{ height: '60vh', width: '100%' }}
+
         >
           <LocateButton position={position} />
 
           {/* Custom marker icon for the default marker */}
           <div className='absolute bottom-3 left-5 z-[400] flex cursor-pointer flex-row items-center gap-4'>
-            <div className='group flex cursor-pointer flex-row items-center rounded-sm bg-[#F6BD16]'>
+            <div className='group flex cursor-pointer flex-row items-center rounded-sm bg-[#F6BD16] backdrop-blur-2xl'>
               <HelpInfo title='Help Available' type='available' />
             </div>
             <div className='group flex cursor-pointer flex-row items-center rounded-sm bg-[#F6BD16]'>
