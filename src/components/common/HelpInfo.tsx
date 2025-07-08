@@ -9,7 +9,7 @@ const HelpInfo = ({ title, type }: { title: string; type: string }) => {
           type === 'available' ? 'bg-secondary' : 'bg-red',
         )}
       ></div>
-      <span className='font-bold text-black'>{title}</span>
+      <span className='font-medium text-black'>{title}</span>
     </div>
   )
 }

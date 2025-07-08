@@ -100,7 +100,7 @@ const Profile = () => {
   if (!userProfile) return <p className='text-primary'>No user profile found</p>
 
   return (
-    <div className='-mt-16 bg-white py-2'>
+    <div className='-mt-16 bg-white py-2 fade-in'>
       <div className='mb-8 flex items-start justify-items-start space-x-10 border-b border-[#33333430] pb-12'>
         <ImgSelection
           imageUrl={
