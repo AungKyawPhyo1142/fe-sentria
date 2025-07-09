@@ -25,7 +25,7 @@ const Input: React.FC<Props> = (props) => {
     primary,
     secondary,
     showSearchIcon, // Destructure the new icon
-    defaultValue,
+    // defaultValue,
     type,
     readOnly,
     inputRef,
@@ -80,8 +80,12 @@ const Input: React.FC<Props> = (props) => {
       <div className='relative flex items-center'>
         {handleSearchIcon()}
         <input
-          disabled={disabled}
           {...rest}
+          name={props.name}
+          value={props.value}
+          onChange={props.onChange}
+          autoComplete={props.autoComplete}
+          disabled={disabled}
           type={inputState.inputType}
           className={clsx(
             'min-h-[50px] w-full rounded-lg border-1 px-3 py-2 text-base font-light ring-0 transition-colors duration-200 outline-none placeholder:text-zinc-400 focus:border-zinc-500',
@@ -93,7 +97,6 @@ const Input: React.FC<Props> = (props) => {
             error ? 'border-red-500' : 'border-gray-500',
             className,
           )}
-          defaultValue={defaultValue}
           readOnly={readOnly}
           ref={inputRef}
         />

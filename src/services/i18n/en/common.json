@@ -1,5 +1,51 @@
 {
   "common": {
     "greeting": "Hello, {{name}}!"
+  },
+  "Login": {
+    "welcome": "Welcome to Sentria.",
+    "instruction": "Please fill all the fields to login.",
+    "email": "Email",
+    "password": "Password",
+    "login": "Login",
+    "forgot": "Forgot password?",
+    "create": "New here? Create an account"
+  },
+  "Register": {
+    "welcome": "Welcome to Sentria.",
+    "instruction": "Please fill all the fields to register.",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "username": "Username",
+    "dateOfBirth": "Date of Birth",
+    "country": "Country",
+    "email": "Email",
+    "password": "Password",
+    "confirm": "Confirm Password",
+    "register": "Register",
+    "terms": "Agree to terms and conditions",
+    "sentrian": "Already a Sentrian? Go back to login"
+  },
+  "onboarding": {
+    "letsTakeFirstStep": "Let's take the first step together",
+    "title": "What is Sentria?",
+    "intro": "Sentria is a community-powered platform built to support people during natural disasters. Whether you're reporting a flood, requesting help during a fire, or offering shelter after a storm — Sentria is your voice, your network, and your safety net. We believe connection can save lives.",
+    "shareTitle": "Share to Stay Safe",
+    "shareDescription": "When disaster hits, timely information is critical. Sentria lets you post real-time updates about your surroundings — from damage reports to safe zones. Every post helps others stay alert and make informed decisions. Your voice can guide, protect, and even rescue.",
+    "helpTitle": "Offer or Request Help",
+    "helpDescription": "Need clean water? Got an extra blanket or power bank? Sentria makes it easy to ask for help — or lend a hand. You can browse nearby requests and offers, making community support more accessible and organized when it matters most.",
+    "rebuildTitle": "Rebuild, Together",
+    "rebuildDescription": "After the storm, the journey continues. Sentria supports long-term recovery by keeping people connected — to services, to aid, and to each other. You’re not alone. Together, we can rise, rebuild, and restore stronger than before.",
+    "startExploring": "Start Exploring"
+  },
+  "emailVerification": {
+    "sent": "Verification Email Sent",
+    "emailSent": "A verification email has been sent to <bold>{{email}}</bold>",
+    "confirmDescription": "Please check your inbox and click on the verification link to complete your registration. Check your spam folder if you didn’t find it.",
+    "resendEmail": "Resend Email",
+    "verified": "Your email has been successfully verified!",
+    "verificationFailed": "Email verification failed. Please try again.",
+    "verifying": "Verifying your email...",
+    "redirecting": "Redirecting you now..."
   }
 }

@@ -61,7 +61,7 @@ const Button: React.FC<Props> = (props) => {
         secondary && 'bg-secondary disabled:bg-[#B3B3B3]',
         destructive && 'bg-red disabled:bg-[#B3B3B3]',
         outline &&
-          'border-secondary !text-secondary hover:bg-secondary hover:!text-white border disabled:bg-[#B3B3B3]',
+          'border-secondary !text-secondary hover:bg-secondary border hover:!text-white disabled:bg-[#B3B3B3]',
         className,
       )}
     >

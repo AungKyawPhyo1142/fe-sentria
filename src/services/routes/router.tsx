@@ -1,7 +1,19 @@
+import Container from '@/pages/auth/Container'
+import Example from '@/pages/example/Example'
 import { createBrowserRouter, Navigate } from 'react-router'
 import { AppConstantRoutes } from './path'
-import Login from '@/pages/auth/Login'
-import Example from '@/pages/example/Example'
+
+import Welcome from '@/pages/onboarding/Welcome'
+import StepsScroller from '@/pages/onboarding/StepsScroller'
+import SecureRoute from '@/components/auth/SecureRoute'
+import LayoutWithAuth from '@/components/layout/LayoutWithAuth'
+import Home from '@/pages/user/Home'
+
+import VerificationSent from '@/pages/auth/VerificationSent'
+import Confirmed from '@/pages/auth/VerifyEmail'
+import Profile from '@/pages/user/Profile'
+import MapPage from '@/pages/user/MapPage'
+import ResourcePage from '@/pages/user/ResourcePage'
 
 /*
   This file is where you define the routes
@@ -26,50 +38,62 @@ export const router = createBrowserRouter([
   },
   {
     path: AppConstantRoutes.paths.auth.login,
-    element: <Login />,
+    element: <Container />,
+  },
+  {
+    path: AppConstantRoutes.paths.auth.register,
+    element: <Container />,
+  },
+  {
+    path: AppConstantRoutes.paths.auth.sent,
+    element: <VerificationSent />,
+  },
+  {
+    path: AppConstantRoutes.paths.auth.confirmed,
+    element: <Confirmed />,
   },
   {
     path: AppConstantRoutes.paths.example.default,
     element: <Example />,
   },
+  {
+    path: AppConstantRoutes.paths.onboarding.welcome,
+    element: <Welcome />,
+  },
+  {
+    path: AppConstantRoutes.paths.onboarding.steps,
+    element: <StepsScroller />,
+  },
 
   // ** The following paths are all protected by SecureRoute component
-  //   {
-  //     path: AppConstantRoutes.paths.default,
-  //     element: (
-  //       <SecureRoute>
-  //         <LayoutWithAuth />
-  //       </SecureRoute>
-  //     ),
-  //     children: [
-  //       {
-  //         path: AppConstantRoutes.paths.home,
-  //         element: <Home />,
-  //       },
-  //       {
-  //         path: AppConstantRoutes.paths.searchPage,
-  //         element: <SearchPage />,
-  //       },
-  //       {
-  //         path: AppConstantRoutes.paths.musictypePage(':title'), // <-- Dynamic Path
-  //         element: <MusictypePage />,
-  //       },
-  //       {
-  //         path: '',
-  //         element: <Navigate to={AppConstantRoutes.paths.home} replace />,
-  //       },
-  //       {
-  //         path: AppConstantRoutes.paths.profile,
-  //         element: <Profile />,
-  //       },
-  //       {
-  //         path: AppConstantRoutes.paths.songDetailPage(':id'), // <-- Dynamic Path
-  //         element: <SongDetail />,
-  //       },
-  //       {
-  //         path: AppConstantRoutes.paths.librabryPage,
-  //         element: <Library />,
-  //       },
-  //     ],
-  //   },
+  {
+    path: AppConstantRoutes.paths.default,
+    element: (
+      <SecureRoute>
+        <LayoutWithAuth />
+      </SecureRoute>
+    ),
+    children: [
+      {
+        path: AppConstantRoutes.paths.home,
+        element: <Home />,
+      },
+      {
+        path: '',
+        element: <Navigate to={AppConstantRoutes.paths.home} replace />,
+      },
+      {
+        path: AppConstantRoutes.paths.map,
+        element: <MapPage />,
+      },
+      {
+        path: AppConstantRoutes.paths.profile,
+        element: <Profile />,
+      },
+      {
+        path: AppConstantRoutes.paths.resources,
+        element: <ResourcePage />,
+      },
+    ],
+  },
 ])
