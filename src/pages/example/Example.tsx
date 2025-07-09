@@ -18,55 +18,56 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router'
 import { useState } from 'react'
 import ActivityPostModal from '@/components/posts/ActivityFeedModal'
+import PostCard from '@/components/posts/PostCard'
 
-// const samplePosts = [
-//   {
-//     id: '1',
-//     user: {
-//       name: 'Scarlett Johansson',
-//       avatar: null,
-//       isVerified: true,
-//     },
-//     trustScore: 19,
-//     isDebunked: true,
-//     location: 'London, UK',
-//     content:
-//       'Itis a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using Content here, content here, making it look like readable English.',
-//     images: [
-//       'https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=400',
-//       'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=400',
-//       'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=400',
-//       'https://images.unsplash.com/photo-1519904981063-b0cf448d479e?w=400',
-//     ],
-//     disasterType: 'storm' as const,
-//     upvotes: 3800,
-//     downvotes: 1200,
-//     comments: 8120,
-//     createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-//   },
-//   {
-//     id: '2',
-//     user: {
-//       name: 'John Doe',
-//       avatar: null,
-//       isVerified: false,
-//     },
-//     trustScore: 80,
-//     isDebunked: false,
-//     location: 'London',
-//     content:
-//       'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.',
-//     images: [
-//       'https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=400',
-//       'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=400',
-//     ],
-//     disasterType: 'flood' as const,
-//     upvotes: 1000,
-//     downvotes: 1200,
-//     comments: 4350,
-//     createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000), // 5 hours ago
-//   },
-// ]
+const samplePosts = [
+  {
+    id: '1',
+    user: {
+      name: 'Scarlett Johansson',
+      avatar: null,
+      isVerified: true,
+    },
+    trustScore: 19,
+    isDebunked: true,
+    location: 'London, UK',
+    content:
+      'Itis a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using Content here, content here, making it look like readable English.',
+    images: [
+      'https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=400',
+      'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=400',
+      'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=400',
+      'https://images.unsplash.com/photo-1519904981063-b0cf448d479e?w=400',
+    ],
+    disasterType: 'storm' as const,
+    upvotes: 3800,
+    downvotes: 1200,
+    comments: 8120,
+    createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
+  },
+  {
+    id: '2',
+    user: {
+      name: 'John Doe',
+      avatar: null,
+      isVerified: false,
+    },
+    trustScore: 80,
+    isDebunked: false,
+    location: 'London',
+    content:
+      'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.',
+    images: [
+      'https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=400',
+      'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=400',
+    ],
+    disasterType: 'flood' as const,
+    upvotes: 1000,
+    downvotes: 1200,
+    comments: 4350,
+    createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000), // 5 hours ago
+  },
+]
 
 const sampleActivityFeedPosts = [
   {
