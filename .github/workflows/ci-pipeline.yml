@@ -13,10 +13,6 @@ jobs:
     name: Build, Lint & Scan
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: ./fe-sentria # 👈 adjust this if your frontend is inside a subfolder
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
