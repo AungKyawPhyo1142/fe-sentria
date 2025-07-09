@@ -1,5 +1,5 @@
-import { Locate } from "lucide-react"
-import { useMap } from "react-leaflet"
+import { Locate } from 'lucide-react'
+import { useMap } from 'react-leaflet'
 
 const LocateButton = ({ position }: { position: [number, number] | null }) => {
   const map = useMap()

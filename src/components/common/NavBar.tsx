@@ -86,15 +86,13 @@ const Navbar = () => {
 
   return (
     <div
-      className={`fixed top-0 right-0 ${isMapPage ? 'left-30' : 'left-68'}  flex items-end justify-between bg-white  py-4 pl-4 pr-8 text-black transition-all duration-300 ease-in-out z-[999]`}
+      className={`fixed top-0 right-0 ${isMapPage ? 'left-30' : 'left-68'} z-[999] flex items-end justify-between bg-white py-4 pr-8 pl-4 text-black transition-all duration-300 ease-in-out`}
     >
-      <div
-        className={`flex  ${isMapPage ? 'space-x-5' : 'space-x-8'}`}
-      >
+      <div className={`flex ${isMapPage ? 'space-x-5' : 'space-x-8'}`}>
         <SearchInput />
 
         {/* Navbar Icons */}
-        <div className='flex h-12.5  gap-x-10 items-center justify-between rounded-xl border border-black/30 p-4'>
+        <div className='flex h-12.5 items-center justify-between gap-x-10 rounded-xl border border-black/30 p-4'>
           {NavbarItems.map((item) => (
             <button
               key={item.title}
@@ -106,25 +104,20 @@ const Navbar = () => {
           ))}
         </div>
 
-
-
         {/* Create Post */}
-        <button className='bg-primary flex h-12.5  items-center justify-center rounded-xl px-4 py-1 font-light text-white hover:cursor-pointer'>
+        <button className='bg-primary flex h-12.5 items-center justify-center rounded-xl px-4 py-1 font-light text-white hover:cursor-pointer'>
           <CirclePlus size={26} strokeWidth={1} />
           <span className='ml-3 text-[16px]'>Report a disaster</span>
         </button>
-
-        
-
       </div>
 
       {/* Profile */}
       <div
         onClick={() => navigate(AppConstantRoutes.paths.profile)}
-        className='  flex h-12.5   cursor-pointer items-center justify-center gap-x-2 rounded-xl border border-black/30 px-4 py-1'
+        className='flex h-12.5 cursor-pointer items-center justify-center gap-x-2 rounded-xl border border-black/30 px-4 py-1'
       >
         <Profile className='size-8 rounded-full object-cover' />
-        <span className=' text-sm'>Sweeny Sydney</span>
+        <span className='text-sm'>Sweeny Sydney</span>
       </div>
     </div>
   )
