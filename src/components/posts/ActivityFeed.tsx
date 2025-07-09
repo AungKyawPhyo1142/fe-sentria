@@ -81,7 +81,7 @@ export const ActivityFeed = () => {
 
   return (
     <div className='fade-in flex h-full w-full'>
-      <div className='flex flex-1 flex-col overflow-y-auto'>
+      <div className='scrollbar-hide flex flex-1 flex-col overflow-y-auto'>
         <div className='mt-4 flex items-center justify-between gap-4 px-6 py-4'>
           <div className='flex flex-shrink-0 items-center gap-4'>
             <span className='text-[20px] font-extralight whitespace-nowrap text-black'>
