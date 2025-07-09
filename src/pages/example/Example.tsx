@@ -229,7 +229,13 @@ const Example = () => {
       {/* Sample Resource Cards */}
       <div className='mt-10 flex w-full flex-col items-center gap-y-4'>
         {sampleResources.map((resource, index) => (
-          <ResourceCard key={index} {...resource} />
+          <ResourceCard
+            key={index}
+            user={resource.user}
+            location={resource.location}
+            description={resource.content}
+            resourceTypes={resource.resourceTypes}
+          />
         ))}
       </div>
 
