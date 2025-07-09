@@ -213,14 +213,13 @@ const Map = () => {
   }
 
   return (
-    <div className='flex w-full justify-between gap-x-[100px] items-start '>
+    <div className='flex w-full items-start justify-between gap-x-[100px]'>
       <div className='flex w-full items-center justify-center rounded-md border border-[#33333430] p-10'>
         <MapContainer
           center={position || [0, 0]}
           zoom={13}
           scrollWheelZoom={true}
           style={{ height: '60vh', width: '100%' }}
-
         >
           <LocateButton position={position} />
 

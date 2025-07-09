@@ -25,7 +25,7 @@ const Input: React.FC<Props> = (props) => {
     primary,
     secondary,
     showSearchIcon, // Destructure the new icon
-    defaultValue,
+    // defaultValue,
     type,
     readOnly,
     inputRef,

@@ -20,8 +20,8 @@ const MapPage = () => {
   ]
 
   return (
-    <div className='fade-in flex h-screen flex-col items-center justify-start '>
-      <div className='flex w-full flex-row items-center justify-between gap-x-5 rounded-lg bg-[#3333340e] p-2 '>
+    <div className='fade-in flex h-screen flex-col items-center justify-start'>
+      <div className='flex w-full flex-row items-center justify-between gap-x-5 rounded-lg bg-[#3333340e] p-2'>
         {pageList.map((item) => (
           <button
             key={item.id}

@@ -1,4 +1,4 @@
-import clsx from "clsx";
+import clsx from 'clsx'
 
 const HelpInfo = ({ title, type }: { title: string; type: string }) => {
   return (
@@ -14,4 +14,4 @@ const HelpInfo = ({ title, type }: { title: string; type: string }) => {
   )
 }
 
-export default HelpInfo;
+export default HelpInfo
