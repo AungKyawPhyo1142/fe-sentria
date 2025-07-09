@@ -1,5 +1,6 @@
 import Map from '@/components/common/Map'
 import { MapFilterProvider } from '@/components/common/MapFilterContext'
+import { ActivityFeed } from '@/components/posts/ActivityFeed'
 import { useState } from 'react'
 const MapPage = () => {
   const [page, setPage] = useState(1)
@@ -15,13 +16,13 @@ const MapPage = () => {
         </div>
       ),
     },
-    { id: 2, label: 'Posts', component: <div>Activity Feed</div> },
+    { id: 2, label: 'Activity Feed', component: <ActivityFeed /> },
     { id: 3, label: 'Resources', component: <div>Resources</div> },
   ]
 
   return (
-    <div className='fade-in flex h-screen flex-col items-center justify-start '>
-      <div className='flex w-full flex-row items-center justify-between gap-x-5 rounded-lg bg-[#3333340e] p-2 '>
+    <div className='fade-in flex h-screen flex-col items-center justify-start'>
+      <div className='flex w-full flex-row items-center justify-between gap-x-5 rounded-lg bg-[#3333340e] p-2'>
         {pageList.map((item) => (
           <button
             key={item.id}
