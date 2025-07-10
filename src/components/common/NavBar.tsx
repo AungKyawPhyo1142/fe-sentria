@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import Profile from '@/assets/default-profile.svg?react'
 import { CirclePlus, HeartHandshake, Map, Phone } from 'lucide-react'
 import { AppConstantRoutes } from '@/services/routes/path'
 import { useLocation, useNavigate } from 'react-router'
@@ -8,6 +9,7 @@ import { useTranslation } from 'react-i18next'
 import CreatePostModal from './CreatePostModal'
 import ProfileNav from './ProfileNav'
 import SearchBar from './SearchBar'
+import SearchInput from './SearchInput'
 
 const NavbarItems = [
   {
@@ -92,13 +94,15 @@ const Navbar = () => {
 
   return (
     <div
-      className={`fixed top-0 right-0 z-20 ${isMapPage ? 'left-30' : 'left-68'} mr-6 flex items-center justify-between bg-white py-4 text-black transition-all duration-300 ease-in-out`}
+      // className={`fixed top-0 right-0 z-20 ${isMapPage ? 'left-30' : 'left-68'} mr-6 flex items-center justify-between bg-white py-4 text-black transition-all duration-300 ease-in-out`}
+      className={`fixed top-0 right-0 ${isMapPage ? 'left-30' : 'left-68'} z-[999] flex items-end justify-between bg-white py-4 pr-8 pl-4 text-black transition-all duration-300 ease-in-out`}
     >
-      <div
-        className={`mx-6 ml-6 flex flex-1/2 ${isMapPage ? 'space-x-16' : 'space-x-8'}`}
-      >
+      <div className={`flex ${isMapPage ? 'space-x-5' : 'space-x-8'}`}>
+        <SearchInput />
+
         {/* Navbar Icons */}
         <div className='flex h-12.5 w-80 items-center justify-between rounded-xl border border-black/30 p-4 px-12'>
+        <div className='flex h-12.5 items-center justify-between gap-x-10 rounded-xl border border-black/30 p-4'>
           {NavbarItems.map((item) => (
             <button
               key={item.title}
@@ -111,10 +115,11 @@ const Navbar = () => {
         </div>
 
         {/* Create Post */}
-        <button
-          onClick={() => setCreatePost(true)}
+        {/* <button
+          
           className='bg-primary flex h-12.5 w-50 items-center justify-center rounded-xl py-1 font-light text-white hover:cursor-pointer'
-        >
+        > */}
+        <button onClick={() => setCreatePost(true)} className='bg-primary flex h-12.5 items-center justify-center rounded-xl px-4 py-1 font-light text-white hover:cursor-pointer'>
           <CirclePlus size={26} strokeWidth={1} />
           <span className='ml-3 text-[16px]'>{t('sidebar.ReportPost')}</span>
         </button>
@@ -128,6 +133,14 @@ const Navbar = () => {
 
       {/* Profile */}
       <ProfileNav />
+      <div
+        onClick={() => navigate(AppConstantRoutes.paths.profile)}
+        className='flex h-12.5 cursor-pointer items-center justify-center gap-x-2 rounded-xl border border-black/30 px-4 py-1'
+      >
+        <Profile className='size-8 rounded-full object-cover' />
+        <span className='text-sm'>Sweeny Sydney</span>
+      </div>
+    </div>
     </div>
   )
 }

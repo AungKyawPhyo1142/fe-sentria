@@ -1,9 +1,12 @@
-import NotificationSidebar from '@/components/common/NotificationSidebar'
-import PostCard from '@/components/posts/PostCard'
+// import NotificationSidebar from '@/components/common/NotificationSidebar'
+// import PostCard from '@/components/posts/PostCard'
 import { useGetAllReports } from '@/services/network/lib/report'
 import { useSocketStore } from '@/zustand/socketStore'
 // import { useTranslation } from 'react-i18next'
 import { useEffect } from 'react'
+import { AppConstantRoutes } from '@/services/routes/path'
+import { useNavigate } from 'react-router'
+import Button from '@/components/common/Button'
 
 const Home = () => {
   // const { t } = useTranslation()
@@ -47,47 +50,55 @@ const Home = () => {
   }
   if (isLoading) return <p>Loading...</p>
   if (error) return <p>Error loading reports</p>
+  const navigate = useNavigate()
   return (
-    <div>
-      <div className='w-[750px] space-y-6'>
-        {data?.data.reports.data.map((report) => (
-          <PostCard
-            key={report.id}
-            id={report.id}
-            user={{
-              name:
-                report.generatedBy.firstName +
-                ' ' +
-                report.generatedBy.lastName,
-              avatar: report.generatedBy.profile_image,
-              isVerified: false,
-            }}
-            trustScore={report.factCheck.overallPercentage}
-            isDebunked={false}
-            location={`${report.location.city}, ${report.location.country}`}
-            title={report.name}
-            content={report.description}
-            disasterType={getDisasterType(report?.incidentType)}
-            images={[]}
-            upvotes={report.factCheck.communityScore?.upvotes}
-            downvotes={report.factCheck.communityScore?.downvotes}
-            comments={report.factCheck.communityScore?.commentCount}
-            createdAt={new Date(report.createdAt)}
-            onUpvote={() => {
-              console.log(`Upvote for ${report.id}`)
-            }}
-            onDownvote={() => {
-              console.log(`Downvote for ${report.id}`)
-            }}
-            onComment={() => {
-              console.log(`Comment on ${report.id}`)
-            }}
-          />
-        ))}
+    <div className='fade-in'>
+      <h1>Home Page</h1>
+      <div className='my-10 flex items-center gap-x-3'>
+        <Button className='px-10' primary>
+          Home Page
+        </Button>
+        <Button
+          className='px-10'
+          primary
+          onClick={() => navigate(AppConstantRoutes.paths.resources)}
+        >
+          Resource Page
+        </Button>
       </div>
-      <div>
-        <NotificationSidebar />
-      </div>
+      <p className='text-base'>
+        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quam sed
+        facilis fuga illo alias laboriosam? Earum atque esse deserunt nihil,
+        pariatur mollitia nobis consequatur voluptatibus sequi excepturi tempora
+        ab obcaecati!Loremloe Lorem ipsum dolor sit, amet consectetur
+        adipisicing elit. Sapiente pariatur at non ullam quae inventore. Ex
+        consequuntur necessitatibus voluptates dolorem, modi quod totam adipisci
+        tempore culpa eligendi consequatur quos asperiores. Lorem, ipsum dolor
+        sit amet consectetur adipisicing elit. Dolore dignissimos quas optio
+        consequuntur officiis totam vero. Omnis nesciunt praesentium saepe
+        reiciendis maxime, unde voluptatem cupiditate deleniti, pariatur
+        exercitationem magnam expedita! Lorem ipsum dolor, sit amet consectetur
+        adipisicing elit. Voluptate, doloremque debitis recusandae quam
+        voluptates placeat maxime sint facilis nisi ipsam, nemo vero quibusdam
+        tenetur error possimus velit nostrum? Ex, inventore. Lorem ipsum dolor
+        sit amet consectetur adipisicing elit. Dolorem veritatis ratione
+        corporis dignissimos, voluptatum at, vitae rerum exercitationem quidem
+        nam unde, nesciunt neque excepturi maiores quas ducimus similique error
+        voluptatibus. Lorem ipsum dolor sit amet consectetur adipisicing elit.
+        Porro fuga corrupti molestias quia non dolorem officiis maxime vitae
+        culpa voluptatum iste atque, optio fugit consequuntur iusto nemo
+        veritatis voluptates molestiae? Lorem, ipsum dolor sit amet consectetur
+        adipisicing elit. Blanditiis tenetur deserunt alias, ad accusamus
+        praesentium corporis placeat facilis aperiam ratione mollitia aliquid
+        aut recusandae similique sed! Tenetur blanditiis nemo reiciendis? Lorem
+        ipsum dolor sit amet consectetur adipisicing elit. Distinctio aperiam,
+        culpa asperiores aliquam esse illo dignissimos fugiat facere suscipit
+        reprehenderit ipsa quia vero numquam necessitatibus similique eaque modi
+        exercitationem quasi? Lorem ipsum dolor sit amet consectetur adipisicing
+        elit. Excepturi quisquam error magni ut, praesentium inventore maiores
+        cumque at eaque ratione quaerat, velit maxime vero dolor cum libero
+        doloribus ullam. Alias?
+      </p>
     </div>
   )
 }

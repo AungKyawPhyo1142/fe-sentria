@@ -187,8 +187,9 @@ const PostCard = ({
               content
             )}
           </p>
-          <div className='flex items-center space-x-2 text-xs text-gray-500'></div>
-          <PostImages images={images} />
+          <div className='flex items-center space-x-2 text-xs text-gray-500'>
+            <PostImages images={images} />
+          </div>
         </div>
 
         {/* actions */}

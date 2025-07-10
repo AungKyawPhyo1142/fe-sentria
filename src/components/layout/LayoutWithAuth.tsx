@@ -18,7 +18,7 @@ const LayoutWithAuth = () => {
             {/* NavBar */}
             {location.pathname !== '/profile' && <NavBar />}
           </div>
-          <main className={`mt-18 ${isMapPage ? 'ml-26' : 'ml-68'} p-5`}>
+          <main className={`mt-18 ${isMapPage ? 'ml-26' : 'ml-68'} p-8`}>
             <Outlet />
           </main>
           <NotificationManager />

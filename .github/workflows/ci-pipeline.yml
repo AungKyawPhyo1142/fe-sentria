@@ -1,0 +1,40 @@
+# .github/workflows/ci-pipeline.yml
+
+name: Sentria Frontend CI Pipeline
+
+on:
+  push:
+    branches: ['main', 'dev']
+  pull_request:
+    branches: ['main', 'dev']
+
+jobs:
+  build-and-scan:
+    name: Build, Lint & Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Needed for full Gitleaks history scan
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18 # Use the Node version you use locally
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci # Cleaner and faster for CI
+
+      - name: Run Linter & Formatter Check
+        run: npm run clean # Assumes this runs lint + format in check mode
+
+      - name: Run Gitleaks secret scan
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build project
+        run: npm run build

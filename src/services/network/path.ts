@@ -36,10 +36,25 @@ export const ApiConstantRoutes = {
         },
       }
     },
-    get report() {
+    get resources() {
       return {
         get default() {
-          return `/report`
+          return '/resource'
+        },
+        get getAll() {
+          return `${this.default}`
+        },
+        get getById() {
+          return `${this.default}/:id`
+        },
+        get create() {
+          return `${this.default}/create`
+        },
+        get update() {
+          return `${this.default}/update/:id`
+        },
+        get delete() {
+          return `${this.default}/delete/:id`
         },
       }
     },
