@@ -1,55 +1,55 @@
 // import NotificationSidebar from '@/components/common/NotificationSidebar'
 // import PostCard from '@/components/posts/PostCard'
-import { useGetAllReports } from '@/services/network/lib/report'
-import { useSocketStore } from '@/zustand/socketStore'
+// import { useGetAllReports } from '@/services/network/lib/report'
+// import { useSocketStore } from '@/zustand/socketStore'
 // import { useTranslation } from 'react-i18next'
-import { useEffect } from 'react'
+// import { useEffect } from 'react'
 import { AppConstantRoutes } from '@/services/routes/path'
 import { useNavigate } from 'react-router'
 import Button from '@/components/common/Button'
 
 const Home = () => {
   // const { t } = useTranslation()
-  const { data, isLoading, error } = useGetAllReports()
-  const connect = useSocketStore((state) => state.connect)
-  const earthquakeAlertListener = useSocketStore(
-    (state) => state.earthquakeAlertListener,
-  )
-  const sendUserLocation = useSocketStore((state) => state.sendUserLocation)
-  const isConnected = useSocketStore((state) => state.isConnected)
+  // const { data, isLoading, error } = useGetAllReports()
+  // const connect = useSocketStore((state) => state.connect)
+  // const earthquakeAlertListener = useSocketStore(
+  //   (state) => state.earthquakeAlertListener,
+  // )
+  // const sendUserLocation = useSocketStore((state) => state.sendUserLocation)
+  // const isConnected = useSocketStore((state) => state.isConnected)
 
   //use effect
-  useEffect(() => {
-    connect()
-    earthquakeAlertListener()
-  }, [])
-  useEffect(() => {
-    if (isConnected) {
-      navigator.geolocation.getCurrentPosition((pos) => {
-        sendUserLocation({
-          lat: pos.coords.latitude,
-          lng: pos.coords.longitude,
-        })
-      })
-    }
-  }, [isConnected])
+  // useEffect(() => {
+  //   connect()
+  //   earthquakeAlertListener()
+  // }, [])
+  // useEffect(() => {
+  //   if (isConnected) {
+  //     navigator.geolocation.getCurrentPosition((pos) => {
+  //       sendUserLocation({
+  //         lat: pos.coords.latitude,
+  //         lng: pos.coords.longitude,
+  //       })
+  //     })
+  //   }
+  // }, [isConnected])
 
-  const getDisasterType = (
-    type?: string,
-  ): 'earthquake' | 'flood' | 'fire' | 'storm' | 'other' => {
-    const lower = type?.toLowerCase()
-    switch (lower) {
-      case 'earthquake':
-      case 'flood':
-      case 'fire':
-      case 'storm':
-        return lower
-      default:
-        return 'other'
-    }
-  }
-  if (isLoading) return <p>Loading...</p>
-  if (error) return <p>Error loading reports</p>
+  // const getDisasterType = (
+  //   type?: string,
+  // ): 'earthquake' | 'flood' | 'fire' | 'storm' | 'other' => {
+  //   const lower = type?.toLowerCase()
+  //   switch (lower) {
+  //     case 'earthquake':
+  //     case 'flood':
+  //     case 'fire':
+  //     case 'storm':
+  //       return lower
+  //     default:
+  //       return 'other'
+  //   }
+  // }
+  // if (isLoading) return <p>Loading...</p>
+  // if (error) return <p>Error loading reports</p>
   const navigate = useNavigate()
   return (
     <div className='fade-in'>
