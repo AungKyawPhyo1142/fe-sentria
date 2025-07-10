@@ -187,7 +187,7 @@ const CreateResourceModal: React.FC<Props> = ({
 
   return (
     <div
-      className='fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4'
+      className='fixed inset-0 z-[100] flex items-center justify-center bg-black/40 p-4'
       onClick={(e) => e.target === e.currentTarget && closeModal()}
     >
       <div className='relative max-h-[90vh] w-full max-w-[50%] overflow-y-auto rounded-lg bg-white px-6'>

@@ -95,13 +95,13 @@ const Navbar = () => {
   return (
     <div
       // className={`fixed top-0 right-0 z-20 ${isMapPage ? 'left-30' : 'left-68'} mr-6 flex items-center justify-between bg-white py-4 text-black transition-all duration-300 ease-in-out`}
-      className={`fixed top-0 right-0 ${isMapPage ? 'left-30' : 'left-68'} z-[999] flex items-end justify-between bg-white py-4 pr-8 pl-4 text-black transition-all duration-300 ease-in-out`}
+      className={`fixed top-0 right-0 ${isMapPage ? 'left-30' : 'left-68'} z-[99] flex items-end justify-between bg-white py-4 pr-8 pl-4 text-black transition-all duration-300 ease-in-out`}
     >
       <div className={`flex ${isMapPage ? 'space-x-5' : 'space-x-8'}`}>
-        <SearchInput />
+
 
         {/* Navbar Icons */}
-        <div className='flex h-12.5 w-80 items-center justify-between rounded-xl border border-black/30 p-4 px-12'>
+
         <div className='flex h-12.5 items-center justify-between gap-x-10 rounded-xl border border-black/30 p-4'>
           {NavbarItems.map((item) => (
             <button
@@ -113,6 +113,8 @@ const Navbar = () => {
             </button>
           ))}
         </div>
+
+        <SearchInput />
 
         {/* Create Post */}
         {/* <button
@@ -128,20 +130,21 @@ const Navbar = () => {
         )}
 
         {/* Search Post */}
-        <SearchBar />
+        
+        {/* <SearchBar /> */}
       </div>
 
       {/* Profile */}
       <ProfileNav />
-      <div
+      {/* <div
         onClick={() => navigate(AppConstantRoutes.paths.profile)}
         className='flex h-12.5 cursor-pointer items-center justify-center gap-x-2 rounded-xl border border-black/30 px-4 py-1'
       >
         <Profile className='size-8 rounded-full object-cover' />
         <span className='text-sm'>Sweeny Sydney</span>
-      </div>
+      </div> */}
     </div>
-    </div>
+
   )
 }
 

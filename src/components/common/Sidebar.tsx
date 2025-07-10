@@ -63,7 +63,7 @@ const Sidebar = () => {
               {!isMapPage && <p>{t('sidebar.Language')}</p>}
             </span> */}
 
-            <span className='flex px-2 hover:cursor-pointer'>
+            <span className='flex hover:cursor-pointer'>
               <LanguageDropdown />
             </span>
           </span>

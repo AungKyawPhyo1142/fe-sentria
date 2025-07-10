@@ -12,7 +12,8 @@ const ProfileNav = () => {
     isLoading: profileLoading,
     error: profileError,
   } = useUserProfile(userId)
-  const userProfile = data?.data
+  const userProfile = data
+
   if (profileLoading)
     return <p className='text-primary p-4'>Loading Profile...</p>
 
@@ -23,23 +24,40 @@ const ProfileNav = () => {
   if (!userProfile) return <p className='text-primary'>No user profile found</p>
 
   return (
+
     <div
       onClick={() => navigate(AppConstantRoutes.paths.profile)}
-      className='ml-5 flex h-12.5 w-50 cursor-pointer items-center justify-center space-x-2 rounded-xl border border-black/30 py-1'
+      className='flex h-12.5 cursor-pointer items-center justify-center gap-x-2 rounded-xl border border-black/30 px-4 py-1'
     >
+      {/* <Profile className='size-8 rounded-full object-cover' /> */}
       {userProfile.profile_image ? (
         <img
           src={userProfile.profile_image}
           alt='profile'
-          className='h-11 w-11 rounded-full object-cover'
+          className='size-10 rounded-full object-cover'
         />
       ) : (
-        <Profile className='h-11 w-11 rounded-full object-cover' /> // Render Profile SVG
+        <Profile className='size-8 rounded-full object-cover' /> // Render Profile SVG
       )}
-      <span className='ml-3 text-[16px]'>
-        {userProfile.firstName + ' ' + userProfile.lastName}
-      </span>
+      <span className='text-sm'> {userProfile.firstName + ' ' + userProfile.lastName}</span>
     </div>
+    // <div
+    //   onClick={() => navigate(AppConstantRoutes.paths.profile)}
+    //   className='ml-5 flex h-12.5 w-50 cursor-pointer items-center justify-center space-x-2 rounded-xl border border-black/30 py-1'
+    // >
+    //   {userProfile.profile_image ? (
+    //     <img
+    //       src={userProfile.profile_image}
+    //       alt='profile'
+    //       className='h-11 w-11 rounded-full object-cover'
+    //     />
+    //   ) : (
+    //     <Profile className='h-11 w-11 rounded-full object-cover' /> // Render Profile SVG
+    //   )}
+    //   <span className='ml-3 text-[16px]'>
+    //     {userProfile.firstName + ' ' + userProfile.lastName}
+    //   </span>
+    // </div>
   )
 }
 export default ProfileNav
