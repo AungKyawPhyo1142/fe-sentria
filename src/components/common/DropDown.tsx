@@ -1,33 +1,40 @@
 import clsx from 'clsx'
-import React, { useState } from 'react'
+import React from 'react'
 
-interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
+interface Props extends React.SelectHTMLAttributes<HTMLSelectElement> {
   className?: string
   itemList?: Map<string, string> | string[]
   disabled?: boolean
-  placeholder?: string // like "Country"
+  placeholder?: string
+  errorMessage?: string
+  value?: string // for controlled input (Formik)
+  onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void // Formik’s onChange
 }
 
 const DropDown: React.FC<Props> = (props) => {
-  const { className, itemList, disabled, placeholder = 'Select' } = props
-
-  const [selectedValue, setSelectedValue] = useState('')
-
-  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedValue(event.target.value)
-  }
+  const {
+    className,
+    itemList,
+    disabled,
+    placeholder = 'Select',
+    errorMessage,
+    value = '',
+    onChange,
+    name,
+  } = props
 
   return (
     <div className='w-full'>
-      <div className='relative flex items-center'>
+      <div className='relative flex flex-col items-start'>
         <select
-          value={selectedValue}
-          onChange={handleChange}
+          name={name}
+          value={value}
+          onChange={onChange}
           disabled={disabled}
           className={clsx(
             'min-h-[50px] w-full rounded-lg border-1 px-3 py-2 text-base font-light ring-0 transition-colors duration-200 outline-none placeholder:text-zinc-400 focus:border-zinc-500',
             disabled ? 'text-zinc-500' : 'border-zinc-300 text-black',
-            selectedValue === '' ? 'text-zinc-400' : 'text-black',
+            value === '' ? 'text-zinc-400' : 'text-black',
             className,
           )}
         >
@@ -46,17 +53,21 @@ const DropDown: React.FC<Props> = (props) => {
                 </option>
               ))
             : itemList instanceof Map
-              ? Array.from(itemList.entries()).map(([key, value]) => (
+              ? Array.from(itemList.entries()).map(([key, val]) => (
                   <option
                     key={key}
                     value={key}
                     className='text-base font-light text-black'
                   >
-                    {value}
+                    {val}
                   </option>
                 ))
               : null}
         </select>
+
+        {errorMessage && (
+          <div className='mt-1 ml-2 text-sm text-red-500'>{errorMessage}</div>
+        )}
       </div>
     </div>
   )

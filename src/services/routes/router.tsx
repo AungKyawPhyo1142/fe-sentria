@@ -11,7 +11,8 @@ import Home from '@/pages/user/Home'
 
 import VerificationSent from '@/pages/auth/VerificationSent'
 import Confirmed from '@/pages/auth/VerifyEmail'
-import WebSocketExample from '@/pages/example/WebSocketExample'
+import Profile from '@/pages/user/Profile'
+import MapPage from '@/pages/user/MapPage'
 import SocketExample from '@/pages/example/SocketExample'
 
 /*
@@ -55,10 +56,6 @@ export const router = createBrowserRouter([
     path: AppConstantRoutes.paths.example.default,
     element: <Example />,
   },
-  // {
-  //   path: AppConstantRoutes.paths.example.webSocket,
-  //   element: <WebSocketExample />,
-  // },
   {
     path: AppConstantRoutes.paths.onboarding.welcome,
     element: <Welcome />,
@@ -88,6 +85,14 @@ export const router = createBrowserRouter([
       {
         path: '',
         element: <Navigate to={AppConstantRoutes.paths.home} replace />,
+      },
+      {
+        path: AppConstantRoutes.paths.map,
+        element: <MapPage />,
+      },
+      {
+        path: AppConstantRoutes.paths.profile,
+        element: <Profile />,
       },
     ],
   },

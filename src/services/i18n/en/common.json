@@ -1,6 +1,23 @@
 {
   "common": {
-    "greeting": "Hello, {{name}}!"
+    "greeting": "Hello, {{name}}!",
+    "contentDebunked": "Content debunked - Will be removed soon",
+    "lowTrust": "Very low trust rate - Be cautious!",
+    "debunked": "Debunked"
+  },
+
+  "disasters": {
+    "earthquake": "Earthquake",
+    "flood": "Flood",
+    "fire": "Fire",
+    "storm": "Storm",
+    "other": "Other"
+  },
+  "severity":{
+    "unknown": "Unknown",
+    "minor" : "Minor",
+    "moderate" : "Moderate",
+    "severe" : "Severe"
   },
   "Login": {
     "welcome": "Welcome to Sentria.",
@@ -25,6 +42,35 @@
     "register": "Register",
     "terms": "Agree to terms and conditions",
     "sentrian": "Already a Sentrian? Go back to login"
+  },
+  "sidebar": {
+    "Favorites": "Favorites",
+    "Notifications": "Notifications",
+    "Home": "Home Page",
+    "LogOut": "LogOut",
+    "Language": "English",
+    "ReportPost": "Report a disaster",
+    "SearchPost": "Search disaster..."
+  },
+  "createPost": {
+    "create": "Create Disaster Report Post ",
+    "disaster": "Pick Disaster Type",
+    "earthquake": "Earthquake",
+    "fire": "Fire",
+    "storm": "Storm",
+    "flood": "Flood",
+    "description": "Description",
+    "cancel": "Cancel",
+    "submit": "Create",
+    "location": "Pick the location where the disaster occurred",
+    "images": "Drop or upload your images here",
+    "dropFile": "Drop the files here",
+    "upload": "Drag a file here to upload",
+    "or": "or",
+    "browse": "Browse",
+    "dragPin": "Drag the pin to set your exact location",
+    "severity" : "Pick Severity Type",
+    "title" : "Post Title"
   },
   "onboarding": {
     "letsTakeFirstStep": "Let's take the first step together",

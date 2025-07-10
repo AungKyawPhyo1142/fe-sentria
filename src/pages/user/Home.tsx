@@ -1,23 +1,18 @@
-import Button from '@/components/common/Button'
-import NotificationSidebar from '@/components/common/NotificationSidebar'
-import { ApiConstantRoutes } from '@/services/network/path'
-import { AppConstantRoutes } from '@/services/routes/path'
-import { cleanupAfterLogout } from '@/zustand/authStore'
+import PostCard from '@/components/posts/PostCard'
+import { useGetAllReports } from '@/services/network/lib/report'
 import { useSocketStore } from '@/zustand/socketStore'
-import { useQueryClient } from '@tanstack/react-query'
+// import { useTranslation } from 'react-i18next'
 import { useEffect } from 'react'
-import { useNavigate } from 'react-router'
 
 const Home = () => {
-  const connect = useSocketStore((state) => state.connect)
+  // const { t } = useTranslation()
+  const { data, isLoading, error } = useGetAllReports()
+  const connect = useSocketStore((state)=>state.connect)
   const earthquakeAlertListener = useSocketStore(
     (state) => state.earthquakeAlertListener,
   )
   const sendUserLocation = useSocketStore((state) => state.sendUserLocation)
   const isConnected = useSocketStore((state) => state.isConnected)
-
-  const navigate = useNavigate()
-  const queryClient = useQueryClient()
 
   //use effect
   useEffect(() => {
@@ -35,26 +30,57 @@ const Home = () => {
     }
   }, [isConnected])
 
-  const handleLogout = () => {
-    cleanupAfterLogout()
-    queryClient.clear()
-    navigate(ApiConstantRoutes.paths.auth.login)
-  }
-  return (
-    <div>
-      <h1>Home Page</h1>
-      <Button className='my-5 w-25' primary onClick={handleLogout}>
-        Log out
-      </Button>
-      <Button
-        className='my-5 w-25'
-        secondary
-        onClick={() => navigate(AppConstantRoutes.paths.example.webSocket)}
-      >
-        Test Websocket
-      </Button>
 
-      <NotificationSidebar />
+  const getDisasterType = (
+    type?: string,
+  ): 'earthquake' | 'flood' | 'fire' | 'storm' | 'other' => {
+    const lower = type?.toLowerCase()
+    switch (lower) {
+      case 'earthquake':
+      case 'flood':
+      case 'fire':
+      case 'storm':
+        return lower
+      default:
+        return 'other'
+    }
+  }
+  if (isLoading) return <p>Loading...</p>
+  if (error) return <p>Error loading reports</p>
+  return (
+    <div className='space-y-6'>
+      {data?.data.reports.data.map((report) => (
+        <PostCard
+          key={report.id}
+          id={report.id}
+          user={{
+            name:
+              report.generatedBy.firstName + ' ' + report.generatedBy.lastName,
+            avatar: report.generatedBy.profile_image,
+            isVerified: false,
+          }}
+          trustScore={report.factCheck.overallPercentage}
+          isDebunked={false}
+          location={`${report.location.city}, ${report.location.country}`}
+          title={report.name}
+          content={report.description}
+          disasterType={getDisasterType(report?.incidentType)}
+          images={[]}
+          upvotes={report.factCheck.communityScore?.upvotes}
+          downvotes={report.factCheck.communityScore?.downvotes}
+          comments={report.factCheck.communityScore?.commentCount}
+          createdAt={new Date(report.createdAt)}
+          onUpvote={() => {
+            console.log(`Upvote for ${report.id}`)
+          }}
+          onDownvote={() => {
+            console.log(`Downvote for ${report.id}`)
+          }}
+          onComment={() => {
+            console.log(`Comment on ${report.id}`)
+          }}
+        />
+      ))}
     </div>
   )
 }

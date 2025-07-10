@@ -63,6 +63,11 @@ export const useAuthStore = create<AuthStore>((set) => ({
   },
 }))
 
+const storedAuth = LocalSelvices.getLocalStorage()
+if (storedAuth) {
+  useAuthStore.setState({ auth: storedAuth })
+}
+
 export const selectAuth = (state: AuthStore) => state.auth
 export const initAfterLogin = (payload: LoginResponse, remember: boolean) =>
   useAuthStore.getState().initAfterLogin(payload, remember)

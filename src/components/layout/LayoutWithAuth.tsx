@@ -1,28 +1,29 @@
 import { Outlet, useLocation } from 'react-router'
+import Sidebar from '../common/Sidebar'
+import NavBar from '../common/NavBar'
 import NotificationManager from '../common/NotificationManager'
-import { toast, ToastContainer } from 'react-toastify'
-import Button from '../common/Button'
+import { ToastContainer } from 'react-toastify'
 
 const LayoutWithAuth = () => {
   const location = useLocation()
-
-
+  const isMapPage = location.pathname === '/map'
 
   return (
-    <div className='flex min-h-screen bg-gray-100'>
-      <ToastContainer />
-      {location.pathname !== '/profile' && (
-        <aside className='hidden w-60 bg-white shadow-md md:block'>
-          {/* Placeholder Sidebar */}
-          <div className='p-4'>Sidebar</div>
-        </aside>
-      )}
-
-      <main className='flex-1 p-5'>
-        <Outlet />
-      </main>
-
-      <NotificationManager />
+    <div className='flex min-h-screen flex-col'>
+      <ToastContainer/>
+      <div className='flex flex-1'>
+        <Sidebar />
+        <div className='w-full flex-col'>
+          <div>
+            {/* NavBar */}
+            {location.pathname !== '/profile' && <NavBar />}
+          </div>
+          <main className={`mt-18 ${isMapPage ? 'ml-26' : 'ml-68'} p-5`}>
+            <Outlet />
+          </main>
+          <NotificationManager />
+        </div>
+      </div>
     </div>
   )
 }
