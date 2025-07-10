@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import Profile from '@/assets/default-profile.svg?react'
+// import Profile from '@/assets/default-profile.svg?react'
 import { CirclePlus, HeartHandshake, Map, Phone } from 'lucide-react'
 import { AppConstantRoutes } from '@/services/routes/path'
 import { useLocation, useNavigate } from 'react-router'
@@ -8,7 +8,7 @@ import Hand from '@/assets/icons/OfferHand2.svg?react'
 import { useTranslation } from 'react-i18next'
 import CreatePostModal from './CreatePostModal'
 import ProfileNav from './ProfileNav'
-import SearchBar from './SearchBar'
+// import SearchBar from './SearchBar'
 import SearchInput from './SearchInput'
 
 const NavbarItems = [

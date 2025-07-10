@@ -106,3 +106,11 @@
 .animate-fade-in {
   animation: fadeIn 0.2s ease-out;
 }
+.custom-scroll {
+  overflow-y: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.custom-scroll::-webkit-scrollbar {
+  display: none;
+}

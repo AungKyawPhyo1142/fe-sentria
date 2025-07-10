@@ -24,22 +24,21 @@ const ProfileNav = () => {
   if (!userProfile) return <p className='text-primary'>No user profile found</p>
 
   return (
-
     <div
       onClick={() => navigate(AppConstantRoutes.paths.profile)}
-      className='flex h-12.5 cursor-pointer items-center justify-center gap-x-2 rounded-xl border border-black/30 px-4 py-1'
+      className='flex h-12.5 cursor-pointer items-center justify-center'
     >
-      {/* <Profile className='size-8 rounded-full object-cover' /> */}
+      {/* <Profile className='size-8 rounded-full object-cover' border border-black/30 px-4 py-1 /> */}
       {userProfile.profile_image ? (
         <img
           src={userProfile.profile_image}
           alt='profile'
-          className='size-10 rounded-full object-cover'
+          className='size-12 rounded-full border border-black/30 object-cover'
         />
       ) : (
-        <Profile className='size-8 rounded-full object-cover' /> // Render Profile SVG
+        <Profile className='size-12 rounded-full border border-black/30 object-cover' /> // Render Profile SVG
       )}
-      <span className='text-sm'> {userProfile.firstName + ' ' + userProfile.lastName}</span>
+      {/* <span className='text-sm'> {userProfile.firstName + ' ' + userProfile.lastName}</span> */}
     </div>
     // <div
     //   onClick={() => navigate(AppConstantRoutes.paths.profile)}
