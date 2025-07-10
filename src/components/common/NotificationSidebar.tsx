@@ -5,7 +5,7 @@ const NotificationSidebar = () => {
   const notifications = useSocketStore((state) => state.allEarthquakeAlerts)
 
   return (
-    <div className='fixed top-[60px] right-0 z-50 h-[calc(100vh-100px)] w-[220px] overflow-y-auto rounded-[10px] border border-black/30 bg-white px-2 py-3'>
+    <div className='fixed top-[100px] right-5 z-50 h-[50vh] w-[220px] overflow-y-auto rounded-[10px] border border-black/30 bg-white px-2 py-3'>
       <h2 className='mb-4 text-center text-lg font-bold'> Notifications</h2>
       {notifications.length === 0 && (
         <p className='text-sm text-black/30'>No Notifications</p>

@@ -1,3 +1,4 @@
+import NotificationSidebar from '@/components/common/NotificationSidebar'
 import PostCard from '@/components/posts/PostCard'
 import { useGetAllReports } from '@/services/network/lib/report'
 import { useSocketStore } from '@/zustand/socketStore'
@@ -7,7 +8,7 @@ import { useEffect } from 'react'
 const Home = () => {
   // const { t } = useTranslation()
   const { data, isLoading, error } = useGetAllReports()
-  const connect = useSocketStore((state)=>state.connect)
+  const connect = useSocketStore((state) => state.connect)
   const earthquakeAlertListener = useSocketStore(
     (state) => state.earthquakeAlertListener,
   )
@@ -30,7 +31,6 @@ const Home = () => {
     }
   }, [isConnected])
 
-
   const getDisasterType = (
     type?: string,
   ): 'earthquake' | 'flood' | 'fire' | 'storm' | 'other' => {
@@ -48,39 +48,46 @@ const Home = () => {
   if (isLoading) return <p>Loading...</p>
   if (error) return <p>Error loading reports</p>
   return (
-    <div className='space-y-6'>
-      {data?.data.reports.data.map((report) => (
-        <PostCard
-          key={report.id}
-          id={report.id}
-          user={{
-            name:
-              report.generatedBy.firstName + ' ' + report.generatedBy.lastName,
-            avatar: report.generatedBy.profile_image,
-            isVerified: false,
-          }}
-          trustScore={report.factCheck.overallPercentage}
-          isDebunked={false}
-          location={`${report.location.city}, ${report.location.country}`}
-          title={report.name}
-          content={report.description}
-          disasterType={getDisasterType(report?.incidentType)}
-          images={[]}
-          upvotes={report.factCheck.communityScore?.upvotes}
-          downvotes={report.factCheck.communityScore?.downvotes}
-          comments={report.factCheck.communityScore?.commentCount}
-          createdAt={new Date(report.createdAt)}
-          onUpvote={() => {
-            console.log(`Upvote for ${report.id}`)
-          }}
-          onDownvote={() => {
-            console.log(`Downvote for ${report.id}`)
-          }}
-          onComment={() => {
-            console.log(`Comment on ${report.id}`)
-          }}
-        />
-      ))}
+    <div>
+      <div className='w-[750px] space-y-6'>
+        {data?.data.reports.data.map((report) => (
+          <PostCard
+            key={report.id}
+            id={report.id}
+            user={{
+              name:
+                report.generatedBy.firstName +
+                ' ' +
+                report.generatedBy.lastName,
+              avatar: report.generatedBy.profile_image,
+              isVerified: false,
+            }}
+            trustScore={report.factCheck.overallPercentage}
+            isDebunked={false}
+            location={`${report.location.city}, ${report.location.country}`}
+            title={report.name}
+            content={report.description}
+            disasterType={getDisasterType(report?.incidentType)}
+            images={[]}
+            upvotes={report.factCheck.communityScore?.upvotes}
+            downvotes={report.factCheck.communityScore?.downvotes}
+            comments={report.factCheck.communityScore?.commentCount}
+            createdAt={new Date(report.createdAt)}
+            onUpvote={() => {
+              console.log(`Upvote for ${report.id}`)
+            }}
+            onDownvote={() => {
+              console.log(`Downvote for ${report.id}`)
+            }}
+            onComment={() => {
+              console.log(`Comment on ${report.id}`)
+            }}
+          />
+        ))}
+      </div>
+      <div>
+        <NotificationSidebar />
+      </div>
     </div>
   )
 }
