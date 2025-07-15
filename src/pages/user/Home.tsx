@@ -1,62 +1,107 @@
-// import NotificationSidebar from '@/components/common/NotificationSidebar'
-// import PostCard from '@/components/posts/PostCard'
-// import { useGetAllReports } from '@/services/network/lib/report'
-// import { useSocketStore } from '@/zustand/socketStore'
+import { useSocketStore } from '@/zustand/socketStore'
 // import { useTranslation } from 'react-i18next'
-// import { useEffect } from 'react'
+import { useEffect } from 'react'
 import { AppConstantRoutes } from '@/services/routes/path'
 import { useNavigate } from 'react-router'
 import Button from '@/components/common/Button'
 import NotificationSidebar from '@/components/common/NotificationSidebar'
+import {
+  ReportData,
+  useGetAllDisasterReports,
+} from '@/services/network/lib/disasterReport'
+import PostCard from '@/components/posts/PostCard'
 
+// component for Post Lists
+interface ReportPostProps {
+  postLists: ReportData[]
+}
+const PostList: React.FC<ReportPostProps> = ({ postLists }) => {
+  return (
+    // * rendering get all reports
+    <div className=''>
+      {postLists.map((postList, index) => {
+        // imag url
+        const imageUrls =
+          postList.media
+            ?.filter(
+              (m) =>
+                typeof m?.type === 'string' &&
+                m.type.toLowerCase() === 'image' &&
+                typeof m.url === 'string' &&
+                m.url.trim() !== '',
+            )
+            .map((m) => m.url) ?? []
+
+        return (
+          <PostCard
+            key={index}
+            id={postList._id}
+            user={{
+              name: `${postList.generatedBy.firstName} ${postList.generatedBy.lastName}`,
+              avatar: postList.generatedBy.profile_image,
+              isVerified: true,
+            }}
+            trustScore={postList.factCheck.overallPercentage}
+            isDebunked={postList.factCheck.goService.status === 'debunked'}
+            location={`${postList.location.city}, ${postList.location.country}`}
+            title={postList.reportName}
+            content={postList.description}
+            images={imageUrls}
+            disasterType={postList.incidentType as any}
+            upvotes={postList.factCheck.communityScore?.upvotes ?? 0}
+            downvotes={postList.factCheck.communityScore?.downvotes ?? 0}
+            comments={0}
+            createdAt={new Date(postList.createdAt)}
+          />
+        )
+      })}
+    </div>
+  )
+}
+
+// Home
 const Home = () => {
   // const { t } = useTranslation()
-  // const { data, isLoading, error } = useGetAllReports()
-  // const connect = useSocketStore((state) => state.connect)
-  // const earthquakeAlertListener = useSocketStore(
-  //   (state) => state.earthquakeAlertListener,
-  // )
-  // const sendUserLocation = useSocketStore((state) => state.sendUserLocation)
-  // const isConnected = useSocketStore((state) => state.isConnected)
 
-  //use effect
-  // useEffect(() => {
-  //   connect()
-  //   earthquakeAlertListener()
-  // }, [])
-  // useEffect(() => {
-  //   if (isConnected) {
-  //     navigator.geolocation.getCurrentPosition((pos) => {
-  //       sendUserLocation({
-  //         lat: pos.coords.latitude,
-  //         lng: pos.coords.longitude,
-  //       })
-  //     })
-  //   }
-  // }, [isConnected])
-
-  // const getDisasterType = (
-  //   type?: string,
-  // ): 'earthquake' | 'flood' | 'fire' | 'storm' | 'other' => {
-  //   const lower = type?.toLowerCase()
-  //   switch (lower) {
-  //     case 'earthquake':
-  //     case 'flood':
-  //     case 'fire':
-  //     case 'storm':
-  //       return lower
-  //     default:
-  //       return 'other'
-  //   }
-  // }
-  // if (isLoading) return <p>Loading...</p>
-  // if (error) return <p>Error loading reports</p>
   const navigate = useNavigate()
+
+  const connect = useSocketStore((state) => state.connect)
+  const earthquakeAlertListener = useSocketStore(
+    (state) => state.earthquakeAlertListener,
+  )
+  const sendUserLocation = useSocketStore((state) => state.sendUserLocation)
+  const isConnected = useSocketStore((state) => state.isConnected)
+
+  // use effect
+  useEffect(() => {
+    connect()
+    earthquakeAlertListener()
+  }, [])
+  useEffect(() => {
+    if (isConnected) {
+      navigator.geolocation.getCurrentPosition((pos) => {
+        sendUserLocation({
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+        })
+      })
+    }
+  }, [isConnected])
+  const { data, isLoading, error } = useGetAllDisasterReports()
+  console.log('report data: ', data)
+  console.log('data.pages', data?.pages)
+
+  const reports =
+    data?.pages?.flatMap((page) => page.data.reports.data ?? []) ?? []
+  console.log('length: ', reports.length)
+
+  if (isLoading) return <p>Loading...</p>
+  if (error) return <p>Error loading reports</p>
+
   return (
     <div className='fade-in'>
       <div className='w-3/4'>
-        <h1>Home Page</h1>
-        <div className='my-10 flex items-center gap-x-3'>
+        <div className='mb-5 flex items-center gap-x-3'>
           <Button className='px-10' primary>
             Home Page
           </Button>
@@ -68,40 +113,12 @@ const Home = () => {
             Resource Page
           </Button>
         </div>
-        <p className='text-base text-justify'>
-          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quam sed
-          facilis fuga illo alias laboriosam? Earum atque esse deserunt nihil,
-          pariatur mollitia nobis consequatur voluptatibus sequi excepturi
-          tempora ab obcaecati!Loremloe Lorem ipsum dolor sit, amet consectetur
-          adipisicing elit. Sapiente pariatur at non ullam quae inventore. Ex
-          consequuntur necessitatibus voluptates dolorem, modi quod totam
-          adipisci tempore culpa eligendi consequatur quos asperiores. Lorem,
-          ipsum dolor sit amet consectetur adipisicing elit. Dolore dignissimos
-          quas optio consequuntur officiis totam vero. Omnis nesciunt
-          praesentium saepe reiciendis maxime, unde voluptatem cupiditate
-          deleniti, pariatur exercitationem magnam expedita! Lorem ipsum dolor,
-          sit amet consectetur adipisicing elit. Voluptate, doloremque debitis
-          recusandae quam voluptates placeat maxime sint facilis nisi ipsam,
-          nemo vero quibusdam tenetur error possimus velit nostrum? Ex,
-          inventore. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-          Dolorem veritatis ratione corporis dignissimos, voluptatum at, vitae
-          rerum exercitationem quidem nam unde, nesciunt neque excepturi maiores
-          quas ducimus similique error voluptatibus. Lorem ipsum dolor sit amet
-          consectetur adipisicing elit. Porro fuga corrupti molestias quia non
-          dolorem officiis maxime vitae culpa voluptatum iste atque, optio fugit
-          consequuntur iusto nemo veritatis voluptates molestiae? Lorem, ipsum
-          dolor sit amet consectetur adipisicing elit. Blanditiis tenetur
-          deserunt alias, ad accusamus praesentium corporis placeat facilis
-          aperiam ratione mollitia aliquid aut recusandae similique sed! Tenetur
-          blanditiis nemo reiciendis? Lorem ipsum dolor sit amet consectetur
-          adipisicing elit. Distinctio aperiam, culpa asperiores aliquam esse
-          illo dignissimos fugiat facere suscipit reprehenderit ipsa quia vero
-          numquam necessitatibus similique eaque modi exercitationem quasi?
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Excepturi
-          quisquam error magni ut, praesentium inventore maiores cumque at eaque
-          ratione quaerat, velit maxime vero dolor cum libero doloribus ullam.
-          Alias?
-        </p>
+        {/* Post Cards */}
+        {reports.length === 0 ? (
+          <p>No reports found.</p>
+        ) : (
+          <PostList postLists={reports} />
+        )}
       </div>
       <NotificationSidebar />
     </div>

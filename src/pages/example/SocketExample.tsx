@@ -1,5 +1,8 @@
 import Button from '@/components/common/Button'
-import { useGetAllDisasterReports } from '@/services/network/lib/reports'
+import {
+  ReportData,
+  useGetAllDisasterReports,
+} from '@/services/network/lib/disasterReport'
 import { useSocketStore } from '@/zustand/socketStore'
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
@@ -73,19 +76,19 @@ const SocketExample = () => {
         <div>
           {reportData?.pages.map((page, index) => (
             <div key={index} className='grid grid-cols-3 gap-4'>
-              {page.data.reports.data.map((report) => (
+              {page.data.reports.data.map((report: ReportData) => (
                 <div
-                  key={report.id}
+                  key={report._id}
                   className='m-5 flex flex-col border bg-blue-200 p-5'
                 >
-                  <span className='text-red-400'>ID: {report.id}</span>
+                  <span className='text-red-400'>ID: {report._id}</span>
                   <br />
                   {report.name}
                   <div>
-                    OverallPercentage: {report.factCheckOverallPercentage} |
-                    {report.factCheckOverallPercentage !== undefined &&
-                    report.factCheckOverallPercentage !== null
-                      ? `${report.factCheckOverallPercentage}%`
+                    OverallPercentage: {report.factCheck.overallPercentage} |
+                    {report.factCheck.overallPercentage !== undefined &&
+                    report.factCheck.overallPercentage !== null
+                      ? `${report.factCheck.overallPercentage}%`
                       : 'NO'}
                   </div>
                   {/* <div className='flex flex-col'>
@@ -94,11 +97,11 @@ const SocketExample = () => {
                     <div>Location: {report.parameters.locationSummary}</div>
                     <div>FactCheckStatus: {report.factCheckStatus}</div>
                   </div> */}
-                  {report.parameters && (
+                  {report && (
                     <div className='flex flex-col'>
-                      <div>Severity: {report.parameters.severity}</div>
-                      <div>IncidentType: {report.parameters.incidentType}</div>
-                      <div>Location: {report.parameters.locationSummary}</div>
+                      <div>Severity: {report.severity}</div>
+                      <div>IncidentType: {report.incidentType}</div>
+                      <div>Location: {report.location.city}</div>
                     </div>
                   )}
                 </div>

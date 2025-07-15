@@ -59,7 +59,7 @@ import { ApiConstantRoutes } from '../path'
 // }
 
 export interface Report {
-  id: string
+  _id: string
   name: string
   description: string
   incidentType: string
@@ -83,7 +83,7 @@ export interface Report {
     communityScore?: {
       upvotes: number
       downvotes: number
-      commentCount: number
+      // commentCount: number
     }
     goService: {
       status: string

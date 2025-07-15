@@ -11,6 +11,42 @@ import ProfileNav from './ProfileNav'
 // import SearchBar from './SearchBar'
 import SearchInput from './SearchInput'
 
+//Skeleton
+export const NavbarSkeleton = ({
+  isMapPage = false,
+}: {
+  isMapPage?: boolean
+}) => {
+  return (
+    <div
+      className={`fixed top-0 right-0 ${isMapPage ? 'left-30' : 'left-68'} z-[99] flex items-end justify-between bg-white py-4 pr-8 pl-4`}
+    >
+      <div className='flex space-x-5'>
+        {/* Navbar Icons Skeleton */}
+        <div className='flex h-12.5 items-center gap-x-10 rounded-xl border border-black/10 p-4'>
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div
+              key={i}
+              className='h-7 w-7 animate-pulse rounded-md bg-gray-300'
+            />
+          ))}
+        </div>
+
+        {/* Search Input Skeleton */}
+        <div className='h-12.5 w-75 animate-pulse rounded-xl bg-gray-300' />
+
+        {/* Report Post Button Skeleton */}
+        <div className='flex h-12.5 w-50 animate-pulse items-center justify-center rounded-xl bg-gray-300' />
+      </div>
+
+      {/* Profile Skeleton */}
+      <div className='h-12.5 w-12.5 animate-pulse rounded-full bg-gray-300' />
+    </div>
+  )
+}
+
+//NavItems
+
 const NavbarItems = [
   {
     icon: (active: boolean) => (
@@ -92,14 +128,23 @@ const Navbar = () => {
     }
   }, [location.pathname])
 
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setLoading(false)
+    }, 1000)
+    return () => clearTimeout(timeout)
+  }, [])
+
+  if (loading) return <NavbarSkeleton isMapPage={isMapPage} />
+
   return (
     <div
       // className={`fixed top-0 right-0 z-20 ${isMapPage ? 'left-30' : 'left-68'} mr-6 flex items-center justify-between bg-white py-4 text-black transition-all duration-300 ease-in-out`}
       className={`fixed top-0 right-0 ${isMapPage ? 'left-30' : 'left-68'} z-[99] flex items-end justify-between bg-white py-4 pr-8 pl-4 text-black transition-all duration-300 ease-in-out`}
     >
       <div className={`flex ${isMapPage ? 'space-x-5' : 'space-x-8'}`}>
-
-
         {/* Navbar Icons */}
 
         <div className='flex h-12.5 items-center justify-between gap-x-10 rounded-xl border border-black/30 p-4'>
@@ -121,7 +166,10 @@ const Navbar = () => {
           
           className='bg-primary flex h-12.5 w-50 items-center justify-center rounded-xl py-1 font-light text-white hover:cursor-pointer'
         > */}
-        <button onClick={() => setCreatePost(true)} className='bg-primary flex h-12.5 items-center justify-center rounded-xl px-4 py-1 font-light text-white hover:cursor-pointer'>
+        <button
+          onClick={() => setCreatePost(true)}
+          className='bg-primary flex h-12.5 items-center justify-center rounded-xl px-4 py-1 font-light text-white hover:cursor-pointer'
+        >
           <CirclePlus size={26} strokeWidth={1} />
           <span className='ml-3 text-[16px]'>{t('sidebar.ReportPost')}</span>
         </button>
@@ -130,7 +178,7 @@ const Navbar = () => {
         )}
 
         {/* Search Post */}
-        
+
         {/* <SearchBar /> */}
       </div>
 
@@ -144,7 +192,6 @@ const Navbar = () => {
         <span className='text-sm'>Sweeny Sydney</span>
       </div> */}
     </div>
-
   )
 }
 

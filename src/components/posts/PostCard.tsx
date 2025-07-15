@@ -8,7 +8,11 @@ import {
   Waves,
   Tornado,
   Dot,
+  Ellipsis,
+  EditIcon,
+  Trash,
 } from 'lucide-react'
+import { formatDistanceToNow } from 'date-fns'
 
 import VerifyBadge from '@/assets/VerifiedBadge.svg?react'
 
@@ -16,6 +20,7 @@ import { formatNumber } from '@/helpers/helpers'
 import PostImages from './PostImages'
 import TrustScoreBadge from './TrustScoreBadge'
 import { useTranslation } from 'react-i18next'
+import { useState } from 'react'
 interface User {
   name: string
   avatar: string | null
@@ -53,11 +58,13 @@ const PostCard = ({
   upvotes = 0,
   downvotes = 0,
   comments = 0,
+  createdAt,
   onUpvote,
   onDownvote,
   onComment,
 }: PostCardProps) => {
   const { t } = useTranslation()
+  const [showMenu, setShowMenu] = useState(false)
   const getTrustWarning = (score: number, isDebunked: boolean) => {
     if (isDebunked) {
       return {
@@ -108,7 +115,7 @@ const PostCard = ({
           </span>
         </div>
       )}
-      <div className='rounded-lg border border-[#33333430] px-8 py-7'>
+      <div className='rounded-lg border border-[#33333430] px-8 pt-7'>
         {/* header */}
         <div className='mb-2'>
           <div className='mb-4 flex items-center justify-between'>
@@ -119,10 +126,10 @@ const PostCard = ({
                   <img
                     src={user.avatar}
                     alt={user.name}
-                    className='h-9 w-9 rounded-full object-cover'
+                    className='h-10 w-10 rounded-full object-cover'
                   />
                 ) : (
-                  <div className='flex h-9 w-9 items-center justify-center rounded-full bg-blue-100'>
+                  <div className='flex h-10 w-10 items-center justify-center rounded-full bg-blue-100'>
                     <span className='text-lg font-semibold text-blue-600'>
                       {user.name.charAt(0).toUpperCase()}
                     </span>
@@ -130,14 +137,22 @@ const PostCard = ({
                 )}
               </div>
 
-              {/* username and Badge */}
-              <div className='flex items-center space-x-2'>
-                <h3 className='text-[16px] font-medium text-black'>
-                  {user.name}
-                </h3>
-                {user.isVerified && (
-                  <VerifyBadge className='h-4 w-4 text-[#1560BD]' />
-                )}
+              <div className='flex flex-col'>
+                {/* username and Badge */}
+                <div className='flex items-center space-x-2'>
+                  <h3 className='text-[16px] font-medium text-black'>
+                    {user.name}
+                  </h3>
+                  {user.isVerified && (
+                    <VerifyBadge className='h-4 w-4 text-[#1560BD]' />
+                  )}
+                </div>
+                {/* Created At */}
+                <div className='text-xs font-light text-zinc-500'>
+                  {createdAt
+                    ? `${formatDistanceToNow(createdAt, { addSuffix: true })}`
+                    : ''}
+                </div>
               </div>
             </div>
 
@@ -208,27 +223,57 @@ const PostCard = ({
             <Dot className='h-5 w-5 text-[#33333430]' />
             <span>{formatNumber(comments)} comments</span>
           </div>
-          <div className='mt-2 flex w-full items-center space-x-4 border-t border-[#33333430] pt-2'>
-            <button
-              onClick={onUpvote}
-              className={`flex min-h-0 items-center space-x-1 border-none bg-transparent p-0 ${upvotes > downvotes ? 'text-primary hover:text-primary/80' : 'text-[#33333430] hover:text-[3333430]/80'}`}
-            >
-              <CircleArrowUp className='h-6 w-6 stroke-1' />
-            </button>
+          {/* up/dowwn/cmt -> menu */}
+          <div className='my-2 flex items-center justify-between border-t border-[#33333430] pt-2'>
+            {/* up/down/cmt */}
+            <div className='flex w-full items-center space-x-4'>
+              <button
+                onClick={onUpvote}
+                className={`flex min-h-0 items-center space-x-1 border-none bg-transparent p-0 ${upvotes > downvotes ? 'text-primary hover:text-primary/80' : 'text-[#33333430] hover:text-[3333430]/80'}`}
+              >
+                <CircleArrowUp className='h-6 w-6 stroke-1' />
+              </button>
 
-            <button
-              onClick={onDownvote}
-              className={`flex items-center space-x-1 ${downvotes > upvotes ? 'text-[#B22222] hover:text-[#B22222]/80' : 'text-[#33333430] hover:text-[#33333430]/80'}`}
-            >
-              <CircleArrowDown className='h-6 w-6 stroke-1' />
-            </button>
+              <button
+                onClick={onDownvote}
+                className={`flex items-center space-x-1 ${downvotes > upvotes ? 'text-[#B22222] hover:text-[#B22222]/80' : 'text-[#33333430] hover:text-[#33333430]/80'}`}
+              >
+                <CircleArrowDown className='h-6 w-6 stroke-1' />
+              </button>
 
-            <button
-              onClick={onComment}
-              className='flex items-center space-x-1 text-[#33333430] hover:text-[#33333430]/80'
-            >
-              <MessageSquare className='h-6 w-6 stroke-1' />
-            </button>
+              <button
+                onClick={onComment}
+                className='flex items-center space-x-1 text-[#33333430] hover:text-[#33333430]/80'
+              >
+                <MessageSquare className='h-6 w-6 stroke-1' />
+              </button>
+            </div>
+            {/* menu */}
+            <div className='relative'>
+              <button
+                onClick={() => setShowMenu(!showMenu)}
+                className='text-[#33333430] focus-within:ring-0 hover:cursor-pointer hover:text-[#33333430]/80 focus:ring-0 focus:outline-none focus-visible:ring-0'
+              >
+                <Ellipsis className='h-6 w-6 stroke-1' />
+              </button>
+              {showMenu && (
+                <div className='absolute -right-9 bottom-full z-50 mb-1 w-28 rounded-md border border-[#333334]/30 bg-white'>
+                  <button
+                    onClick={() => console.log('Edit Post')}
+                    className='flex w-full cursor-pointer items-center gap-2 px-4 py-2 text-xs text-[#333334]/80 hover:text-[#333334]/30 focus:ring-0 focus:outline-none focus-visible:ring-0'
+                    disabled
+                  >
+                    <EditIcon className='h-4 w-4' /> Edit
+                  </button>
+                  <button
+                    onClick={() => console.log('Delete Post')}
+                    className='flex w-full items-center gap-2 px-4 py-2 text-xs text-[#B22222] hover:cursor-pointer hover:text-[#B22222]/80 focus:ring-0 focus:outline-none focus-visible:ring-0'
+                  >
+                    <Trash className='h-4 w-4' /> Delete
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

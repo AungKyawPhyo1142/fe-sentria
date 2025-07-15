@@ -6,7 +6,6 @@ import PostCard from '@/components/posts/PostCard'
 import { useUserProfile } from '@/services/network/lib/user'
 import { useUpdateProfileImage } from '@/services/network/lib/user'
 import { selectAuth, useAuthStore } from '@/zustand/authStore'
-
 const samplePosts = [
   {
     id: '1',
@@ -18,13 +17,15 @@ const samplePosts = [
     trustScore: 19,
     isDebunked: true,
     location: 'London, UK',
+    title: 'Storm hits London',
     content:
-      'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using Content here, content here, making it look like readable English.',
-    title: 'Title1',
-      images: [
-      'https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=400',
-
-      'https://images.unsplash.com/photo-1519904981063-b0cf448d479e?w=400',
+      'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout...',
+    images: [
+      'https://images.pexels.com/photos/206359/pexels-photo-206359.jpeg',
+      'https://images.pexels.com/photos/206359/pexels-photo-206359.jpeg',
+      'https://images.pexels.com/photos/206359/pexels-photo-206359.jpeg',
+      'https://images.pexels.com/photos/709552/pexels-photo-709552.jpeg',
+      'https://images.pexels.com/photos/709552/pexels-photo-709552.jpeg',
     ],
     disasterType: 'storm' as const,
     upvotes: 3800,
@@ -42,10 +43,14 @@ const samplePosts = [
     trustScore: 80,
     isDebunked: false,
     location: 'London',
+    title: 'Flood in Underground',
     content:
-      'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.',
-    title: 'Title2 testing 123',
-    images: ['https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=400'],
+      'A reader will be distracted by readable content of a page when looking at its layout...',
+    images: [
+      'https://images.pexels.com/photos/709552/pexels-photo-709552.jpeg',
+      'https://images.pexels.com/photos/206359/pexels-photo-206359.jpeg',
+      'https://images.pexels.com/photos/709552/pexels-photo-709552.jpeg',
+    ],
     disasterType: 'flood' as const,
     upvotes: 1000,
     downvotes: 1200,
