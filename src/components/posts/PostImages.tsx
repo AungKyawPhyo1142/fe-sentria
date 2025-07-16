@@ -1,9 +1,14 @@
+import { useState } from 'react'
+import ReportDetailModal from './ReportDetailModal'
+
 const PostImages = ({ images }: { images?: string[] }) => {
   if (!images || images.length === 0) return null
 
   const displayImages = images.slice(0, 4)
 
   const extraImageCount = images.length - displayImages.length
+
+  const [showDetail, setShowDetail] = useState(false)
 
   return (
     <div className='mt-1 grid grid-cols-4 gap-3'>
@@ -15,10 +20,17 @@ const PostImages = ({ images }: { images?: string[] }) => {
             className='aspect-square w-full rounded-lg object-cover'
           />
           {index === displayImages.length - 1 && extraImageCount > 0 && (
-            <div className='bg-opacity-50 absolute inset-0 flex items-center justify-center rounded-lg bg-zinc-500/30 text-lg font-semibold text-white hover:cursor-pointer'>
+            <div
+              onClick={() => setShowDetail(true)}
+              className='bg-opacity-50 absolute inset-0 flex items-center justify-center rounded-lg bg-zinc-500/30 text-lg font-semibold text-white hover:cursor-pointer'
+            >
               +{extraImageCount}
             </div>
           )}
+          {/* SHOW POST DETAIL */}
+          {/* {showDetail && (
+            <ReportDetailModal isOpen={showDetail} setIsOpen={setShowDetail} />
+          )} */}
         </div>
       ))}
     </div>

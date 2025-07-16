@@ -21,7 +21,32 @@ import PostImages from './PostImages'
 import TrustScoreBadge from './TrustScoreBadge'
 import { useTranslation } from 'react-i18next'
 import { useState } from 'react'
-interface User {
+import ReportDetailModal from './ReportDetailModal'
+
+// fake data for report detail
+
+const fakeUser = {
+  name: 'Scarlett Johansson',
+  avatar:
+    'https://img.freepik.com/premium-vector/avatar-profile-icon-flat-style-male-user-profile-vector-illustration-isolated-background-man-profile-sign-business-concept_157943-38764.jpg?semt=ais_hybrid&w=740',
+  isVerified: true,
+}
+
+const fakeImages = [
+  'https://images.pexels.com/photos/206359/pexels-photo-206359.jpeg',
+  'https://images.pexels.com/photos/206359/pexels-photo-206359.jpeg',
+  'https://images.pexels.com/photos/206359/pexels-photo-206359.jpeg',
+  'https://images.pexels.com/photos/709552/pexels-photo-709552.jpeg',
+  'https://images.pexels.com/photos/709552/pexels-photo-709552.jpeg',
+  'https://images.pexels.com/photos/206359/pexels-photo-206359.jpeg',
+  'https://images.pexels.com/photos/206359/pexels-photo-206359.jpeg',
+  'https://images.pexels.com/photos/206359/pexels-photo-206359.jpeg',
+  'https://images.pexels.com/photos/709552/pexels-photo-709552.jpeg',
+  'https://images.pexels.com/photos/709552/pexels-photo-709552.jpeg',
+]
+// ////////
+
+export interface User {
   name: string
   avatar: string | null
   isVerified: boolean
@@ -76,6 +101,7 @@ const PostCard = ({
   console.log('loginUser type:', typeof loginUser)
 
   const [showMenu, setShowMenu] = useState(false)
+  const [showDetail, setShowDetail] = useState(false)
   const getTrustWarning = (score: number, isDebunked: boolean) => {
     if (isDebunked) {
       return {
@@ -191,7 +217,13 @@ const PostCard = ({
             <MapPinned className='mr-1 h-6 w-6 stroke-1' />
             <span className='ml-2 text-[16px] font-semibold'>{location}</span>
           </div>
-          <div className='mt-2 text-[14px]'>{title}</div>
+          {/* post title */}
+          <div
+            onClick={() => setShowDetail(true)}
+            className='mt-2 text-[14px] hover:cursor-pointer'
+          >
+            {title}
+          </div>
         </div>
 
         {/* Content */}
@@ -201,10 +233,11 @@ const PostCard = ({
               <>
                 {content.slice(0, 300)}...
                 <button
-                  className='text-primary hover:text-primary/80 ml-1 text-[13px] font-medium'
-                  onClick={() => {
+                  className='text-primary hover:text-primary/80 ml-1 text-[13px] font-medium hover:cursor-pointer'
+                  onClick={() =>
                     // show post modal
-                  }}
+                    setShowDetail(true)
+                  }
                 >
                   Read More
                 </button>
@@ -217,6 +250,33 @@ const PostCard = ({
             <PostImages images={images} />
           </div>
         </div>
+        {/* show post detail */}
+        {showDetail && (
+          <ReportDetailModal
+            id='fake-id'
+            isOpen={showDetail}
+            setIsOpen={setShowDetail}
+            user={fakeUser}
+            trustScore={15}
+            isDebunked={false}
+            location='London, UK'
+            title='Severe Earthquake in Central London'
+            content={`It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. 
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Assumenda, eos. Nemo, maxime aliquid facilis est dolore cupiditate eaque numquam perspiciatis earum voluptate doloribus eveniet, animi nihil odio tempora illum dicta!
+               The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters...`}
+            images={fakeImages}
+            disasterType='earthquake'
+            upvotes={1234}
+            downvotes={125}
+            comments={12}
+            createdAt={new Date(Date.now() - 2 * 60 * 60 * 1000)} // 2 hours ago
+            onUpvote={() => alert('Upvoted')}
+            onDownvote={() => alert('Downvoted')}
+            onComment={() => alert('Commented')}
+            reporterId='user123'
+            loginUser='user123'
+          />
+        )}
 
         {/* actions */}
         <div className='pt-3'>
@@ -269,7 +329,7 @@ const PostCard = ({
                   <Ellipsis className='h-6 w-6 stroke-1' />
                 </button>
                 {showMenu && (
-                  <div className='absolute -right-9 bottom-full z-50 mb-1 w-28 rounded-md border border-[#333334]/30 bg-white'>
+                  <div className='absolute right-0 bottom-full z-50 mb-1 w-28 rounded-md border border-[#333334]/30 bg-white'>
                     <button
                       onClick={() => console.log('Edit Post')}
                       className='flex w-full cursor-pointer items-center gap-2 px-4 py-2 text-xs text-[#333334]/80 hover:text-[#333334]/30 focus:ring-0 focus:outline-none focus-visible:ring-0'

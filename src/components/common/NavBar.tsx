@@ -142,7 +142,7 @@ const Navbar = () => {
   return (
     <div
       // className={`fixed top-0 right-0 z-20 ${isMapPage ? 'left-30' : 'left-68'} mr-6 flex items-center justify-between bg-white py-4 text-black transition-all duration-300 ease-in-out`}
-      className={`fixed top-0 right-0 ${isMapPage ? 'left-30' : 'left-68'} z-[99] flex items-end justify-between bg-white py-4 pr-8 pl-4 text-black transition-all duration-300 ease-in-out`}
+      className={`fixed top-0 right-0 ${isMapPage ? 'left-30' : 'left-68'} z-50 flex items-end justify-between bg-white py-4 pr-8 pl-4 text-black transition-all duration-300 ease-in-out`}
     >
       <div className={`flex ${isMapPage ? 'space-x-5' : 'space-x-8'}`}>
         {/* Navbar Icons */}
