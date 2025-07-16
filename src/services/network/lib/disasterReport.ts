@@ -1,4 +1,4 @@
-import { useInfiniteQuery } from '@tanstack/react-query'
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import { STATUS } from './auth'
 import { apiClient } from '../apiClient'
 import { ApiConstantRoutes } from '../path'
@@ -44,7 +44,7 @@ export interface ReportData {
     id: string
     firstName: string
     lastName: string
-    profile_image: string | null
+    profile_image: string | null 
   }
 }
 
@@ -54,6 +54,16 @@ export interface ReportResponse {
       data: ReportData[]
       nextCursor: string | null
       hasNextPage: boolean
+    }
+  }
+  status: STATUS
+}
+// Get report by Id
+export interface ReportDetailResponse {
+  data: {
+    report: {
+      data: ReportData
+      message: string
     }
   }
   status: STATUS
@@ -74,5 +84,14 @@ export const useGetAllDisasterReports = (searchQuery?: string) => {
     enabled: true,
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (lastPage) => lastPage.data.reports.nextCursor,
+  })
+}
+
+// Get report by Id
+export const useGetDisasterReportDetail = (id: string) => {
+  return useQuery<ReportDetailResponse>({
+    queryKey: ['get-disaster-report-detail', id],
+    queryFn: () =>
+      apiClient.get(ApiConstantRoutes.paths.auth.getReportById(id)),
   })
 }

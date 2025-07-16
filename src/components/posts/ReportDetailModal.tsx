@@ -32,7 +32,7 @@ interface reportDetailProps {
   className?: string
   isOpen: boolean
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
-  id: string
+  _id: string
   user: User
   trustScore: number
   isDebunked: boolean
@@ -73,6 +73,7 @@ const ReportDetailModal: React.FC<reportDetailProps> = ({
   onComment,
   reporterId,
   loginUser,
+  _id,
 }) => {
   const { t } = useTranslation()
 
@@ -262,7 +263,7 @@ const ReportDetailModal: React.FC<reportDetailProps> = ({
                     <div className='flex w-full items-center space-x-4'>
                       <button
                         onClick={onUpvote}
-                        className={`flex min-h-0 items-center space-x-1 border-none bg-transparent p-0 ${upvotes > downvotes ? 'text-primary hover:text-primary/80' : 'text-[#33333430] hover:text-[3333430]/80'}`}
+                        className={`flex min-h-0 items-center space-x-1 border-none bg-transparent p-0 ${upvotes > downvotes ? 'text-primary hover:text-primary/80' : 'text-[#33333430] hover:text-[#3333430]/80'}`}
                       >
                         <CircleArrowUp className='h-6 w-6 stroke-1' />
                       </button>
@@ -328,7 +329,7 @@ const ReportDetailModal: React.FC<reportDetailProps> = ({
             </div>
 
             {/* comment */}
-            <CommentInputBox user={user} VerifyBadge={VerifyBadge} />
+            <CommentInputBox VerifyBadge={VerifyBadge} />
           </motion.div>
         </motion.div>
       )}

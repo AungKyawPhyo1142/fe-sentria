@@ -20,6 +20,9 @@ export const ApiConstantRoutes = {
         getReports() {
           return `/report`
         },
+        getReportById(id: string) {
+          return `/report/${id}`
+        },
       }
     },
     get user() {

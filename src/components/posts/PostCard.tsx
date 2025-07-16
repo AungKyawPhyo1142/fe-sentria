@@ -22,29 +22,10 @@ import TrustScoreBadge from './TrustScoreBadge'
 import { useTranslation } from 'react-i18next'
 import { useState } from 'react'
 import ReportDetailModal from './ReportDetailModal'
+import { useGetDisasterReportDetail } from '@/services/network/lib/disasterReport'
+import { selectAuth, useAuthStore } from '@/zustand/authStore'
 
 // fake data for report detail
-
-const fakeUser = {
-  name: 'Scarlett Johansson',
-  avatar:
-    'https://img.freepik.com/premium-vector/avatar-profile-icon-flat-style-male-user-profile-vector-illustration-isolated-background-man-profile-sign-business-concept_157943-38764.jpg?semt=ais_hybrid&w=740',
-  isVerified: true,
-}
-
-const fakeImages = [
-  'https://images.pexels.com/photos/206359/pexels-photo-206359.jpeg',
-  'https://images.pexels.com/photos/206359/pexels-photo-206359.jpeg',
-  'https://images.pexels.com/photos/206359/pexels-photo-206359.jpeg',
-  'https://images.pexels.com/photos/709552/pexels-photo-709552.jpeg',
-  'https://images.pexels.com/photos/709552/pexels-photo-709552.jpeg',
-  'https://images.pexels.com/photos/206359/pexels-photo-206359.jpeg',
-  'https://images.pexels.com/photos/206359/pexels-photo-206359.jpeg',
-  'https://images.pexels.com/photos/206359/pexels-photo-206359.jpeg',
-  'https://images.pexels.com/photos/709552/pexels-photo-709552.jpeg',
-  'https://images.pexels.com/photos/709552/pexels-photo-709552.jpeg',
-]
-// ////////
 
 export interface User {
   name: string
@@ -74,6 +55,7 @@ interface PostCardProps {
 }
 
 const PostCard = ({
+  id,
   user,
   trustScore,
   isDebunked = false,
@@ -93,6 +75,7 @@ const PostCard = ({
   loginUser,
 }: PostCardProps) => {
   const { t } = useTranslation()
+  const { userId } = useAuthStore(selectAuth)
   const isOwner = String(reporterId) === String(loginUser)
   console.log('Owner / reporter', isOwner)
   console.log('reporterId: ', reporterId)
@@ -102,6 +85,8 @@ const PostCard = ({
 
   const [showMenu, setShowMenu] = useState(false)
   const [showDetail, setShowDetail] = useState(false)
+  const [selectedId, setSelectedId] = useState<string | null>(null)
+
   const getTrustWarning = (score: number, isDebunked: boolean) => {
     if (isDebunked) {
       return {
@@ -138,6 +123,23 @@ const PostCard = ({
   }
 
   const trustWarning = getTrustWarning(trustScore, isDebunked)
+
+  // data fetch
+  const { data, isLoading, isError } = useGetDisasterReportDetail(id)
+  if (isLoading) return <p>Loading...</p>
+  if (isError) return <p>Error fetching detail</p>
+
+  const reportDetail = data?.data?.report?.data
+  const imgUrl =
+    reportDetail?.media
+      ?.filter(
+        (m) =>
+          typeof m?.type === 'string' &&
+          m.type.toLowerCase() === 'image' &&
+          typeof m.url === 'string' &&
+          m.url.trim() !== '',
+      )
+      .map((m) => m.url) ?? []
 
   return (
     <div className='mb-4 max-w-full bg-white'>
@@ -219,7 +221,10 @@ const PostCard = ({
           </div>
           {/* post title */}
           <div
-            onClick={() => setShowDetail(true)}
+            onClick={() => {
+              setSelectedId(id)
+              setShowDetail(true)
+            }}
             className='mt-2 text-[14px] hover:cursor-pointer'
           >
             {title}
@@ -253,28 +258,30 @@ const PostCard = ({
         {/* show post detail */}
         {showDetail && (
           <ReportDetailModal
-            id='fake-id'
+            _id={id}
             isOpen={showDetail}
             setIsOpen={setShowDetail}
-            user={fakeUser}
-            trustScore={15}
-            isDebunked={false}
-            location='London, UK'
-            title='Severe Earthquake in Central London'
-            content={`It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. 
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Assumenda, eos. Nemo, maxime aliquid facilis est dolore cupiditate eaque numquam perspiciatis earum voluptate doloribus eveniet, animi nihil odio tempora illum dicta!
-               The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters...`}
-            images={fakeImages}
-            disasterType='earthquake'
-            upvotes={1234}
-            downvotes={125}
+            user={{
+              name: `${reportDetail?.generatedBy.firstName} ${reportDetail?.generatedBy.lastName}`,
+              avatar: reportDetail?.generatedBy.profile_image,
+              isVerified: true,
+            }}
+            trustScore={reportDetail?.factCheck?.overallPercentage}
+            isDebunked={reportDetail?.factCheck.goService.status === 'debunked'}
+            location={`${reportDetail?.location.city}, ${reportDetail?.location.country}`}
+            title={reportDetail?.reportName}
+            content={reportDetail?.description}
+            images={imgUrl}
+            disasterType={reportDetail?.incidentType as any}
+            upvotes={reportDetail?.factCheck.communityScore?.upvotes ?? 0}
+            downvotes={reportDetail?.factCheck.communityScore?.downvotes ?? 0}
             comments={12}
-            createdAt={new Date(Date.now() - 2 * 60 * 60 * 1000)} // 2 hours ago
+            createdAt={new Date(reportDetail?.createdAt)}
             onUpvote={() => alert('Upvoted')}
             onDownvote={() => alert('Downvoted')}
             onComment={() => alert('Commented')}
-            reporterId='user123'
-            loginUser='user123'
+            reporterId={reportDetail?.generatedBy.id}
+            loginUser={userId}
           />
         )}
 

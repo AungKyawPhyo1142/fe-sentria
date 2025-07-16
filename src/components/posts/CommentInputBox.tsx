@@ -1,17 +1,17 @@
 // components/CommentInputBox.tsx
 import { Image, Send, X } from 'lucide-react'
 import React, { useRef, useState } from 'react'
-import { User } from './PostCard'
+import { selectAuth, useAuthStore } from '@/zustand/authStore'
+import { useUserProfile } from '@/services/network/lib/user'
 
 interface CommentInputBoxProps {
-  user: User
   VerifyBadge: React.FC<React.SVGProps<SVGSVGElement>>
 }
 
-const CommentInputBox: React.FC<CommentInputBoxProps> = ({
-  user,
-  VerifyBadge,
-}) => {
+const CommentInputBox: React.FC<CommentInputBoxProps> = ({ VerifyBadge }) => {
+  const { userId } = useAuthStore(selectAuth)
+  const { data: userProfile, isLoading, error } = useUserProfile(userId)
+
   const [comment, setComment] = useState('')
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -44,31 +44,36 @@ const CommentInputBox: React.FC<CommentInputBoxProps> = ({
     if (fileInputRef.current) fileInputRef.current.value = ''
   }
 
+  if (isLoading) return <p>Loading user...</p>
+  if (error || !userProfile) return <p>Failed to load user.</p>
+
+  const fullName = `${userProfile.firstName} ${userProfile.lastName}`
+  const isVerified = userProfile.verified_profile
+  const avatar = userProfile.profile_image
+
   return (
     <div className='sticky bottom-0 z-[999] rounded-lg rounded-t-[10px] bg-[#bbbbc5] px-8 py-5'>
       {/* user comment */}
       <div className='flex items-center space-x-3'>
         <div className='relative'>
-          {user.avatar ? (
+          {avatar ? (
             <img
-              src={user.avatar}
-              alt={user.name}
+              src={avatar}
+              alt={fullName}
               className='h-10 w-10 rounded-full object-cover'
             />
           ) : (
             <div className='flex h-10 w-10 items-center justify-center rounded-full bg-blue-100'>
               <span className='text-lg font-semibold text-blue-600'>
-                {user.name.charAt(0).toUpperCase()}
+                {fullName.charAt(0).toUpperCase()}
               </span>
             </div>
           )}
         </div>
 
         <div className='flex items-center space-x-2'>
-          <h3 className='text-[16px] font-medium text-black'>{user.name}</h3>
-          {user.isVerified && (
-            <VerifyBadge className='h-4 w-4 text-[#1560BD]' />
-          )}
+          <h3 className='text-[16px] font-medium text-black'>{fullName}</h3>
+          {isVerified && <VerifyBadge className='h-4 w-4 text-[#1560BD]' />}
         </div>
       </div>
 
