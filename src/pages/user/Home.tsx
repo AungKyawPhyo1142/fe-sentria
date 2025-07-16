@@ -10,12 +10,15 @@ import {
   useGetAllDisasterReports,
 } from '@/services/network/lib/disasterReport'
 import PostCard from '@/components/posts/PostCard'
+import { selectAuth, useAuthStore } from '@/zustand/authStore'
 
 // component for Post Lists
 interface ReportPostProps {
   postLists: ReportData[]
 }
 const PostList: React.FC<ReportPostProps> = ({ postLists }) => {
+  const { userId } = useAuthStore(selectAuth)
+  console.log('user id: ', userId)
   return (
     // * rendering get all reports
     <div className=''>
@@ -34,8 +37,10 @@ const PostList: React.FC<ReportPostProps> = ({ postLists }) => {
 
         return (
           <PostCard
+            reporterId={postList.generatedBy.id}
             key={index}
             id={postList._id}
+            loginUser={userId}
             user={{
               name: `${postList.generatedBy.firstName} ${postList.generatedBy.lastName}`,
               avatar: postList.generatedBy.profile_image,

@@ -44,6 +44,8 @@ interface PostCardProps {
   onUpvote?: () => void
   onDownvote?: () => void
   onComment?: () => void
+  reporterId?: string
+  loginUser?: string
 }
 
 const PostCard = ({
@@ -62,8 +64,17 @@ const PostCard = ({
   onUpvote,
   onDownvote,
   onComment,
+  reporterId,
+  loginUser,
 }: PostCardProps) => {
   const { t } = useTranslation()
+  const isOwner = String(reporterId) === String(loginUser)
+  console.log('Owner / reporter', isOwner)
+  console.log('reporterId: ', reporterId)
+  console.log('loginUser: ', loginUser)
+  console.log('reporterId type:', typeof reporterId)
+  console.log('loginUser type:', typeof loginUser)
+
   const [showMenu, setShowMenu] = useState(false)
   const getTrustWarning = (score: number, isDebunked: boolean) => {
     if (isDebunked) {
@@ -249,31 +260,33 @@ const PostCard = ({
               </button>
             </div>
             {/* menu */}
-            <div className='relative'>
-              <button
-                onClick={() => setShowMenu(!showMenu)}
-                className='text-[#33333430] focus-within:ring-0 hover:cursor-pointer hover:text-[#33333430]/80 focus:ring-0 focus:outline-none focus-visible:ring-0'
-              >
-                <Ellipsis className='h-6 w-6 stroke-1' />
-              </button>
-              {showMenu && (
-                <div className='absolute -right-9 bottom-full z-50 mb-1 w-28 rounded-md border border-[#333334]/30 bg-white'>
-                  <button
-                    onClick={() => console.log('Edit Post')}
-                    className='flex w-full cursor-pointer items-center gap-2 px-4 py-2 text-xs text-[#333334]/80 hover:text-[#333334]/30 focus:ring-0 focus:outline-none focus-visible:ring-0'
-                    disabled
-                  >
-                    <EditIcon className='h-4 w-4' /> Edit
-                  </button>
-                  <button
-                    onClick={() => console.log('Delete Post')}
-                    className='flex w-full items-center gap-2 px-4 py-2 text-xs text-[#B22222] hover:cursor-pointer hover:text-[#B22222]/80 focus:ring-0 focus:outline-none focus-visible:ring-0'
-                  >
-                    <Trash className='h-4 w-4' /> Delete
-                  </button>
-                </div>
-              )}
-            </div>
+            {isOwner && (
+              <div className='relative'>
+                <button
+                  onClick={() => setShowMenu(!showMenu)}
+                  className='text-[#33333430] focus-within:ring-0 hover:cursor-pointer hover:text-[#33333430]/80 focus:ring-0 focus:outline-none focus-visible:ring-0'
+                >
+                  <Ellipsis className='h-6 w-6 stroke-1' />
+                </button>
+                {showMenu && (
+                  <div className='absolute -right-9 bottom-full z-50 mb-1 w-28 rounded-md border border-[#333334]/30 bg-white'>
+                    <button
+                      onClick={() => console.log('Edit Post')}
+                      className='flex w-full cursor-pointer items-center gap-2 px-4 py-2 text-xs text-[#333334]/80 hover:text-[#333334]/30 focus:ring-0 focus:outline-none focus-visible:ring-0'
+                      disabled
+                    >
+                      <EditIcon className='h-4 w-4' /> Edit
+                    </button>
+                    <button
+                      onClick={() => console.log('Delete Post')}
+                      className='flex w-full items-center gap-2 px-4 py-2 text-xs text-[#B22222] hover:cursor-pointer hover:text-[#B22222]/80 focus:ring-0 focus:outline-none focus-visible:ring-0'
+                    >
+                      <Trash className='h-4 w-4' /> Delete
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>

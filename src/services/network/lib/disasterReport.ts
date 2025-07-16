@@ -41,7 +41,7 @@ export interface ReportData {
   createdAt: string
   updatedAt: string
   generatedBy: {
-    id: number | null
+    id: string
     firstName: string
     lastName: string
     profile_image: string | null
