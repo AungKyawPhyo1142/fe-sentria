@@ -130,16 +130,30 @@ const ReportDetailModal: React.FC<reportDetailProps> = ({
           exit='exit'
           variants={backdropVariants}
         >
-          {/* Trust Score Warning - Outside border */}
-          {trustWarning.show && (
-            <div
-              className={`mb-0 w-fit rounded-t-xl ${trustWarning.bgColor} px-4 py-1`}
-            >
-              <span className='text-[12px] font-medium text-white'>
-                {trustWarning.message}
-              </span>
+          {/* Trust Score Warning & Close - Outside border */}
+          <div className='m-0 flex items-center justify-between space-x-120 p-0 align-middle'>
+            <div>
+              {trustWarning.show && (
+                <div
+                  className={`mb-0 w-fit rounded-t-xl ${trustWarning.bgColor} px-4 py-1`}
+                >
+                  <span className='text-[12px] font-medium text-white'>
+                    {trustWarning.message}
+                  </span>
+                </div>
+              )}
             </div>
-          )}
+            {/* Close */}
+            <button
+              onClick={() => setIsOpen(false)}
+              className='cursor-pointe absolute top-11 right-15 z-50 text-gray-400 hover:cursor-pointer hover:text-gray-700'
+            >
+              <X
+                className='h-7 w-7 rounded-full bg-black/80 p-1'
+                strokeWidth={2}
+              />
+            </button>
+          </div>
           <motion.div
             className='custom-scroll relative flex max-h-[90vh] w-189 flex-col rounded-lg bg-white shadow-xl'
             variants={modalVariants}
@@ -189,17 +203,19 @@ const ReportDetailModal: React.FC<reportDetailProps> = ({
                 </div>
 
                 {/* trust Score */}
-                <div className='mr-6'>
-                  <TrustScoreBadge score={trustScore} />
+                <div className='flex space-x-2'>
+                  <div className=''>
+                    <TrustScoreBadge score={trustScore} />
+                  </div>
+                  <div
+                    className={`flex h-7 items-center space-x-1 rounded-sm px-2 py-1 text-xs font-medium text-white ${isDebunked ? 'bg-[#33333430]' : 'bg-[#B22222]'}`}
+                  >
+                    {getDisasterIcon(disasterType)}
+                    <span className='capitalize'>
+                      {t(`disasters.${disasterType}`)}
+                    </span>
+                  </div>
                 </div>
-
-                {/* Close */}
-                <button
-                  onClick={() => setIsOpen(false)}
-                  className='fix cursor-pointe top-0 right-0 my-3 text-gray-500 hover:cursor-pointer hover:text-gray-700'
-                >
-                  <X className='h-8 w-8' strokeWidth={2} />
-                </button>
               </div>
 
               {/* post detail */}
@@ -211,14 +227,6 @@ const ReportDetailModal: React.FC<reportDetailProps> = ({
                       <span>{t('common.debunked')}</span>
                     </div>
                   )}
-                  <div
-                    className={`flex h-7 items-center space-x-1 rounded-sm px-2 py-1 text-xs font-medium text-white ${isDebunked ? 'bg-[#33333430]' : 'bg-[#B22222]'}`}
-                  >
-                    {getDisasterIcon(disasterType)}
-                    <span className='capitalize'>
-                      {t(`disasters.${disasterType}`)}
-                    </span>
-                  </div>
                 </div>
 
                 {/* Location */}
