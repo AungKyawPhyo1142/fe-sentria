@@ -17,12 +17,6 @@ export const ApiConstantRoutes = {
         get verifyEmail() {
           return `${this.default}/verify-email/:token`
         },
-        getReports() {
-          return `/report`
-        },
-        getReportById(id: string) {
-          return `/report/${id}`
-        },
       }
     },
     get user() {
@@ -36,6 +30,22 @@ export const ApiConstantRoutes = {
 
         get updateProfile() {
           return `${this.default}/:id`
+        },
+      }
+    },
+    get report() {
+      return {
+        get default() {
+          return '/report'
+        },
+        getReports() {
+          return `${this.default}`
+        },
+        getReportById(id: string) {
+          return `${this.default}/${id}`
+        },
+        get createReport() {
+          return `${this.default}/create`
         },
       }
     },

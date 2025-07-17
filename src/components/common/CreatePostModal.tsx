@@ -8,6 +8,10 @@ import Button from './Button'
 import MapSelector from './MapSelector'
 import { useTranslation } from 'react-i18next'
 import Input from './Input'
+import {
+  CreateReport,
+  useCreateDisasterReport,
+} from '@/services/network/lib/disasterReport'
 
 // Create Post Modal Interfaace
 interface createPostProps {
@@ -90,43 +94,66 @@ const CreatePostModal: React.FC<createPostProps> = ({
     setLocation(null)
     setPreviewImages([])
     setIsOpen(false)
-
-    // set current locaiotn
-    // navigator.geolocation.getCurrentPosition(async (pos) => {
-    //   const lat = pos.coords.latitude
-    //   const lon = pos.coords.longitude
-
-    //   const res = await fetch(
-    //     `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=jsonv2`,
-    //   )
-    //   const data = await res.json()
-    //   const { road, city, town, village } = data.address
-    //   const place: PlaceInfo = {
-    //     lat,
-    //     lon,
-    //     display: data.display_name,
-    //     street: road,
-    //     city: city || town || village,
-    //   }
-    //   setLocation(place)
-    // })
   }
 
   // submit button
+  // const handleSubmit = (e: React.FormEvent) => {
+  //   e.preventDefault()
+  //   const formData = {
+  //     disasterType,
+  //     severityType,
+  //     title,
+  //     description,
+  //     location,
+  //     uploadedImages,
+  //   }
+  //   console.log('Form Submittede: ', formData)
+  //   alert('Create Post successfully!')
+  //   handleCancel()
+  //   setIsOpen(false)
+  // }
+
+  const { mutate: createReport, isPending } = useCreateDisasterReport()
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    const formData = {
-      disasterType,
-      severityType,
-      title,
-      description,
-      location,
-      uploadedImages,
+
+    if (!title.trim()) {
+      alert('Title is required.')
+      return
     }
-    console.log('Form Submittede: ', formData)
-    alert('Create Post successfully!')
-    handleCancel()
-    setIsOpen(false)
+
+    const reportData: CreateReport = {
+      reportImage: uploadedImages,
+      imageCaption: '', // always blank
+      reportType: disasterType,
+      name: title,
+      parameters: {
+        description,
+        incidentType: disasterType.toUpperCase(), // optional: if needed in uppercase
+        severity: severityType.toUpperCase(), // optional: uppercase
+        incidentTimestamp: new Date().toISOString(), // current time; or use a date input
+        location: {
+          city: location.city,
+          country: location.country,
+          latitude: location.latitude,
+          longitude: location.longitude,
+        },
+        media: [],
+      },
+    }
+
+    createReport(reportData, {
+      onSuccess: (res) => {
+        console.log('Report created:', res.data)
+        alert('Create Post successfully!')
+        handleCancel()
+      },
+      onError: (err) => {
+        console.error('Failed to create report:', err)
+        alert('Failed to create post.')
+      },
+    })
   }
 
   // remove selected image
@@ -231,7 +258,7 @@ const CreatePostModal: React.FC<createPostProps> = ({
                   </div>
                 </div>
               </div>
-              {/* title */}
+              {/* title is name */}
               <div>
                 <label
                   htmlFor='title'
@@ -257,13 +284,6 @@ const CreatePostModal: React.FC<createPostProps> = ({
                   {t('createPost.description')}
                   <span className='text-red'>*</span>
                 </label>
-                {/* <Input
-                  type='description'
-                  name='description'
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  required
-                /> */}
                 <textarea
                   id='description'
                   value={description}
@@ -352,8 +372,13 @@ const CreatePostModal: React.FC<createPostProps> = ({
                 >
                   {t('createPost.cancel')}
                 </Button>
-                <Button className='w-29' primary type='submit'>
-                  {t('createPost.submit')}
+                <Button
+                  className='w-29'
+                  primary
+                  type='submit'
+                  disabled={isPending}
+                >
+                  {isPending ? 'Submitting...' : t('createPost.submit')}
                 </Button>
               </div>
             </form>

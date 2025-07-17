@@ -93,12 +93,12 @@ const Home = () => {
     }
   }, [isConnected])
   const { data, isLoading, error } = useGetAllDisasterReports()
-  console.log('report data: ', data)
-  console.log('data.pages', data?.pages)
+  // console.log('report data: ', data)
+  // console.log('data.pages', data?.pages)
 
   const reports =
     data?.pages?.flatMap((page) => page.data.reports.data ?? []) ?? []
-  console.log('length: ', reports.length)
+  // console.log('length: ', reports.length)
 
   if (isLoading) return <p>Loading...</p>
   if (error) return <p>Error loading reports</p>

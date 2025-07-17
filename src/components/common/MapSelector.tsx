@@ -19,11 +19,10 @@ function SetViewLocation({ position }: { position: [number, number] }) {
 }
 
 export interface PlaceInfo {
-  lat: number
-  lon: number
-  display: string
-  street?: string
-  city?: string
+  city: string
+  country: string
+  latitude: number
+  longitude: number
 }
 
 interface MapSelectorProps {
@@ -40,13 +39,12 @@ const MapSelector = ({ onLocationChange }: MapSelectorProps) => {
     const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=jsonv2`
     const res = await fetch(url)
     const data = await res.json()
-    const { road, city, town, village } = data.address
+    const { city, town, village } = data.address
     const place: PlaceInfo = {
-      lat,
-      lon,
-      display: data.display_name,
-      street: road,
-      city: city || town || village,
+      city: city || town || village || 'Unknown',
+      country: data.address.country || 'Unknown',
+      latitude: lat,
+      longitude: lon,
     }
     onLocationChange(place)
     setLoadingPlace(false)

@@ -1,7 +1,9 @@
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
+import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query'
 import { STATUS } from './auth'
 import { apiClient } from '../apiClient'
 import { ApiConstantRoutes } from '../path'
+import axios from 'axios'
+import { PlaceInfo } from '@/components/common/MapSelector'
 
 export interface ReportData {
   _id: string
@@ -44,7 +46,7 @@ export interface ReportData {
     id: string
     firstName: string
     lastName: string
-    profile_image: string | null 
+    profile_image: string | null
   }
 }
 
@@ -69,11 +71,40 @@ export interface ReportDetailResponse {
   status: STATUS
 }
 
+//create report
+export interface CreateReport {
+  reportImage: File[]
+  imageCaption?: string
+  reportType: string
+  name: string
+  parameters: {
+    description: string
+    incidentType: string
+    severity: string
+    incidentTimestamp: string
+    location: PlaceInfo
+    media: any[] // should always be []
+  }
+}
+
+interface CreateReportResponse {
+  data: {
+    result: {
+      postgresReportId: string
+      mongoDbReportId: string
+      message: string
+      currentStatus: string
+    }
+  }
+  status: string
+}
+
+//get all reports
 export const useGetAllDisasterReports = (searchQuery?: string) => {
   return useInfiniteQuery<ReportResponse>({
     queryKey: ['get-all-disaster-reports', searchQuery],
     queryFn: ({ pageParam = '' }) => {
-      return apiClient.get(ApiConstantRoutes.paths.auth.getReports(), {
+      return apiClient.get(ApiConstantRoutes.paths.report.getReports(), {
         params: {
           limit: 10,
           cursor: pageParam,
@@ -92,6 +123,48 @@ export const useGetDisasterReportDetail = (id: string) => {
   return useQuery<ReportDetailResponse>({
     queryKey: ['get-disaster-report-detail', id],
     queryFn: () =>
-      apiClient.get(ApiConstantRoutes.paths.auth.getReportById(id)),
+      apiClient.get(ApiConstantRoutes.paths.report.getReportById(id)),
   })
 }
+
+//create report
+export const useCreateDisasterReport = () =>
+  useMutation<CreateReportResponse, Error, CreateReport>({
+    mutationFn: async (data: CreateReport) => {
+      const formData = new FormData()
+      data.reportImage.forEach((file) => {
+        formData.append('reportImage', file)
+      })
+      formData.append('imageCaption', '') // will always send blank
+      formData.append('reportType', data.reportType)
+      formData.append('name', data.name)
+
+      const updatedParams = {
+        ...data.parameters,
+        media: [], // always empty
+      }
+      formData.append('parameters', JSON.stringify(updatedParams))
+
+      // ✅ Log form data content before sending
+      console.log('🔍 FormData being sent:')
+      formData.forEach((value, key) => {
+        console.log(`${key}:`, value)
+      })
+
+      try {
+        const res = await axios.post(
+          ApiConstantRoutes.paths.report.createReport,
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          },
+        )
+        console.log(' Response:', res.data)
+        return res.data
+      } catch (error) {
+        console.error('Failed to create report:', error)
+      }
+    },
+  })
