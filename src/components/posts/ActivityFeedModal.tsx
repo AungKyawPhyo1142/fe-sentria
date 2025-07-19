@@ -1,6 +1,11 @@
-import { useState } from 'react'
-import { X, MapPin } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { X } from 'lucide-react'
+import L from 'leaflet'
+import 'leaflet/dist/leaflet.css'
+import { MapContainer, Marker, TileLayer, useMapEvents } from 'react-leaflet'
 import Button from '../common/Button'
+import LocateButton from '../common/LocateButton'
+import RichTextEditor from '../RichTextEditor'
 
 type ActivityType = 'offer' | 'request'
 
@@ -10,6 +15,59 @@ interface ActivityFormData {
   quantities: { [key: string]: number }
   description: string
   location: string
+  coordinates: [number, number] | null
+}
+
+const DraggableMarker = ({
+  position,
+  onPositionChange,
+}: {
+  position: [number, number] | null
+  onPositionChange: (pos: [number, number]) => void
+}) => {
+  const map = useMapEvents({
+    click(e) {
+      const newPos: [number, number] = [e.latlng.lat, e.latlng.lng]
+      onPositionChange(newPos)
+    },
+    locationfound(e) {
+      const newPos: [number, number] = [e.latlng.lat, e.latlng.lng]
+      onPositionChange(newPos)
+      map.setView(e.latlng, map.getZoom())
+    },
+  })
+
+  useEffect(() => {
+    map.locate({
+      setView: true,
+      maxZoom: 16,
+      watch: false,
+      enableHighAccuracy: true,
+    })
+  }, [map])
+
+  return position ? (
+    <Marker
+      position={position}
+      draggable={true}
+      eventHandlers={{
+        dragend: (e) => {
+          const marker = e.target
+          const newPos = marker.getLatLng()
+          onPositionChange([newPos.lat, newPos.lng])
+        },
+      }}
+      icon={L.icon({
+        iconUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowUrl:
+          'https://unpkg.com/leaflet@1.9.3/dist/images/marker-shadow.png',
+        shadowSize: [41, 41],
+      })}
+    />
+  ) : null
 }
 
 interface Props {
@@ -29,6 +87,7 @@ const ActivityPostModal: React.FC<Props> = ({
     quantities: {},
     description: '',
     location: '',
+    coordinates: null,
   })
 
   const helpOptions = [
@@ -45,6 +104,7 @@ const ActivityPostModal: React.FC<Props> = ({
       quantities: {},
       description: '',
       location: '',
+      coordinates: null,
     })
   }
 
@@ -55,6 +115,16 @@ const ActivityPostModal: React.FC<Props> = ({
 
   function handleTypeChange(type: ActivityType) {
     setFormData((prev) => ({ ...prev, type }))
+  }
+
+  const handleDescriptionChange = (html: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      parameters: {
+        ...prev,
+        description: html,
+      },
+    }))
   }
 
   function handleHelpTypeToggle(helpType: string) {
@@ -207,16 +277,11 @@ const ActivityPostModal: React.FC<Props> = ({
             <label className='mb-2 block text-2xl font-medium'>
               Description
             </label>
-            <textarea
-              value={formData.description}
-              onChange={(e) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  description: e.target.value,
-                }))
-              }
-              placeholder='Some texts here'
-              className='h-42 w-full resize-none rounded-lg border border-gray-300 px-3 py-2 text-[16px]'
+            <RichTextEditor
+              content={formData.description}
+              onChange={handleDescriptionChange}
+              minHeight='128px'
+              className='h-44'
             />
           </div>
 
@@ -226,37 +291,50 @@ const ActivityPostModal: React.FC<Props> = ({
                 Your location
               </label>
               <div className='text-sm font-medium text-black/50'>
-                Drag this pin to set your exact location
+                Click or drag the pin to set your exact location
               </div>
             </div>
-            <div className='relative'>
-              <MapPin className='absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-gray-400' />
-              <input
-                type='text'
-                value={formData.location}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, location: e.target.value }))
-                }
-                placeholder='Drag this pin to set your exact location'
-                className='w-full rounded-lg border border-gray-300 py-2 pr-3 pl-10 text-sm'
-              />
+            <div className='h-60 w-full overflow-hidden rounded-lg border border-gray-300'>
+              <MapContainer
+                center={formData.coordinates || [0, 0]}
+                zoom={13}
+                scrollWheelZoom={true}
+                style={{ height: '100%', width: '100%' }}
+              >
+                <LocateButton position={formData.coordinates} />
+                <TileLayer
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                  url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+                />
+                <DraggableMarker
+                  position={formData.coordinates}
+                  onPositionChange={(pos) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      coordinates: pos,
+                      location: `${pos[0].toFixed(6)}, ${pos[1].toFixed(6)}`,
+                    }))
+                  }}
+                />
+              </MapContainer>
             </div>
+            {formData.coordinates && (
+              <div className='mt-2 text-sm text-gray-600'>
+                Coordinates: {formData.coordinates[0].toFixed(6)},{' '}
+                {formData.coordinates[1].toFixed(6)}
+              </div>
+            )}
           </div>
 
           <div className='flex items-center justify-between pt-4 text-[20px]'>
-            <Button onClick={closeModal} className='h-16 w-35 bg-black/25'>
+            <Button onClick={closeModal} className='h-8 w-25 bg-black/25'>
               Cancel
             </Button>
             <Button
               destructive={formData.type === 'request'}
               primary={formData.type === 'offer'}
               onClick={handleSubmit}
-              className={`h-16 w-60`}
-              disabled={
-                !formData.description.trim() ||
-                !formData.location.trim() ||
-                formData.helpTypes.length === 0
-              }
+              className={`h-8 w-45`}
             >
               {formData.type === 'request'
                 ? 'Request for help'

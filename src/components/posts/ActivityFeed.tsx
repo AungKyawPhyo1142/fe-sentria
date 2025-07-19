@@ -84,12 +84,12 @@ export const ActivityFeed = () => {
       <div className='scrollbar-hide flex flex-1 flex-col overflow-y-auto'>
         <div className='mt-4 flex items-center justify-between gap-4 px-6 py-4'>
           <div className='flex flex-shrink-0 items-center gap-4'>
-            <span className='text-[20px] font-extralight whitespace-nowrap text-black'>
+            <span className='text-[16px] font-extralight whitespace-nowrap text-black'>
               Sort by:
             </span>
             <div className='relative w-75 flex-shrink-0'>
               <DropDown
-                className='min-h-[50px] w-full appearance-none'
+                className='min-h-[50px] w-full appearance-none text-sm'
                 itemList={sortOptions.map(
                   (option) => option[0].toUpperCase() + option.slice(1),
                 )}
@@ -104,7 +104,7 @@ export const ActivityFeed = () => {
             <Input
               showSearchIcon
               type='text'
-              className='min-h-[50px] w-full border-r ps-11 text-[20px]'
+              className='min-h-[50px] w-full border-r ps-11 text-[16px]'
               value={locationSearch}
               onChange={(e) => setLocationSearch(e.target.value)}
               placeholder='Location'
@@ -126,7 +126,7 @@ export const ActivityFeed = () => {
         </div>
       </div>
 
-      <div className='w-80 border-l border-[#33333430] p-6'>
+      <div className='w-80 p-6'>
         <div className='flex flex-col gap-y-5'>
           <div className='mt-4 flex w-full flex-col gap-y-4 rounded-lg border border-[#33333430] p-4'>
             <h2 className='text-lg font-light text-[#3333344d]'>Filter by</h2>

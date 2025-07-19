@@ -1,14 +1,70 @@
 import { useState, useRef, useEffect } from 'react'
-import { X, MapPin, CloudUpload, ChevronDown } from 'lucide-react'
+import { X, CloudUpload, ChevronDown } from 'lucide-react'
 import clsx from 'clsx'
+import L from 'leaflet'
+import 'leaflet/dist/leaflet.css'
+import { MapContainer, Marker, TileLayer, useMapEvents } from 'react-leaflet'
 import Button from '../common/Button'
 import Input from '../common/Input'
+import LocateButton from '../common/LocateButton'
 import RichTextEditor from '../RichTextEditor'
 import {
   ResourceType,
   CreateResourceFormValues,
   CreateResourceFormValuesWithFiles,
 } from '@/services/network/lib/resources'
+
+const DraggableMarker = ({
+  position,
+  onPositionChange,
+}: {
+  position: [number, number] | null
+  onPositionChange: (pos: [number, number]) => void
+}) => {
+  const map = useMapEvents({
+    click(e) {
+      const newPos: [number, number] = [e.latlng.lat, e.latlng.lng]
+      onPositionChange(newPos)
+    },
+    locationfound(e) {
+      const newPos: [number, number] = [e.latlng.lat, e.latlng.lng]
+      onPositionChange(newPos)
+      map.setView(e.latlng, map.getZoom())
+    },
+  })
+
+  useEffect(() => {
+    map.locate({
+      setView: true,
+      maxZoom: 16,
+      watch: false,
+      enableHighAccuracy: true,
+    })
+  }, [map])
+
+  return position ? (
+    <Marker
+      position={position}
+      draggable={true}
+      eventHandlers={{
+        dragend: (e) => {
+          const marker = e.target
+          const newPos = marker.getLatLng()
+          onPositionChange([newPos.lat, newPos.lng])
+        },
+      }}
+      icon={L.icon({
+        iconUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowUrl:
+          'https://unpkg.com/leaflet@1.9.3/dist/images/marker-shadow.png',
+        shadowSize: [41, 41],
+      })}
+    />
+  ) : null
+}
 
 interface Props {
   isOpen: boolean
@@ -267,25 +323,80 @@ const CreateResourceModal: React.FC<Props> = ({
             />
           </div>
 
-          {/* Location & Address Placeholder */}
+          {/* Location & Address */}
           <div>
             <div className='mb-3 flex items-baseline justify-between'>
               <label className='mb-2 text-[20px] font-medium text-black'>
                 Location
               </label>
-            </div>
-            <div className='flex h-48 items-center justify-center rounded-lg border bg-gray-50 p-4'>
-              <div className='text-center text-gray-500'>
-                <MapPin className='mx-auto mb-2 h-8 w-8' />
-                <p className='text-sm font-medium'>
-                  Map integration coming soon
-                </p>
-                <p className='mt-2 text-xs text-[#33333480]'>
-                  Location and address information will be provided through the
-                  map interface
-                </p>
+              <div className='text-sm font-medium text-black/50'>
+                Click or drag the pin to set your location
               </div>
             </div>
+            <div className='h-48 w-full overflow-hidden rounded-lg border border-gray-300'>
+              <MapContainer
+                center={
+                  formData.parameters.location.latitude !== 0 &&
+                  formData.parameters.location.longitude !== 0
+                    ? [
+                        formData.parameters.location.latitude,
+                        formData.parameters.location.longitude,
+                      ]
+                    : [0, 0]
+                }
+                zoom={13}
+                scrollWheelZoom={true}
+                style={{ height: '100%', width: '100%' }}
+              >
+                <LocateButton
+                  position={
+                    formData.parameters.location.latitude !== 0 &&
+                    formData.parameters.location.longitude !== 0
+                      ? [
+                          formData.parameters.location.latitude,
+                          formData.parameters.location.longitude,
+                        ]
+                      : null
+                  }
+                />
+                <TileLayer
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                  url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+                />
+                <DraggableMarker
+                  position={
+                    formData.parameters.location.latitude !== 0 &&
+                    formData.parameters.location.longitude !== 0
+                      ? [
+                          formData.parameters.location.latitude,
+                          formData.parameters.location.longitude,
+                        ]
+                      : null
+                  }
+                  onPositionChange={(pos) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      parameters: {
+                        ...prev.parameters,
+                        location: {
+                          ...prev.parameters.location,
+                          latitude: pos[0],
+                          longitude: pos[1],
+                        },
+                      },
+                    }))
+                  }}
+                />
+              </MapContainer>
+            </div>
+            {formData.parameters.location.latitude !== 0 &&
+              formData.parameters.location.longitude !== 0 && (
+                <div className='mt-2 text-sm text-gray-600'>
+                  Coordinates:{' '}
+                  {formData.parameters.location.latitude.toFixed(6)},{' '}
+                  {formData.parameters.location.longitude.toFixed(6)}
+                </div>
+              )}
           </div>
 
           {/* Image Upload */}
