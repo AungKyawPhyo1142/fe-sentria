@@ -104,7 +104,7 @@ export const useGetAllDisasterReports = (searchQuery?: string) => {
   return useInfiniteQuery<ReportResponse>({
     queryKey: ['get-all-disaster-reports', searchQuery],
     queryFn: ({ pageParam = '' }) => {
-      return apiClient.get(ApiConstantRoutes.paths.report.getReports(), {
+      return apiClient.get(ApiConstantRoutes.paths.report.default, {
         params: {
           limit: 10,
           cursor: pageParam,
@@ -151,9 +151,11 @@ export const useCreateDisasterReport = () =>
         console.log(`${key}:`, value)
       })
 
+      console.log('url is: ', ApiConstantRoutes.paths.report.create)
+
       try {
-        const res = await axios.post(
-          ApiConstantRoutes.paths.report.createReport,
+        const res = await apiClient.post(
+          ApiConstantRoutes.paths.report.create,
           formData,
           {
             headers: {

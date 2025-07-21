@@ -128,6 +128,6 @@ export interface GetReportsResponse {
 export const useGetAllReports = () => {
   return useQuery<GetReportsResponse>({
     queryKey: ['get-all-reports'],
-    queryFn: () => apiClient.get(ApiConstantRoutes.paths.auth.getReports()),
+    queryFn: () => apiClient.get(ApiConstantRoutes.paths.report.default),
   })
 }
