@@ -113,7 +113,6 @@ export interface Report {
   }
 }
 
-
 export interface GetReportsResponse {
   data: {
     reports: {

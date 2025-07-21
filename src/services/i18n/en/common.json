@@ -13,11 +13,11 @@
     "storm": "Storm",
     "other": "Other"
   },
-  "severity":{
+  "severity": {
     "unknown": "Unknown",
-    "minor" : "Minor",
-    "moderate" : "Moderate",
-    "severe" : "Severe"
+    "minor": "Minor",
+    "moderate": "Moderate",
+    "severe": "Severe"
   },
   "Login": {
     "welcome": "Welcome to Sentria.",
@@ -69,8 +69,8 @@
     "or": "or",
     "browse": "Browse",
     "dragPin": "Drag the pin to set your exact location",
-    "severity" : "Pick Severity Type",
-    "title" : "Post Title"
+    "severity": "Pick Severity Type",
+    "title": "Post Title"
   },
   "onboarding": {
     "letsTakeFirstStep": "Let's take the first step together",

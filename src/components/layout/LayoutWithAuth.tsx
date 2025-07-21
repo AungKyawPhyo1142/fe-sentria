@@ -10,7 +10,7 @@ const LayoutWithAuth = () => {
 
   return (
     <div className='flex min-h-screen flex-col'>
-      <ToastContainer/>
+      <ToastContainer />
       <div className='flex flex-1'>
         <Sidebar />
         <div className='w-full flex-col'>

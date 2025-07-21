@@ -48,18 +48,21 @@ class ReportSocketManager {
                     console.log('Updating report:', report.id)
                     console.log('New values:', {
                       factCheckStatus: data.factCheck.status,
-                      factCheckOverallPercentage: data.factCheck.factCheckOverallPercentage,
-                      factCheckLastUpdatedAt: data.factCheck.lastCalculatedAt
+                      factCheckOverallPercentage:
+                        data.factCheck.factCheckOverallPercentage,
+                      factCheckLastUpdatedAt: data.factCheck.lastCalculatedAt,
                     })
                     return {
                       ...report,
                       factCheckStatus: data.factCheck.status,
-                      factCheckOverallPercentage: data.factCheck.factCheckOverallPercentage,
+                      factCheckOverallPercentage:
+                        data.factCheck.factCheckOverallPercentage,
                       factCheckLastUpdatedAt: data.factCheck.lastCalculatedAt,
                       factCheck: {
                         ...report.factCheck,
-                        factCheckOverallPercentage: data.factCheck.factCheckOverallPercentage
-                      }
+                        factCheckOverallPercentage:
+                          data.factCheck.factCheckOverallPercentage,
+                      },
                     }
                   }
                   return report
