@@ -17,7 +17,7 @@ import {
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router'
 import { useState } from 'react'
-import ActivityPostModal from '@/components/posts/ActivityFeedModal'
+import ActivityPostModal from '@/components/posts/ActivityPostModal'
 import PostCard from '@/components/posts/PostCard'
 
 const samplePosts = [

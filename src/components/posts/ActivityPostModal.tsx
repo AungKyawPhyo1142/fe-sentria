@@ -3,18 +3,20 @@ import { X } from 'lucide-react'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { MapContainer, Marker, TileLayer, useMapEvents } from 'react-leaflet'
+import { CreateActivityRequest } from '@/services/network/lib/activity'
 import Button from '../common/Button'
 import LocateButton from '../common/LocateButton'
 import RichTextEditor from '../RichTextEditor'
 
 type ActivityType = 'offer' | 'request'
 
-interface ActivityFormData {
-  type: ActivityType
-  helpTypes: string[]
+interface CreateActivityFormValues
+  extends Pick<CreateActivityRequest, 'description'> {
+  activityType: ActivityType
+  helpItems: string[]
   quantities: { [key: string]: number }
-  description: string
-  location: string
+  city: string
+  country: string
   coordinates: [number, number] | null
 }
 
@@ -73,21 +75,24 @@ const DraggableMarker = ({
 interface Props {
   isOpen: boolean
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
-  onSubmit?: (data: ActivityFormData) => void
+  onSubmit?: (data: CreateActivityFormValues) => void
+  initialData?: Partial<CreateActivityFormValues> // For editing existing activities
 }
 
 const ActivityPostModal: React.FC<Props> = ({
   isOpen,
   setIsOpen,
   onSubmit,
+  initialData,
 }) => {
-  const [formData, setFormData] = useState<ActivityFormData>({
-    type: 'request',
-    helpTypes: [],
-    quantities: {},
-    description: '',
-    location: '',
-    coordinates: null,
+  const [formData, setFormData] = useState<CreateActivityFormValues>({
+    activityType: initialData?.activityType || 'request',
+    helpItems: initialData?.helpItems || [],
+    quantities: initialData?.quantities || {},
+    description: initialData?.description || '',
+    city: initialData?.city || 'London',
+    country: initialData?.country || 'United Kingdom',
+    coordinates: initialData?.coordinates || null,
   })
 
   const helpOptions = [
@@ -97,15 +102,45 @@ const ActivityPostModal: React.FC<Props> = ({
     { id: 'wifi', label: 'Wifi (Internet Connection)' },
   ]
 
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
+        activityType: initialData.activityType || 'request',
+        helpItems: initialData.helpItems || [],
+        quantities: initialData.quantities || {},
+        description: initialData.description || '',
+        city: initialData.city || 'London',
+        country: initialData.country || 'United Kingdom',
+        coordinates: initialData.coordinates || null,
+      })
+    }
+  }, [initialData])
+
   function resetModal() {
-    setFormData({
-      type: 'request',
-      helpTypes: [],
+    const defaultData = {
+      activityType: 'request' as const,
+      helpItems: [],
       quantities: {},
       description: '',
-      location: '',
+      city: 'London',
+      country: 'United Kingdom',
       coordinates: null,
-    })
+    }
+
+    // Use initialData if provided (for editing), otherwise use default
+    setFormData(
+      initialData
+        ? {
+            activityType: initialData.activityType || 'request',
+            helpItems: initialData.helpItems || [],
+            quantities: initialData.quantities || {},
+            description: initialData.description || '',
+            city: initialData.city || 'London',
+            country: initialData.country || 'United Kingdom',
+            coordinates: initialData.coordinates || null,
+          }
+        : defaultData,
+    )
   }
 
   function closeModal() {
@@ -114,25 +149,22 @@ const ActivityPostModal: React.FC<Props> = ({
   }
 
   function handleTypeChange(type: ActivityType) {
-    setFormData((prev) => ({ ...prev, type }))
+    setFormData((prev) => ({ ...prev, activityType: type }))
   }
 
   const handleDescriptionChange = (html: string) => {
     setFormData((prev) => ({
       ...prev,
-      parameters: {
-        ...prev,
-        description: html,
-      },
+      description: html,
     }))
   }
 
   function handleHelpTypeToggle(helpType: string) {
     setFormData((prev) => {
-      const isSelected = prev.helpTypes.includes(helpType)
+      const isSelected = prev.helpItems.includes(helpType)
       const newHelpTypes = isSelected
-        ? prev.helpTypes.filter((t) => t !== helpType)
-        : [...prev.helpTypes, helpType]
+        ? prev.helpItems.filter((t) => t !== helpType)
+        : [...prev.helpItems, helpType]
 
       const newQuantities = { ...prev.quantities }
       if (!isSelected) {
@@ -143,7 +175,7 @@ const ActivityPostModal: React.FC<Props> = ({
 
       return {
         ...prev,
-        helpTypes: newHelpTypes,
+        helpItems: newHelpTypes,
         quantities: newQuantities,
       }
     })
@@ -160,13 +192,11 @@ const ActivityPostModal: React.FC<Props> = ({
   }
 
   function handleSubmit() {
-    if (
-      !formData.description.trim() ||
-      !formData.location.trim() ||
-      formData.helpTypes.length === 0
-    ) {
+    if (!formData.description.trim() || formData.helpItems.length === 0) {
+      alert('Please fill in all required fields.')
       return
     }
+
     onSubmit?.(formData)
     closeModal()
   }
@@ -181,7 +211,7 @@ const ActivityPostModal: React.FC<Props> = ({
       <div className='relative max-h-[90vh] w-full max-w-[50%] overflow-y-auto rounded-lg bg-white px-10'>
         <div className='sticky top-0 z-10 flex items-center justify-between border-b border-black/30 bg-white py-6'>
           <h2 className='text-2xl font-medium text-black'>
-            Request / Offer Help
+            {initialData ? 'Edit Activity' : 'Request / Offer Help'}
           </h2>
           <button
             onClick={closeModal}
@@ -194,11 +224,13 @@ const ActivityPostModal: React.FC<Props> = ({
         <div className='space-y-6 py-5'>
           <div>
             <h3 className='mb-3 text-[32px] font-semibold'>
-              {formData.type === 'request' ? 'Request for help' : 'Offer help'}
+              {formData.activityType === 'request'
+                ? 'Request for help'
+                : 'Offer help'}
             </h3>
             <p className='mb-6 text-[20px] font-medium text-black/50'>
               Please fill up the following form to{' '}
-              {formData.type === 'request' ? 'request' : 'offer'} help.
+              {formData.activityType === 'request' ? 'request' : 'offer'} help.
             </p>
 
             <div className='space-y-2'>
@@ -208,7 +240,7 @@ const ActivityPostModal: React.FC<Props> = ({
                   <input
                     type='radio'
                     name='activityType'
-                    checked={formData.type === 'offer'}
+                    checked={formData.activityType === 'offer'}
                     onChange={() => handleTypeChange('offer')}
                     className='accent-primary mr-2 h-[30px] w-[30px]'
                   />
@@ -218,7 +250,7 @@ const ActivityPostModal: React.FC<Props> = ({
                   <input
                     type='radio'
                     name='activityType'
-                    checked={formData.type === 'request'}
+                    checked={formData.activityType === 'request'}
                     onChange={() => handleTypeChange('request')}
                     className='accent-primary mr-2 h-[30px] w-[30px]'
                   />
@@ -240,7 +272,7 @@ const ActivityPostModal: React.FC<Props> = ({
                   <label className='flex items-center'>
                     <input
                       type='checkbox'
-                      checked={formData.helpTypes.includes(option.id)}
+                      checked={formData.helpItems.includes(option.id)}
                       onChange={() => handleHelpTypeToggle(option.id)}
                       className='accent-primary mr-3 h-6 w-6'
                     />
@@ -248,7 +280,7 @@ const ActivityPostModal: React.FC<Props> = ({
                       {option.label}
                     </span>
                   </label>
-                  {formData.helpTypes.includes(option.id) &&
+                  {formData.helpItems.includes(option.id) &&
                     option.id !== 'wifi' && (
                       <div className='ml-9 flex items-center gap-2'>
                         <span className='text-[16px] font-medium text-black'>
@@ -312,16 +344,23 @@ const ActivityPostModal: React.FC<Props> = ({
                     setFormData((prev) => ({
                       ...prev,
                       coordinates: pos,
-                      location: `${pos[0].toFixed(6)}, ${pos[1].toFixed(6)}`,
+                      // These will be automatically determined from coordinates later
+                      city: 'Location Selected',
+                      country: 'United Kingdom',
                     }))
                   }}
                 />
               </MapContainer>
             </div>
             {formData.coordinates && (
-              <div className='mt-2 text-sm text-gray-600'>
-                Coordinates: {formData.coordinates[0].toFixed(6)},{' '}
-                {formData.coordinates[1].toFixed(6)}
+              <div className='mt-2 space-y-1'>
+                <div className='text-sm text-gray-600'>
+                  Coordinates: {formData.coordinates[0].toFixed(6)},{' '}
+                  {formData.coordinates[1].toFixed(6)}
+                </div>
+                <div className='text-xs text-gray-500'>
+                  Location: {formData.city}, {formData.country}
+                </div>
               </div>
             )}
           </div>
@@ -331,14 +370,16 @@ const ActivityPostModal: React.FC<Props> = ({
               Cancel
             </Button>
             <Button
-              destructive={formData.type === 'request'}
-              primary={formData.type === 'offer'}
+              destructive={formData.activityType === 'request'}
+              primary={formData.activityType === 'offer'}
               onClick={handleSubmit}
               className={`h-8 w-45`}
             >
-              {formData.type === 'request'
-                ? 'Request for help'
-                : 'Help people in need'}
+              {initialData
+                ? 'Update Activity'
+                : formData.activityType === 'request'
+                  ? 'Request for help'
+                  : 'Help people in need'}
             </Button>
           </div>
         </div>
@@ -348,3 +389,4 @@ const ActivityPostModal: React.FC<Props> = ({
 }
 
 export default ActivityPostModal
+export type { CreateActivityFormValues }

@@ -6,6 +6,14 @@ import { useLocation, useNavigate } from 'react-router'
 import Home from '@/assets/icons/home.svg?react'
 import Hand from '@/assets/icons/OfferHand2.svg?react'
 import SearchInput from './SearchInput'
+import ActivityPostModal from '../posts/ActivityPostModal'
+import { CreateActivityFormValues } from '@/components/posts/ActivityPostModal'
+import {
+  useCreateActivity,
+  ActivityType,
+  HelpType,
+  CreateActivityRequest,
+} from '@/services/network/lib/activity'
 
 const NavbarItems = [
   {
@@ -63,7 +71,70 @@ const NavbarItems = [
 
 const Navbar = () => {
   const [activeIcon, setActiveIcon] = useState<string>('home')
+  const [isActivityModalOpen, setIsActivityModalOpen] = useState(false)
   const navigate = useNavigate()
+
+  const createActivityMutation = useCreateActivity()
+
+  const handleActivitySubmit = (data: CreateActivityFormValues) => {
+    // Validate
+    if (!data.description?.trim()) {
+      alert('Please provide a description for your activity.')
+      return
+    }
+
+    if (!data.helpItems || data.helpItems.length === 0) {
+      alert('Please select at least one type of help.')
+      return
+    }
+
+    // Convert form data to API format with proper structure
+    const apiData: CreateActivityRequest = {
+      activityType:
+        data.activityType === 'offer'
+          ? ActivityType.OFFER
+          : ActivityType.REQUEST,
+      description: data.description.trim(),
+      location: {
+        city: data.city?.trim() || 'London', // Default to London if no city provided
+        country: data.country?.trim() || 'United Kingdom', // Default to UK if no country provided
+        latitude: data.coordinates ? data.coordinates[0] : 51.5074, // London coordinates as default
+        longitude: data.coordinates ? data.coordinates[1] : -0.1278,
+      },
+      helpItems: data.helpItems.map((helpType) => ({
+        helpType: mapHelpTypeToHelpType(helpType),
+        quantity: data.quantities[helpType] || null,
+      })),
+    }
+
+    console.log('Submitting activity:', apiData)
+
+    createActivityMutation.mutate(apiData, {
+      onSuccess: (response) => {
+        console.log('Activity created successfully from NavBar:', response)
+        setIsActivityModalOpen(false)
+      },
+      onError: (error) => {
+        console.error('Error creating activity from NavBar:', error)
+        alert('Failed to create activity. Please try again.')
+      },
+    })
+  }
+
+  const mapHelpTypeToHelpType = (helpType: string): HelpType => {
+    switch (helpType.toLowerCase()) {
+      case 'food':
+        return HelpType.FOOD
+      case 'water':
+        return HelpType.WATER
+      case 'shelter':
+        return HelpType.SHELTER
+      case 'wifi':
+        return HelpType.WIFI
+      default:
+        return HelpType.FOOD
+    }
+  }
 
   const handleIconClick = (title: string, path?: string) => {
     setActiveIcon(title)
@@ -104,11 +175,23 @@ const Navbar = () => {
           ))}
         </div>
 
-        {/* Create Post */}
-        <button className='bg-primary flex h-12.5 items-center justify-center rounded-xl px-4 py-1 font-light text-white hover:cursor-pointer'>
-          <CirclePlus size={26} strokeWidth={1} />
-          <span className='ml-3 text-[16px]'>Report a disaster</span>
-        </button>
+        {/* Create Post / Help Buttons */}
+        {isMapPage ? (
+          <button
+            onClick={() => setIsActivityModalOpen(true)}
+            className='bg-secondary flex h-12.5 items-center justify-center rounded-xl px-4 py-1 font-light text-white hover:cursor-pointer'
+          >
+            <CirclePlus size={26} strokeWidth={1} />
+            <span className='ml-2 text-[20px] font-light'>
+              I need / I can help
+            </span>
+          </button>
+        ) : (
+          <button className='bg-primary flex h-12.5 items-center justify-center rounded-xl px-4 py-1 font-light text-white hover:cursor-pointer'>
+            <CirclePlus size={26} strokeWidth={1} />
+            <span className='ml-3 text-[16px]'>Report a disaster</span>
+          </button>
+        )}
       </div>
 
       {/* Profile */}
@@ -119,6 +202,12 @@ const Navbar = () => {
         <Profile className='size-8 rounded-full object-cover' />
         <span className='text-sm'>Sweeny Sydney</span>
       </div>
+
+      <ActivityPostModal
+        isOpen={isActivityModalOpen}
+        setIsOpen={setIsActivityModalOpen}
+        onSubmit={handleActivitySubmit}
+      />
     </div>
   )
 }
