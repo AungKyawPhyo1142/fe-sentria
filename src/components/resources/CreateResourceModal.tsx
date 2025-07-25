@@ -1,14 +1,14 @@
-import { useState, useRef, useEffect } from 'react'
-import { X, MapPin, CloudUpload, ChevronDown } from 'lucide-react'
+import {
+  CreateResourceFormValues,
+  CreateResourceFormValuesWithFiles,
+  ResourceType,
+} from '@/services/network/lib/resources'
 import clsx from 'clsx'
+import { ChevronDown, CloudUpload, MapPin, X } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
 import Button from '../common/Button'
 import Input from '../common/Input'
 import RichTextEditor from '../RichTextEditor'
-import {
-  ResourceType,
-  CreateResourceFormValues,
-  CreateResourceFormValuesWithFiles,
-} from '@/services/network/lib/resources'
 
 interface Props {
   isOpen: boolean

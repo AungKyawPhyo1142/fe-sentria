@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react'
 import Profile from '@/assets/default-profile.svg?react'
-import { CirclePlus, HeartHandshake, Map, Phone } from 'lucide-react'
-import { AppConstantRoutes } from '@/services/routes/path'
-import { useLocation, useNavigate } from 'react-router'
 import Home from '@/assets/icons/home.svg?react'
 import Hand from '@/assets/icons/OfferHand2.svg?react'
+import { AppConstantRoutes } from '@/services/routes/path'
+import { CirclePlus, HeartHandshake, Map, Phone } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router'
 import SearchInput from './SearchInput'
 
 const NavbarItems = [
