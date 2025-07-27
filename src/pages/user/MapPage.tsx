@@ -2,7 +2,7 @@ import Map from '@/components/common/Map'
 import { MapFilterProvider } from '@/components/common/MapFilterContext'
 import { ActivityFeed } from '@/components/posts/ActivityFeed'
 import { useState } from 'react'
-import ResourcePage from './ResourcePage'
+import ResourcePage from '@/components/resources/ResourcePage'
 const MapPage = () => {
   const [page, setPage] = useState(1)
   const pageList = [
