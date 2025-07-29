@@ -131,7 +131,7 @@ const ReportDetailModal: React.FC<reportDetailProps> = ({
           variants={backdropVariants}
         >
           {/* Trust Score Warning & Close - Outside border */}
-          <div className='m-0 flex items-center justify-between space-x-120 p-0 align-middle'>
+          <div className='m-0 flex w-189 items-center justify-between space-x-120 p-0 align-middle'>
             <div>
               {trustWarning.show && (
                 <div
@@ -146,7 +146,7 @@ const ReportDetailModal: React.FC<reportDetailProps> = ({
             {/* Close */}
             <button
               onClick={() => setIsOpen(false)}
-              className='cursor-pointe absolute top-11 right-15 z-50 text-gray-400 hover:cursor-pointer hover:text-gray-700'
+              className='cursor-pointe  z-50 text-gray-400 hover:cursor-pointer hover:text-gray-700'
             >
               <X
                 className='h-7 w-7 rounded-full bg-black/80 p-1'

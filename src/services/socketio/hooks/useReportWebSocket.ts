@@ -1,7 +1,8 @@
-import { ReportResponse } from '@/services/network/lib/reports'
+import { ReportResponse } from '@/services/network/lib/disasterReport'
 import { InfiniteData, useQueryClient } from '@tanstack/react-query'
 import { socket } from '../socket'
 import { config } from '@config/register'
+// import { ReportDetailResponse } from '@/services/network/lib/disasterReport'
 
 interface FactCheckUpdate {
   reportId: string
@@ -89,10 +90,10 @@ class ReportSocketManager {
   private subscribeToReports(reportData: ReportResponse[]) {
     reportData.forEach((page) => {
       page.data.reports.data.forEach((report) => {
-        if (!this.subscriptions.has(report.id)) {
-          socket.emit('subscribe_to_report', report.id, (res: any) => {
-            console.log(`Subscribed to report: ${report.id}, `, res)
-            this.subscriptions.add(report.id)
+        if (!this.subscriptions.has(report._id)) {
+          socket.emit('subscribe_to_report', report._id, (res: any) => {
+            console.log(`Subscribed to report: ${report._id}, `, res)
+            this.subscriptions.add(report._id)
           })
         }
       })
