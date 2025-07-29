@@ -55,5 +55,27 @@ export const ApiConstantRoutes = {
         },
       }
     },
+    get activity() {
+      return {
+        get default() {
+          return '/activity'
+        },
+        get getAll() {
+          return `${this.default}`
+        },
+        get getById() {
+          return `${this.default}/:id`
+        },
+        get create() {
+          return `${this.default}`
+        },
+        get update() {
+          return `${this.default}/:id`
+        },
+        get delete() {
+          return `${this.default}/:id`
+        },
+      }
+    },
   },
 }

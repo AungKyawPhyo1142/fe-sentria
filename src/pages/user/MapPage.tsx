@@ -1,7 +1,8 @@
 import Map from '@/components/common/Map'
 import { MapFilterProvider } from '@/components/common/MapFilterContext'
+import { ActivityFeed } from '@/components/posts/ActivityFeed'
 import { useState } from 'react'
-import ResourcePage from './ResourcePage'
+import ResourcePage from '@/components/resources/ResourcePage'
 const MapPage = () => {
   const [page, setPage] = useState(1)
   const pageList = [
@@ -16,8 +17,8 @@ const MapPage = () => {
         </div>
       ),
     },
-    { id: 2, label: 'Posts', component: <div>Activity Feed</div> },
-    { id: 3, label: 'Resources', component: <ResourcePage/> },
+    { id: 2, label: 'Activity Feed', component: <ActivityFeed /> },
+    { id: 3, label: 'Resources', component: <ResourcePage /> },
   ]
 
   return (
