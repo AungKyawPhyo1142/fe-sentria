@@ -8,10 +8,7 @@ import Button from './Button'
 import MapSelector from './MapSelector'
 import { useTranslation } from 'react-i18next'
 import Input from './Input'
-import {
-  CreateReport,
-  useCreateDisasterReport,
-} from '@/services/network/lib/disasterReport'
+import { PlaceInfo } from '@/services/network/lib/disasterReport'
 
 // Create Post Modal Interfaace
 interface createPostProps {
@@ -70,7 +67,7 @@ const CreatePostModal: React.FC<createPostProps> = ({
   const [severityType, setSeverityType] = useState<string>('moderate')
   const [title, setTitle] = useState<string>('')
   const [description, setDescription] = useState<string>('')
-  const [location, setLocation] = useState<any>(null)
+  const [location, setLocation] = useState<PlaceInfo | null>(null)
   const [uploadedImages, setUploadedImages] = useState<File[]>([])
   const [previewImages, setPreviewImages] = useState<string[]>([])
 
@@ -90,72 +87,46 @@ const CreatePostModal: React.FC<createPostProps> = ({
   // cancel button
   const handleCancel = () => {
     setDisasterType('earthquake')
+    setSeverityType('moderate')
+    setTitle('')
     setDescription('')
     setLocation(null)
     setPreviewImages([])
     setIsOpen(false)
   }
 
+  // handle locaton
+  const handleLocationChange = (location: PlaceInfo) => {
+    console.log('📌 Location received in CreatePostModal:', location)
+    setLocation(location)
+  }
+
   // submit button
-  // const handleSubmit = (e: React.FormEvent) => {
-  //   e.preventDefault()
-  //   const formData = {
-  //     disasterType,
-  //     severityType,
-  //     title,
-  //     description,
-  //     location,
-  //     uploadedImages,
-  //   }
-  //   console.log('Form Submittede: ', formData)
-  //   alert('Create Post successfully!')
-  //   handleCancel()
-  //   setIsOpen(false)
-  // }
-
-  const { mutate: createReport, isPending } = useCreateDisasterReport()
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-
+    console.log('Location before submit:', location)
     if (!title.trim()) {
       alert('Title is required.')
       return
     }
-
-    const reportData: CreateReport = {
-      reportImage: uploadedImages,
-      imageCaption: '', // always blank
-      reportType: disasterType,
-      name: title,
-      parameters: {
-        description,
-        incidentType: disasterType.toUpperCase(), // optional: if needed in uppercase
-        severity: severityType.toUpperCase(), // optional: uppercase
-        incidentTimestamp: new Date().toISOString(), // current time; or use a date input
-        location: {
-          city: location.city,
-          country: location.country,
-          latitude: location.latitude,
-          longitude: location.longitude,
-        },
-        media: [],
-      },
+    if (!location) {
+      alert('Location is required.')
+      return
     }
-
-    createReport(reportData, {
-      onSuccess: (res) => {
-        console.log('Report created:', res.data)
-        alert('Create Post successfully!')
-        handleCancel()
-      },
-      onError: (err) => {
-        console.error('Failed to create report:', err)
-        alert('Failed to create post.')
-      },
-    })
+    const formData = {
+      disasterType,
+      severityType,
+      title,
+      description,
+      location,
+      uploadedImages,
+    }
+    console.log('Form Submittede: ', formData)
+    console.log('Location submitteded:', location)
+    alert('Create Post successfully!')
+    handleCancel()
+    setIsOpen(false)
   }
-
   // remove selected image
   const handleRemoveImage = (indexToRemove: number) => {
     setUploadedImages((prev) =>
@@ -268,7 +239,7 @@ const CreatePostModal: React.FC<createPostProps> = ({
                   <span className='text-red'>*</span>
                 </label>
                 <Input
-                  type='title'
+                  type='text'
                   name='title'
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
@@ -285,6 +256,7 @@ const CreatePostModal: React.FC<createPostProps> = ({
                   <span className='text-red'>*</span>
                 </label>
                 <textarea
+                  maxLength={300}
                   id='description'
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
@@ -304,7 +276,7 @@ const CreatePostModal: React.FC<createPostProps> = ({
                 </p>
 
                 {/* Placeholder for Leaflet map */}
-                <MapSelector onLocationChange={(loc) => setLocation(loc)} />
+                <MapSelector onLocationChange={handleLocationChange} />
               </div>
 
               {/* drop or upload images */}
@@ -376,9 +348,10 @@ const CreatePostModal: React.FC<createPostProps> = ({
                   className='w-29'
                   primary
                   type='submit'
-                  disabled={isPending}
+                  // disabled={isPending}
                 >
-                  {isPending ? 'Submitting...' : t('createPost.submit')}
+                  {/* {isPending ? 'Submitting...' : t('createPost.submit')} */}
+                  {t('createPost.submit')}
                 </Button>
               </div>
             </form>

@@ -2,8 +2,14 @@ import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query'
 import { STATUS } from './auth'
 import { apiClient } from '../apiClient'
 import { ApiConstantRoutes } from '../path'
-import axios from 'axios'
-import { PlaceInfo } from '@/components/common/MapSelector'
+// import { PlaceInfo } from '@/components/common/MapSelector'
+
+export interface PlaceInfo {
+  city: string
+  country: string
+  lat: number
+  lng: number
+}
 
 export interface ReportData {
   _id: string
@@ -96,7 +102,7 @@ interface CreateReportResponse {
       currentStatus: string
     }
   }
-  status: string
+  status: STATUS
 }
 
 //get all reports
@@ -128,8 +134,8 @@ export const useGetDisasterReportDetail = (id: string) => {
 }
 
 //create report
-export const useCreateDisasterReport = () =>
-  useMutation<CreateReportResponse, Error, CreateReport>({
+export const useCreateDisasterReport = () => {
+  return useMutation<CreateReportResponse, Error, CreateReport>({
     mutationFn: async (data: CreateReport) => {
       const formData = new FormData()
       data.reportImage.forEach((file) => {
@@ -170,3 +176,4 @@ export const useCreateDisasterReport = () =>
       }
     },
   })
+}

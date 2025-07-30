@@ -1,9 +1,10 @@
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
 import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useReverseGeocode } from '@/services/network/lib/useReverseGeocode'
 
-// fixing default icon issue
+// Fix Leaflet default icon
 delete (L.Icon.Default.prototype as any)._getIconUrl
 L.Icon.Default.mergeOptions({
   iconRetinaUrl:
@@ -18,39 +19,20 @@ function SetViewLocation({ position }: { position: [number, number] }) {
   return null
 }
 
-export interface PlaceInfo {
-  city: string
-  country: string
-  latitude: number
-  longitude: number
-}
-
 interface MapSelectorProps {
-  onLocationChange: (Location: PlaceInfo) => void
+  onLocationChange: (location: {
+    city: string
+    country: string
+    lat: number
+    lng: number
+  }) => void
 }
 
-const MapSelector = ({ onLocationChange }: MapSelectorProps) => {
+const MapSelector: React.FC<MapSelectorProps> = ({ onLocationChange }) => {
   const [position, setPosition] = useState<[number, number] | null>(null)
-  const [loadingPlace, setLoadingPlace] = useState(false)
+  const { fetchLocation, data, loading } = useReverseGeocode()
 
-  // define gocode
-  async function reverseGeocode([lat, lon]: [number, number]) {
-    setLoadingPlace(true)
-    const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=jsonv2`
-    const res = await fetch(url)
-    const data = await res.json()
-    const { city, town, village } = data.address
-    const place: PlaceInfo = {
-      city: city || town || village || 'Unknown',
-      country: data.address.country || 'Unknown',
-      latitude: lat,
-      longitude: lon,
-    }
-    onLocationChange(place)
-    setLoadingPlace(false)
-  }
-
-  //   get current location
+  // Get user location on load
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
@@ -59,24 +41,57 @@ const MapSelector = ({ onLocationChange }: MapSelectorProps) => {
           pos.coords.longitude,
         ]
         setPosition(loc)
-        reverseGeocode(loc)
       },
       () => {
-        const fallback: [number, number] = [51.505, -0.09]
+        const fallback: [number, number] = [16.0544, 108.2022]
         setPosition(fallback)
-        reverseGeocode(fallback)
       },
     )
   }, [])
-  if (!position) {
-    return <div>Loading map....</div>
+
+  // Fetch location info when position updates
+  useEffect(() => {
+    if (position) {
+      fetchLocation({ lat: position[0], lng: position[1] })
+    }
+  }, [position])
+
+  // Trigger onLocationChange when data is received
+  useEffect(() => {
+    console.log('📥 data from useReverseGeocode hook:', data)
+    if (data) {
+      console.log('📥 useEffect triggered by data change:', data)
+      onLocationChange({
+        city: data.city,
+        country: data.country,
+        lat: data.lat,
+        lng: data.lng,
+      })
+    }
+  }, [data])
+  // useEffect(() => {
+  //   const testData = {
+  //     city: 'Test City',
+  //     country: 'Test Country',
+  //     lat: 1,
+  //     lng: 1,
+  //   }
+
+  //   console.log('🧪 Testing onLocationChange directly')
+  //   onLocationChange(testData)
+  // }, [])
+
+  const handleDragEnd = (e: L.DragEndEvent) => {
+    const marker = e.target as L.Marker
+    const newCoords: [number, number] = [
+      marker.getLatLng().lat,
+      marker.getLatLng().lng,
+    ]
+    setPosition(newCoords)
   }
 
-  function onDragEnd(e: L.DragEndEvent) {
-    const m = e.target as L.Marker
-    const newCoords: [number, number] = [m.getLatLng().lat, m.getLatLng().lng]
-    setPosition(newCoords)
-    reverseGeocode(newCoords)
+  if (!position) {
+    return <div>Loading map…</div>
   }
 
   return (
@@ -94,13 +109,13 @@ const MapSelector = ({ onLocationChange }: MapSelectorProps) => {
         <Marker
           position={position}
           draggable
-          eventHandlers={{ dragend: onDragEnd }}
+          eventHandlers={{ dragend: handleDragEnd }}
         >
           <Popup>Choose Location that you want to post!</Popup>
         </Marker>
         <SetViewLocation position={position} />
       </MapContainer>
-      {loadingPlace && (
+      {loading && (
         <div className='bg-opacity-75 absolute inset-0 flex items-center justify-center bg-white'>
           Getting address…
         </div>
