@@ -263,20 +263,20 @@ const PostCard = ({
             setIsOpen={setShowDetail}
             user={{
               name: `${reportDetail?.generatedBy.firstName} ${reportDetail?.generatedBy.lastName}`,
-              avatar: reportDetail?.generatedBy.profile_image,
+              avatar: reportDetail?.generatedBy.profile_image ?? null,
               isVerified: true,
             }}
-            trustScore={reportDetail?.factCheck?.overallPercentage}
+            trustScore={reportDetail?.factCheck?.overallPercentage ?? 0}
             isDebunked={reportDetail?.factCheck.goService.status === 'debunked'}
             location={`${reportDetail?.location.city}, ${reportDetail?.location.country}`}
-            title={reportDetail?.reportName}
-            content={reportDetail?.description}
+            title={reportDetail?.reportName ?? ''}
+            content={reportDetail?.description ?? ''}
             images={imgUrl}
             disasterType={reportDetail?.incidentType as any}
             upvotes={reportDetail?.factCheck.communityScore?.upvotes ?? 0}
             downvotes={reportDetail?.factCheck.communityScore?.downvotes ?? 0}
             comments={12}
-            createdAt={new Date(reportDetail?.createdAt)}
+            createdAt={new Date(reportDetail?.createdAt ?? Date.now())}
             onUpvote={() => alert('Upvoted')}
             onDownvote={() => alert('Downvoted')}
             onComment={() => alert('Commented')}
