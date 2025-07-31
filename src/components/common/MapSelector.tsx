@@ -2,7 +2,8 @@ import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
 import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet'
 import React, { useEffect, useState } from 'react'
-import { useReverseGeocode } from '@/services/network/lib/useReverseGeocode'
+import { selectUserCurrentLocation, useUserCurrentLocationStore } from '@/zustand/userCurrentLocationStore'
+
 
 // Fix Leaflet default icon
 delete (L.Icon.Default.prototype as any)._getIconUrl
@@ -19,75 +20,50 @@ function SetViewLocation({ position }: { position: [number, number] }) {
   return null
 }
 
-interface MapSelectorProps {
-  onLocationChange: (location: {
-    city: string
-    country: string
-    lat: number
-    lng: number
-  }) => void
+export interface LocationCoordinates {
+  lat: number | null
+  lng: number | null
 }
 
-const MapSelector: React.FC<MapSelectorProps> = ({ onLocationChange }) => {
-  const [position, setPosition] = useState<[number, number] | null>(null)
-  const { fetchLocation, data, loading } = useReverseGeocode()
+interface MapSelectorProps {
+  onPositionChange: (position: { lat: number; lng: number }) => void
+}
+
+const MapSelector: React.FC<MapSelectorProps> = ({ onPositionChange }) => {
+  const [position, setPosition] = useState<LocationCoordinates | null>(null)
 
   // Get user location on load
-  useEffect(() => {
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const loc: [number, number] = [
-          pos.coords.latitude,
-          pos.coords.longitude,
-        ]
-        setPosition(loc)
-      },
-      () => {
-        const fallback: [number, number] = [16.0544, 108.2022]
-        setPosition(fallback)
-      },
-    )
-  }, [])
-
-  // Fetch location info when position updates
-  useEffect(() => {
-    if (position) {
-      fetchLocation({ lat: position[0], lng: position[1] })
-    }
-  }, [position])
-
-  // Trigger onLocationChange when data is received
-  useEffect(() => {
-    console.log('📥 data from useReverseGeocode hook:', data)
-    if (data) {
-      console.log('📥 useEffect triggered by data change:', data)
-      onLocationChange({
-        city: data.city,
-        country: data.country,
-        lat: data.lat,
-        lng: data.lng,
-      })
-    }
-  }, [data])
   // useEffect(() => {
-  //   const testData = {
-  //     city: 'Test City',
-  //     country: 'Test Country',
-  //     lat: 1,
-  //     lng: 1,
-  //   }
-
-  //   console.log('🧪 Testing onLocationChange directly')
-  //   onLocationChange(testData)
+  //   navigator.geolocation.getCurrentPosition(
+  //     (pos) => {
+  //       const loc: [number, number] = [
+  //         pos.coords.latitude,
+  //         pos.coords.longitude,
+  //       ]
+  //       setPosition(loc)
+  //     },
+  //     () => {
+  //       const fallback: [number, number] = [16.0544, 108.2022]
+  //       setPosition(fallback)
+  //     },
+  //   )
   // }, [])
+
+  //! use the global state instead of calling the useEffect again
+  // because user current location will & should be available almost everytime
+  const userCurrentLocation = useUserCurrentLocationStore(selectUserCurrentLocation)
+  useEffect(() => {
+    setPosition(userCurrentLocation)
+  }, [userCurrentLocation])
 
   const handleDragEnd = (e: L.DragEndEvent) => {
     const marker = e.target as L.Marker
-    const newCoords: [number, number] = [
-      marker.getLatLng().lat,
-      marker.getLatLng().lng,
-    ]
+    const newCoords = {
+      lat: marker.getLatLng().lat,
+      lng: marker.getLatLng().lng,
+    }
     setPosition(newCoords)
+    onPositionChange(newCoords)
   }
 
   if (!position) {
@@ -97,7 +73,7 @@ const MapSelector: React.FC<MapSelectorProps> = ({ onLocationChange }) => {
   return (
     <div className='relative z-0'>
       <MapContainer
-        center={position}
+        center={[position.lat ?? 16.0544, position.lng ?? 108.2022]}
         zoom={13}
         style={{ height: '400px', width: '100%' }}
         scrollWheelZoom={false}
@@ -107,19 +83,19 @@ const MapSelector: React.FC<MapSelectorProps> = ({ onLocationChange }) => {
           url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
         />
         <Marker
-          position={position}
+          position={[position.lat ?? 16.0544, position.lng ?? 108.2022]}
           draggable
           eventHandlers={{ dragend: handleDragEnd }}
         >
           <Popup>Choose Location that you want to post!</Popup>
         </Marker>
-        <SetViewLocation position={position} />
+        <SetViewLocation position={[position.lat ?? 16.0544, position.lng ?? 108.2022]} />
       </MapContainer>
-      {loading && (
+      {/* {loading && (
         <div className='bg-opacity-75 absolute inset-0 flex items-center justify-center bg-white'>
           Getting address…
         </div>
-      )}
+      )} */}
     </div>
   )
 }

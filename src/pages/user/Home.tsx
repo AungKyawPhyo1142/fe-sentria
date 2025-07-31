@@ -11,6 +11,7 @@ import {
 } from '@/services/network/lib/disasterReport'
 import PostCard from '@/components/posts/PostCard'
 import { selectAuth, useAuthStore } from '@/zustand/authStore'
+import { setUserCurrentLocation } from '@/zustand/userCurrentLocationStore'
 
 // component for Post Lists
 interface ReportPostProps {
@@ -89,9 +90,16 @@ const Home = () => {
           lat: pos.coords.latitude,
           lng: pos.coords.longitude,
         })
+        // set user current location global state via zustand
+        setUserCurrentLocation(
+          {
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude,
+          }
+        )
       })
     }
-  }, [isConnected])
+  }, [])
   const { data, isLoading, error } = useGetAllDisasterReports()
   // console.log('report data: ', data)
   // console.log('data.pages', data?.pages)

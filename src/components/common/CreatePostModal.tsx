@@ -1,14 +1,25 @@
 import clsx from 'clsx'
 import { ChevronDown, CloudUpload, X } from 'lucide-react'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import ReactDOM from 'react-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useDropzone } from 'react-dropzone'
 import Button from './Button'
-import MapSelector from './MapSelector'
+import MapSelector, { LocationCoordinates } from './MapSelector'
 import { useTranslation } from 'react-i18next'
 import Input from './Input'
 import { PlaceInfo } from '@/services/network/lib/disasterReport'
+import { array, mixed, number, object, ObjectSchema, string } from 'yup'
+import { useFormik } from 'formik'
+import { useCustomEvents } from '@/services/formik/hooks'
+import { useQueryClient } from '@tanstack/react-query'
+import { apiClient } from '@/services/network/apiClient'
+import { ApiConstantRoutes } from '@/services/network/path'
+import { ReverseGeocodeResponse } from '@/services/network/lib/report'
+import {
+  selectUserCurrentLocation,
+  useUserCurrentLocationStore,
+} from '@/zustand/userCurrentLocationStore';
 
 // Create Post Modal Interfaace
 interface createPostProps {
@@ -57,22 +68,187 @@ export interface DisasterTypeSelectOption {
   initialValue?: string
 }
 
+interface CreateReportParameters {
+  description: string
+  incidentType: 'EARTHQUAKE' | 'FLOOD' | 'FIRE' | 'STORM' | 'OTHER'
+  severity: 'UNKNOWN' | 'MINOR' | 'MODERATE' | 'SEVERE'
+  incidentTimestamp: string
+  location: {
+    city: string
+    country: string
+    latitude: number
+    longitude: number
+  }
+  media: string[] | null //tbh it should be removed from be, just leave it for now like this
+}
+
+export interface CreateReportFormValues {
+  reportImage: File[] | null,
+  reportType: 'DISASTER_INCIDENT' // add more later if needed
+  name: string
+  parameters: CreateReportParameters
+}
+
 // Create Post Modal
 const CreatePostModal: React.FC<createPostProps> = ({
   className,
   isOpen,
   setIsOpen,
 }) => {
-  const [disasterType, setDisasterType] = useState<string>('earthquake')
-  const [severityType, setSeverityType] = useState<string>('moderate')
-  const [title, setTitle] = useState<string>('')
-  const [description, setDescription] = useState<string>('')
-  const [location, setLocation] = useState<PlaceInfo | null>(null)
-  const [uploadedImages, setUploadedImages] = useState<File[]>([])
   const [previewImages, setPreviewImages] = useState<string[]>([])
+  const [isGeocoding, setIsGeocoding] = useState(false)
+  const hasFetchedInitialLocation = useRef(false)
+  const { t } = useTranslation()
+  const queryClient = useQueryClient()
+  const userCurrentLocation = useUserCurrentLocationStore(selectUserCurrentLocation)
+  const setUserCurrentLocationInStore = useUserCurrentLocationStore((state) => state.setUserCurrentLocation)
+
+  const initialValues: CreateReportFormValues = {
+    reportImage: null,
+    reportType: 'DISASTER_INCIDENT',
+    name: '',
+    parameters: {
+      description: "",
+      incidentType: 'EARTHQUAKE',
+      severity: 'UNKNOWN',
+      incidentTimestamp: new Date().toISOString(),
+      location: {
+        city: '',
+        country: '',
+        latitude: 0,
+        longitude: 0,
+      },
+      media: [] //tbh it should be removed from be, just leave it for now like this
+    }
+  }
+
+
+  const validationSchema: ObjectSchema<CreateReportFormValues> = object({
+    reportImage: array().of(mixed<File>().required('Image is required')).nullable().default(null),
+    reportType: string().oneOf(['DISASTER_INCIDENT'], 'Invalid report type').required('Report type is required'),
+    name: string().required('Name is required'),
+    parameters: object().shape({
+      description: string()
+        .required('Description is required')
+        .min(10, 'Description must be at least 10 characters long'),
+      incidentType: string().oneOf(['EARTHQUAKE', 'FLOOD', 'FIRE', 'STORM', 'OTHER'], 'Invalid incident type').required('Incident type is required'),
+      severity: string().oneOf(['UNKNOWN', 'MINOR', 'MODERATE', 'SEVERE'], 'Invalid severity').required('Severity is required'),
+      incidentTimestamp: string().required('Incident timestamp is required'),
+      location: object().shape({
+        city: string().required('City is required'),
+        country: string().required('Country is required'),
+        latitude: number().required('Latitude is required'),
+        longitude: number().required('Longitude is required'),
+      }),
+      media: array().of(string().required()).nullable().default(null),
+    }),
+  })
+
+  const handleSubmit = (values: CreateReportFormValues) => {
+    console.log('Form values submitted:', values)
+    // The city and country are already populated.
+    // You can now proceed with your API call to create the report.
+    setIsOpen(false) // Close modal on submit
+  }
+
+  const formik = useFormik({
+    initialValues,
+    validationSchema,
+    onSubmit: handleSubmit,
+    validateOnChange: false,
+    validateOnBlur: false,
+  })
+
+  // handle locaton
+  const handlePositionChange = useCallback(async (location: LocationCoordinates) => {
+    console.log('📌 Location received in CreatePostModal:', location)
+    const lat = location.lat ?? 0
+    const lng = location.lng ?? 0
+
+    formik.setFieldValue('parameters.location.latitude', lat)
+    formik.setFieldValue('parameters.location.longitude', lng)
+
+    if (!lat || !lng) return
+
+    setIsGeocoding(true)
+    try {
+      const data = await queryClient.fetchQuery<ReverseGeocodeResponse>({
+        queryKey: ['get-reverse-geocode', lat, lng],
+        queryFn: () =>
+          apiClient.post(ApiConstantRoutes.paths.location.reverseGeocode, {
+            lat,
+            lng,
+          }),
+        staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+      })
+
+      if (data.status === 'SUCCESS' && data.data) {
+        formik.setFieldValue('parameters.location.city', data.data.city)
+        formik.setFieldValue('parameters.location.country', data.data.country)
+      } else {
+        formik.setFieldValue('parameters.location.city', 'Unknown City')
+        formik.setFieldValue('parameters.location.country', 'Unknown Country')
+      }
+    } catch (error) {
+      console.error('Failed to reverse geocode location', error)
+      formik.setFieldValue('parameters.location.city', 'Error Fetching City')
+      formik.setFieldValue('parameters.location.country', 'Error Fetching Country')
+    } finally {
+      setIsGeocoding(false)
+    }
+  }, [queryClient, formik.setFieldValue])
+
+  // On modal open, if we have a user location, perform reverse geocoding to pre-fill the form.
+  useEffect(() => {
+    if (!isOpen) {
+      hasFetchedInitialLocation.current = false
+      return
+    }
+
+    if (hasFetchedInitialLocation.current) {
+      return
+    }
+
+    const fetchAndSetLocation = (coords: { lat: number; lng: number }) => {
+      handlePositionChange(coords)
+      hasFetchedInitialLocation.current = true
+    }
+
+    // If location is already in the global store, use it.
+    if (userCurrentLocation.lat && userCurrentLocation.lng) {
+      fetchAndSetLocation({
+        lat: userCurrentLocation.lat,
+        lng: userCurrentLocation.lng,
+      })
+    } else {
+      // Otherwise, get it directly from the browser's geolocation API.
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const coords = { lat: pos.coords.latitude, lng: pos.coords.longitude }
+          // Update the global store so we don't have to ask again
+          setUserCurrentLocationInStore(coords)
+          // Use the location for the current modal instance
+          fetchAndSetLocation(coords)
+        },
+        (error) => {
+          console.error('Could not get user location:', error)
+          // Mark as attempted to prevent re-fetching, allowing user to set manually
+          hasFetchedInitialLocation.current = true
+        },
+      )
+    }
+  }, [isOpen, userCurrentLocation, handlePositionChange, setUserCurrentLocationInStore])
+
+  // cancel button
+  const handleCancel = () => {
+    formik.resetForm()
+    setPreviewImages([])
+    setIsOpen(false)
+  }
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
-    setUploadedImages((prev) => [...prev, ...acceptedFiles])
+    const currentImages = formik.values.reportImage || []
+    formik.setFieldValue('reportImage', [...currentImages, ...acceptedFiles])
     acceptedFiles.forEach((file) => {
       const reader = new FileReader()
       reader.onload = () => {
@@ -80,64 +256,20 @@ const CreatePostModal: React.FC<createPostProps> = ({
       }
       reader.readAsDataURL(file)
     })
-  }, [])
+  }, [formik])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
 
-  // cancel button
-  const handleCancel = () => {
-    setDisasterType('earthquake')
-    setSeverityType('moderate')
-    setTitle('')
-    setDescription('')
-    setLocation(null)
-    setPreviewImages([])
-    setIsOpen(false)
-  }
+  const { onInputChange } = useCustomEvents<CreateReportFormValues>(formik)
 
-  // handle locaton
-  const handleLocationChange = (location: PlaceInfo) => {
-    console.log('📌 Location received in CreatePostModal:', location)
-    setLocation(location)
-  }
-
-  // submit button
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log('Location before submit:', location)
-    if (!title.trim()) {
-      alert('Title is required.')
-      return
-    }
-    if (!location) {
-      alert('Location is required.')
-      return
-    }
-    const formData = {
-      disasterType,
-      severityType,
-      title,
-      description,
-      location,
-      uploadedImages,
-    }
-    console.log('Form Submittede: ', formData)
-    console.log('Location submitteded:', location)
-    alert('Create Post successfully!')
-    handleCancel()
-    setIsOpen(false)
-  }
   // remove selected image
   const handleRemoveImage = (indexToRemove: number) => {
-    setUploadedImages((prev) =>
-      prev.filter((_, index) => index !== indexToRemove),
-    )
+    const currentImages = formik.values.reportImage || []
+    formik.setFieldValue('reportImage', currentImages.filter((_, i) => i !== indexToRemove))
     setPreviewImages((prev) =>
       prev.filter((_, index) => index !== indexToRemove),
     )
   }
-
-  const { t } = useTranslation()
 
   return ReactDOM.createPortal(
     <AnimatePresence>
@@ -173,66 +305,78 @@ const CreatePostModal: React.FC<createPostProps> = ({
               </button>
             </div>
             {/* Form */}
-            <form onSubmit={handleSubmit} className='space-y-5 pt-6'>
+            <form onSubmit={formik.handleSubmit} className='space-y-5 pt-6'>
               {/* Select Disaster Type */}
               <div>
                 <label
-                  htmlFor='disasterType'
+                  htmlFor='incidentType'
                   className='mb-2 block text-xl font-semibold'
                 >
                   {t('createPost.disaster')} <span className='text-red'>*</span>
                 </label>
                 <div className='relative w-full'>
                   <select
-                    id='disasterType'
+                    id='incidentType'
+                    name='incidentType'
                     className='block min-h-[50px] w-full appearance-none rounded-[10px] border border-zinc-300 px-4 py-2 text-base font-light text-black transition-colors duration-200 focus:outline-black/30'
-                    value={disasterType}
-                    onChange={(e) => setDisasterType(e.target.value)}
+                    value={formik.values.parameters.incidentType}
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                      formik.setFieldValue('parameters.incidentType', e.target.value)
+                    }}
                     required
                   >
-                    <option value='earthquake'>
+                    <option value='EARTHQUAKE'>
                       {t('createPost.earthquake')}
                     </option>
-                    <option value='flood'>{t('createPost.flood')}</option>
-                    <option value='storm'>{t('createPost.storm')}</option>
-                    <option value='fire'>{t('createPost.fire')}</option>
+                    <option value='FLOOD'>{t('createPost.flood')}</option>
+                    <option value='STORM'>{t('createPost.storm')}</option>
+                    <option value='FIRE'>{t('createPost.fire')}</option>
                   </select>
                   <div className='absolute inset-y-0 right-0 flex items-center px-4 text-black'>
                     <ChevronDown />
                   </div>
                 </div>
+                {formik.errors.parameters?.incidentType && (
+                  <p className='mt-1 text-sm text-red'>{formik.errors.parameters.incidentType}</p>
+                )}
               </div>
 
               {/* Pick Severity type */}
               <div>
                 <label
-                  htmlFor='severityType'
+                  htmlFor='severity'
                   className='mb-2 block text-xl font-semibold'
                 >
                   {t('createPost.severity')} <span className='text-red'>*</span>
                 </label>
                 <div className='relative w-full'>
                   <select
-                    id='severityType'
+                    id='severity'
+                    name='severity'
                     className='block min-h-[50px] w-full appearance-none rounded-[10px] border border-zinc-300 px-4 py-2 text-base font-light text-black transition-colors duration-200 focus:outline-black/30'
-                    value={severityType}
-                    onChange={(e) => setSeverityType(e.target.value)}
+                    value={formik.values.parameters.severity}
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                      formik.setFieldValue('parameters.severity', e.target.value)
+                    }}
                     required
                   >
-                    <option value='unknown'>{t('severity.unknown')} </option>
-                    <option value='minor'>{t('severity.minor')}</option>
-                    <option value='moderate'>{t('severity.moderate')}</option>
-                    <option value='severe'>{t('severity.severe')}</option>
+                    <option value='UNKOWN'>{t('severity.unknown')} </option>
+                    <option value='MINOR'>{t('severity.minor')}</option>
+                    <option value='MODERATE'>{t('severity.moderate')}</option>
+                    <option value='SEVERE'>{t('severity.severe')}</option>
                   </select>
                   <div className='absolute inset-y-0 right-0 flex items-center px-4 text-black'>
                     <ChevronDown />
                   </div>
                 </div>
+                {formik.errors.parameters?.severity && (
+                  <p className='mt-1 text-sm text-red'>{formik.errors.parameters.severity}</p>
+                )}
               </div>
               {/* title is name */}
               <div>
                 <label
-                  htmlFor='title'
+                  htmlFor='name'
                   className='mb-2 block text-xl font-semibold'
                 >
                   {t('createPost.title')}
@@ -240,9 +384,10 @@ const CreatePostModal: React.FC<createPostProps> = ({
                 </label>
                 <Input
                   type='text'
-                  name='title'
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  name='name'
+                  value={formik.values.name}
+                  onChange={onInputChange}
+                  error={formik.errors.name}
                   required
                 />
               </div>
@@ -258,11 +403,17 @@ const CreatePostModal: React.FC<createPostProps> = ({
                 <textarea
                   maxLength={300}
                   id='description'
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
+                  name='description'
+                  value={formik.values.parameters.description}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                    formik.setFieldValue('parameters.description', e.target.value)
+                  }}
                   className='block min-h-28 w-full appearance-none rounded-[10px] border border-zinc-300 px-4 py-2 text-base font-light text-black transition-colors duration-200 focus:outline-black/30'
                   required
                 ></textarea>
+                {formik.errors.parameters?.description && (
+                  <p className='mt-1 text-sm text-red'>{formik.errors.parameters.description}</p>
+                )}
               </div>
 
               {/* Pick the location where the disaster occurred */}
@@ -271,12 +422,22 @@ const CreatePostModal: React.FC<createPostProps> = ({
                   {t('createPost.location')}
                   <span className='text-red'>*</span>
                 </label>
+                {formik.touched.parameters?.location && formik.errors.parameters?.location && typeof formik.errors.parameters.location === 'object' && (
+                  Object.values(formik.errors.parameters.location).map((error, index) => (
+                    <p key={index} className='mt-1 text-sm text-red'>{error}</p>
+                  ))
+                )}
+                {formik.touched.parameters?.location && formik.errors.parameters?.location && typeof formik.errors.parameters.location === 'string' && (
+                  <p className='mt-1 text-sm text-red'>{formik.errors.parameters.location}</p>
+                )}
                 <p className='mb-2 text-sm font-thin text-black/50'>
-                  {t('createPost.dragPin')}
+                  {isGeocoding
+                    ? 'Fetching address...'
+                    : t('createPost.dragPin')}
                 </p>
 
                 {/* Placeholder for Leaflet map */}
-                <MapSelector onLocationChange={handleLocationChange} />
+                <MapSelector onPositionChange={handlePositionChange} />
               </div>
 
               {/* drop or upload images */}
@@ -323,7 +484,10 @@ const CreatePostModal: React.FC<createPostProps> = ({
                         />
                         <button
                           type='button'
-                          onClick={() => handleRemoveImage(index)}
+                          onClick={(e) => {
+                            e.stopPropagation() // prevent dropzone click
+                            handleRemoveImage(index)
+                          }}
                           className='absolute top-1 right-1 rounded-full bg-black/50 p-1 text-white transition-opacity group-hover:cursor-pointer group-hover:bg-black/30'
                         >
                           <X className='h-4 w-4' />
@@ -348,7 +512,6 @@ const CreatePostModal: React.FC<createPostProps> = ({
                   className='w-29'
                   primary
                   type='submit'
-                  // disabled={isPending}
                 >
                   {/* {isPending ? 'Submitting...' : t('createPost.submit')} */}
                   {t('createPost.submit')}

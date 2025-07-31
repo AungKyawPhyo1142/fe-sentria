@@ -130,3 +130,25 @@ export const useGetAllReports = () => {
     queryFn: () => apiClient.get(ApiConstantRoutes.paths.report.default),
   })
 }
+
+export interface ReverseGeocodeResponse {
+  data: {
+    lat: number
+    lng: number
+    city: string
+    country: string
+  }
+  status: STATUS
+}
+
+export const useReverseGeocode = (lat: number, lng: number) => {
+  return useQuery<ReverseGeocodeResponse>({
+    queryKey: ['get-reverse-geocode', lat, lng],
+    queryFn: () => {
+      return apiClient.post(ApiConstantRoutes.paths.location.reverseGeocode, {
+        lat,
+        lng
+      })
+    }
+  })
+}
