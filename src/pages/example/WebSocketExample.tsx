@@ -5,7 +5,7 @@ import {
   useSendLocationWebSocket,
 } from '@/services/socketio/hooks/useSendLocationWebSocket'
 // import { useQueryClient } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 const WebSocketExample = () => {
   const {
@@ -42,35 +42,25 @@ const WebSocketExample = () => {
   }, [])
 
   // 2. Use the WebSocket hook once we have a location
-  // useEffect(() => {
-  //   if (!userLocation) return
-
-  //   const disconnect = useSendLocationWebSocket(userLocation)
-
-  //   return () => {
-  //     disconnect()
-  //   }
-  // }, [userLocation])
-  // 2. Use the WebSocket hook once we have a location
-  const disconnect = userLocation
-    ? useSendLocationWebSocket(userLocation)
-    : () => {}
-
   useEffect(() => {
+    if (!userLocation) return
+
+    const disconnect = useSendLocationWebSocket(userLocation)
+
     return () => {
       disconnect()
     }
-  }, [disconnect])
+  }, [userLocation])
 
   // * Cleanup
   useEffect(() => reportSocketCleanup, [reportSocketCleanup])
 
-  const handleScroll = () => {
+  const handleScroll = useCallback(() => {
     const { scrollHeight, scrollTop, clientHeight } = document.documentElement
     if (scrollTop + clientHeight >= scrollHeight - 5) {
       fetchNextPage()
     }
-  }
+  }, [fetchNextPage])
 
   // Scroll listener
   useEffect(() => {

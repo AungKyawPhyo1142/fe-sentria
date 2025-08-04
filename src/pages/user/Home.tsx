@@ -82,7 +82,8 @@ const Home = () => {
   useEffect(() => {
     connect()
     earthquakeAlertListener()
-  }, [])
+  }, [connect, earthquakeAlertListener])
+
   useEffect(() => {
     if (isConnected) {
       navigator.geolocation.getCurrentPosition((pos) => {
@@ -97,7 +98,8 @@ const Home = () => {
         })
       })
     }
-  }, [])
+  }, [isConnected, sendUserLocation])
+
   const { data, isLoading, error } = useGetAllDisasterReports()
   // console.log('report data: ', data)
   // console.log('data.pages', data?.pages)
