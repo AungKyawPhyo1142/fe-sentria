@@ -51,7 +51,7 @@ const WebSocketExample = () => {
   //     disconnect()
   //   }
   // }, [userLocation])
-    useSendLocationWebSocket(userLocation)
+  useSendLocationWebSocket(userLocation)
 
   // * Cleanup
   useEffect(() => reportSocketCleanup, [reportSocketCleanup])

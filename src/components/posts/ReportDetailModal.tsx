@@ -27,7 +27,7 @@ import PostImageSlider from './PostImagesSlider'
 import { formatNumber } from '@/helpers/helpers'
 import CommentCard from './CommentCard'
 import CommentInputBox from './CommentInputBox'
-import { fakeComments } from './fakeData/fakeComments'
+import { fakeComments } from './constants/fakeComments'
 
 interface reportDetailProps {
   className?: string
