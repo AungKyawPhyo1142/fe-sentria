@@ -1,19 +1,19 @@
-import { useGetAllDisasterReports } from '@/services/network/lib/reports'
+import { useGetAllDisasterReports } from '@/services/network/lib/disasterReport'
 import { useReportWebSocket } from '@/services/socketio/hooks/useReportWebSocket'
 import {
   UserLocation,
   useSendLocationWebSocket,
 } from '@/services/socketio/hooks/useSendLocationWebSocket'
-import { useQueryClient } from '@tanstack/react-query'
+// import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 
 const WebSocketExample = () => {
   const {
     data: reportData,
-    isLoading,
-    isError,
+    // isLoading,
+    // isError,
     fetchNextPage,
-    isFetchingNextPage,
+    // isFetchingNextPage,
   } = useGetAllDisasterReports()
 
   const reportSocketCleanup = useReportWebSocket(reportData?.pages)
@@ -86,24 +86,26 @@ const WebSocketExample = () => {
           <div key={index} className='grid grid-cols-3 gap-4'>
             {page.data.reports.data.map((report) => (
               <div
-                key={report.id}
+                key={report._id}
                 className='m-5 flex flex-col border bg-blue-200 p-5'
               >
-                <span className='text-red-400'>ID: {report.id}</span>
+                <span className='text-red-400'>ID: {report._id}</span>
                 <br />
                 {report.name}
                 <div>
-                  OverallPercentage: {report.factCheckOverallPercentage} |{' '}
-                  {report.factCheckOverallPercentage !== undefined &&
-                  report.factCheckOverallPercentage !== null
-                    ? `${report.factCheckOverallPercentage}%`
+                  OverallPercentage: {report.factCheck.overallPercentage} |{' '}
+                  {report.factCheck.overallPercentage !== undefined &&
+                  report.factCheck.overallPercentage !== null
+                    ? `${report.factCheck.overallPercentage}%`
                     : 'NO'}
                 </div>
                 <div className='flex flex-col'>
-                  <div>Severity: {report.parameters.severity}</div>
-                  <div>IncidentType: {report.parameters.incidentType}</div>
-                  <div>Location: {report.parameters.locationSummary}</div>
-                  <div>FactCheckStatus: {report.factCheckStatus}</div>
+                  <div>Severity: {report.severity}</div>
+                  <div>IncidentType: {report.incidentType}</div>
+                  <div>Location: {report.location.country}</div>
+                  <div>
+                    FactCheckStatus: {report.factCheck.goService.status}
+                  </div>
                 </div>
               </div>
             ))}

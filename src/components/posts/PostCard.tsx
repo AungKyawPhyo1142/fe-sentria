@@ -42,7 +42,8 @@ interface PostCardProps {
   title: string
   content: string
   images?: string[]
-  disasterType: 'earthquake' | 'flood' | 'fire' | 'storm' | 'other'
+  // disasterType: 'earthquake' | 'flood' | 'fire' | 'storm' | 'other'
+  disasterType: string
   upvotes?: number
   downvotes?: number
   comments?: number

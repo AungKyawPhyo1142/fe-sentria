@@ -147,8 +147,8 @@ export const useReverseGeocode = (lat: number, lng: number) => {
     queryFn: () => {
       return apiClient.post(ApiConstantRoutes.paths.location.reverseGeocode, {
         lat,
-        lng
+        lng,
       })
-    }
+    },
   })
 }

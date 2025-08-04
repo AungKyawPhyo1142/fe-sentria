@@ -53,7 +53,7 @@ const PostList: React.FC<ReportPostProps> = ({ postLists }) => {
             title={postList.reportName}
             content={postList.description}
             images={imageUrls}
-            disasterType={postList.incidentType as any}
+            disasterType={postList.incidentType}
             upvotes={postList.factCheck.communityScore?.upvotes ?? 0}
             downvotes={postList.factCheck.communityScore?.downvotes ?? 0}
             comments={0}
@@ -91,12 +91,10 @@ const Home = () => {
           lng: pos.coords.longitude,
         })
         // set user current location global state via zustand
-        setUserCurrentLocation(
-          {
-            lat: pos.coords.latitude,
-            lng: pos.coords.longitude,
-          }
-        )
+        setUserCurrentLocation({
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+        })
       })
     }
   }, [])

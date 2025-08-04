@@ -13,6 +13,12 @@ interface FactCheckUpdate {
     narrative: string
   }
 }
+type ReportData = ReportResponse['data']['reports']['data'][number]
+type ReportPage = ReportResponse
+type SocketAckResponse = {
+  success: boolean
+  message?: string
+}
 
 class ReportSocketManager {
   private queryClient: ReturnType<typeof useQueryClient>
@@ -38,15 +44,15 @@ class ReportSocketManager {
         console.log('Current data:', oldData)
         const newData = {
           ...oldData,
-          pages: oldData.pages.map((page: any) => ({
+          pages: oldData.pages.map((page: ReportPage) => ({
             ...page,
             data: {
               ...page.data,
               reports: {
                 ...page.data.reports,
-                data: page.data.reports.data.map((report: any) => {
-                  if (report.id === data.reportId) {
-                    console.log('Updating report:', report.id)
+                data: page.data.reports.data.map((report: ReportData) => {
+                  if (report._id === data.reportId) {
+                    console.log('Updating report:', report._id)
                     console.log('New values:', {
                       factCheckStatus: data.factCheck.status,
                       factCheckOverallPercentage:
@@ -91,10 +97,14 @@ class ReportSocketManager {
     reportData.forEach((page) => {
       page.data.reports.data.forEach((report) => {
         if (!this.subscriptions.has(report._id)) {
-          socket.emit('subscribe_to_report', report._id, (res: any) => {
-            console.log(`Subscribed to report: ${report._id}, `, res)
-            this.subscriptions.add(report._id)
-          })
+          socket.emit(
+            'subscribe_to_report',
+            report._id,
+            (res: SocketAckResponse) => {
+              console.log(`Subscribed to report: ${report._id}, `, res)
+              this.subscriptions.add(report._id)
+            },
+          )
         }
       })
     })
@@ -102,9 +112,13 @@ class ReportSocketManager {
 
   public disconnect() {
     this.subscriptions.forEach((reportId) => {
-      socket.emit('unsubscribe_from_report', reportId, (res: any) => {
-        console.log(`Unsubscribed from report: ${reportId}, `, res)
-      })
+      socket.emit(
+        'unsubscribe_from_report',
+        reportId,
+        (res: SocketAckResponse) => {
+          console.log(`Unsubscribed from report: ${reportId}, `, res)
+        },
+      )
     })
 
     this.subscriptions.clear()

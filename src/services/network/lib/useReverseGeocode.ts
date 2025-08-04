@@ -8,8 +8,6 @@
 //   lng: number
 // }
 
-
-
 // // export const useReverseGeocode = () => {
 // //   const [loading, setLoading] = useState(false)
 // //   const [error, setError] = useState<string | null>(null)
@@ -74,7 +72,7 @@
 //         setData(response.data.data)
 //       } else {
 //         // this step
-//         console.warn('⚠️ Reverse geocode failed:', response.data) 
+//         console.warn('⚠️ Reverse geocode failed:', response.data)
 //         setError('Failed to fetch location')
 //       }
 //     } catch (err: any) {

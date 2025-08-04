@@ -2,8 +2,10 @@ import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
 import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet'
 import React, { useEffect, useState } from 'react'
-import { selectUserCurrentLocation, useUserCurrentLocationStore } from '@/zustand/userCurrentLocationStore'
-
+import {
+  selectUserCurrentLocation,
+  useUserCurrentLocationStore,
+} from '@/zustand/userCurrentLocationStore'
 
 // Fix Leaflet default icon
 delete (L.Icon.Default.prototype as any)._getIconUrl
@@ -51,7 +53,9 @@ const MapSelector: React.FC<MapSelectorProps> = ({ onPositionChange }) => {
 
   //! use the global state instead of calling the useEffect again
   // because user current location will & should be available almost everytime
-  const userCurrentLocation = useUserCurrentLocationStore(selectUserCurrentLocation)
+  const userCurrentLocation = useUserCurrentLocationStore(
+    selectUserCurrentLocation,
+  )
   useEffect(() => {
     setPosition(userCurrentLocation)
   }, [userCurrentLocation])
@@ -89,7 +93,9 @@ const MapSelector: React.FC<MapSelectorProps> = ({ onPositionChange }) => {
         >
           <Popup>Choose Location that you want to post!</Popup>
         </Marker>
-        <SetViewLocation position={[position.lat ?? 16.0544, position.lng ?? 108.2022]} />
+        <SetViewLocation
+          position={[position.lat ?? 16.0544, position.lng ?? 108.2022]}
+        />
       </MapContainer>
       {/* {loading && (
         <div className='bg-opacity-75 absolute inset-0 flex items-center justify-center bg-white'>

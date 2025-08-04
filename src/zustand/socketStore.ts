@@ -9,7 +9,7 @@ import {
   ServerToClientEvents,
   EQAlert,
 } from '@/services/socketio/types'
-import { ReportResponse } from '@/services/network/lib/reports'
+import { ReportResponse } from '@/services/network/lib/disasterReport'
 
 // Get backend URL from Vite environment variables
 const SOCKET_SERVER_URL =
@@ -34,6 +34,7 @@ interface SocketState {
   allEarthquakeAlerts: EQAlert['data'][] //new to show notifications on side bar
   addEarthquakeAlertToList: (alert: EQAlert['data']) => void
 }
+type Report = ReportResponse['data']['reports']['data'][number]
 
 export const useSocketStore = create<SocketState>((set, get) => ({
   socket: null,
@@ -101,10 +102,10 @@ export const useSocketStore = create<SocketState>((set, get) => ({
   subscribeToReportsRoom: (reportData: ReportResponse[]) => {
     reportData.forEach((page) => {
       page.data.reports.data.forEach((report) => {
-        if (!get().subscriptions.has(report.id)) {
-          get().socket?.emit('subscribe_to_report', report.id, (res: any) => {
-            console.log(`Subscribed to report: ${report.id}, `, res)
-            get().subscriptions.add(report.id)
+        if (!get().subscriptions.has(report._id)) {
+          get().socket?.emit('subscribe_to_report', report._id, (res) => {
+            console.log(`Subscribed to report: ${report._id}, `, res)
+            get().subscriptions.add(report._id)
           })
         }
       })
@@ -113,7 +114,7 @@ export const useSocketStore = create<SocketState>((set, get) => ({
 
   unsubscribeFromReportsRoom: () => {
     get().subscriptions.forEach((reportId) => {
-      get().socket?.emit('unsubscribe_from_report', reportId, (res: any) => {
+      get().socket?.emit('unsubscribe_from_report', reportId, (res: string) => {
         console.log(`Unsubscribed from report: ${reportId}, `, res)
       })
     })
@@ -176,8 +177,8 @@ export const useSocketStore = create<SocketState>((set, get) => ({
                 // Find the report to update within the current page's data array
                 // Your structure is: page.data.reports.data
                 const updatedReports = page.data.reports.data.map(
-                  (report: any) => {
-                    if (report.id === data.reportId) {
+                  (report: Report) => {
+                    if (report._id === data.reportId) {
                       console.log(
                         `[ZustandSocket] Found and updating report ${data.reportId} in cache.`,
                       )
@@ -187,14 +188,18 @@ export const useSocketStore = create<SocketState>((set, get) => ({
                         factCheckStatus: data.factCheck.status,
                         factCheckOverallPercentage:
                           data.factCheck.factCheckOverallPercentage,
-                        factCheckLastUpdatedAt: data.factCheck.lastCalculatedAt,
+                        factCheckLastUpdatedAt: String(
+                          data.factCheck.lastCalculatedAt,
+                        ),
                         // Also update the nested factCheck object if your component uses it
                         factCheck: {
                           ...report.factCheck,
                           overallPercentage:
                             data.factCheck.factCheckOverallPercentage,
                           status: data.factCheck.status,
-                          lastCalculatedAt: data.factCheck.lastCalculatedAt,
+                          lastCalculatedAt: String(
+                            data.factCheck.lastCalculatedAt,
+                          ),
                           narrative: data.factCheck.narrative,
                         },
                       }

@@ -96,7 +96,7 @@ export interface CreateReport {
     severity: string
     incidentTimestamp: string
     location: PlaceInfo
-    media: any[] // should always be []
+    media: [] // should always be []
   }
 }
 

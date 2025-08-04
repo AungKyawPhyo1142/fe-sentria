@@ -146,7 +146,7 @@ const ReportDetailModal: React.FC<reportDetailProps> = ({
             {/* Close */}
             <button
               onClick={() => setIsOpen(false)}
-              className='cursor-pointe  z-50 text-gray-400 hover:cursor-pointer hover:text-gray-700'
+              className='cursor-pointe z-50 text-gray-400 hover:cursor-pointer hover:text-gray-700'
             >
               <X
                 className='h-7 w-7 rounded-full bg-black/80 p-1'
