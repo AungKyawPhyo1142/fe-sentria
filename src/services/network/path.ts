@@ -38,9 +38,9 @@ export const ApiConstantRoutes = {
         get default() {
           return '/report'
         },
-        get create() {
-          return `${this.default}/create`
-        },
+        // get create() {
+        //   return `${this.default}/create`
+        // },
         getReportById(id: string) {
           return `${this.default}/${id}`
         },

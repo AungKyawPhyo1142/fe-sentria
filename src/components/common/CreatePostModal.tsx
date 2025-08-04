@@ -8,7 +8,7 @@ import Button from './Button'
 import MapSelector, { LocationCoordinates } from './MapSelector'
 import { useTranslation } from 'react-i18next'
 import Input from './Input'
-import { PlaceInfo } from '@/services/network/lib/disasterReport'
+// import { PlaceInfo } from '@/services/network/lib/disasterReport'
 import { array, mixed, number, object, ObjectSchema, string } from 'yup'
 import { useFormik } from 'formik'
 import { useCustomEvents } from '@/services/formik/hooks'
@@ -19,7 +19,8 @@ import { ReverseGeocodeResponse } from '@/services/network/lib/report'
 import {
   selectUserCurrentLocation,
   useUserCurrentLocationStore,
-} from '@/zustand/userCurrentLocationStore';
+} from '@/zustand/userCurrentLocationStore'
+import { useCreateDisasterReport } from '@/services/network/lib/disasterReport'
 
 // Create Post Modal Interfaace
 interface createPostProps {
@@ -83,7 +84,7 @@ interface CreateReportParameters {
 }
 
 export interface CreateReportFormValues {
-  reportImage: File[] | null,
+  reportImage: File[] | null
   reportType: 'DISASTER_INCIDENT' // add more later if needed
   name: string
   parameters: CreateReportParameters
@@ -100,15 +101,19 @@ const CreatePostModal: React.FC<createPostProps> = ({
   const hasFetchedInitialLocation = useRef(false)
   const { t } = useTranslation()
   const queryClient = useQueryClient()
-  const userCurrentLocation = useUserCurrentLocationStore(selectUserCurrentLocation)
-  const setUserCurrentLocationInStore = useUserCurrentLocationStore((state) => state.setUserCurrentLocation)
+  const userCurrentLocation = useUserCurrentLocationStore(
+    selectUserCurrentLocation,
+  )
+  const setUserCurrentLocationInStore = useUserCurrentLocationStore(
+    (state) => state.setUserCurrentLocation,
+  )
 
   const initialValues: CreateReportFormValues = {
     reportImage: null,
     reportType: 'DISASTER_INCIDENT',
     name: '',
     parameters: {
-      description: "",
+      description: '',
       incidentType: 'EARTHQUAKE',
       severity: 'UNKNOWN',
       incidentTimestamp: new Date().toISOString(),
@@ -118,21 +123,32 @@ const CreatePostModal: React.FC<createPostProps> = ({
         latitude: 0,
         longitude: 0,
       },
-      media: [] //tbh it should be removed from be, just leave it for now like this
-    }
+      media: [], //tbh it should be removed from be, just leave it for now like this
+    },
   }
 
-
   const validationSchema: ObjectSchema<CreateReportFormValues> = object({
-    reportImage: array().of(mixed<File>().required('Image is required')).nullable().default(null),
-    reportType: string().oneOf(['DISASTER_INCIDENT'], 'Invalid report type').required('Report type is required'),
+    reportImage: array()
+      .of(mixed<File>().required('Image is required'))
+      .nullable()
+      .default(null),
+    reportType: string()
+      .oneOf(['DISASTER_INCIDENT'], 'Invalid report type')
+      .required('Report type is required'),
     name: string().required('Name is required'),
     parameters: object().shape({
       description: string()
         .required('Description is required')
         .min(10, 'Description must be at least 10 characters long'),
-      incidentType: string().oneOf(['EARTHQUAKE', 'FLOOD', 'FIRE', 'STORM', 'OTHER'], 'Invalid incident type').required('Incident type is required'),
-      severity: string().oneOf(['UNKNOWN', 'MINOR', 'MODERATE', 'SEVERE'], 'Invalid severity').required('Severity is required'),
+      incidentType: string()
+        .oneOf(
+          ['EARTHQUAKE', 'FLOOD', 'FIRE', 'STORM', 'OTHER'],
+          'Invalid incident type',
+        )
+        .required('Incident type is required'),
+      severity: string()
+        .oneOf(['UNKNOWN', 'MINOR', 'MODERATE', 'SEVERE'], 'Invalid severity')
+        .required('Severity is required'),
       incidentTimestamp: string().required('Incident timestamp is required'),
       location: object().shape({
         city: string().required('City is required'),
@@ -144,11 +160,13 @@ const CreatePostModal: React.FC<createPostProps> = ({
     }),
   })
 
+  const { mutate: createReport } = useCreateDisasterReport()
   const handleSubmit = (values: CreateReportFormValues) => {
     console.log('Form values submitted:', values)
     // The city and country are already populated.
     // You can now proceed with your API call to create the report.
     setIsOpen(false) // Close modal on submit
+    createReport(values)
   }
 
   const formik = useFormik({
@@ -160,43 +178,49 @@ const CreatePostModal: React.FC<createPostProps> = ({
   })
 
   // handle locaton
-  const handlePositionChange = useCallback(async (location: LocationCoordinates) => {
-    console.log('📌 Location received in CreatePostModal:', location)
-    const lat = location.lat ?? 0
-    const lng = location.lng ?? 0
+  const handlePositionChange = useCallback(
+    async (location: LocationCoordinates) => {
+      console.log('📌 Location received in CreatePostModal:', location)
+      const lat = location.lat ?? 0
+      const lng = location.lng ?? 0
 
-    formik.setFieldValue('parameters.location.latitude', lat)
-    formik.setFieldValue('parameters.location.longitude', lng)
+      formik.setFieldValue('parameters.location.latitude', lat)
+      formik.setFieldValue('parameters.location.longitude', lng)
 
-    if (!lat || !lng) return
+      if (!lat || !lng) return
 
-    setIsGeocoding(true)
-    try {
-      const data = await queryClient.fetchQuery<ReverseGeocodeResponse>({
-        queryKey: ['get-reverse-geocode', lat, lng],
-        queryFn: () =>
-          apiClient.post(ApiConstantRoutes.paths.location.reverseGeocode, {
-            lat,
-            lng,
-          }),
-        staleTime: 1000 * 60 * 5, // Cache for 5 minutes
-      })
+      setIsGeocoding(true)
+      try {
+        const data = await queryClient.fetchQuery<ReverseGeocodeResponse>({
+          queryKey: ['get-reverse-geocode', lat, lng],
+          queryFn: () =>
+            apiClient.post(ApiConstantRoutes.paths.location.reverseGeocode, {
+              lat,
+              lng,
+            }),
+          staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+        })
 
-      if (data.status === 'SUCCESS' && data.data) {
-        formik.setFieldValue('parameters.location.city', data.data.city)
-        formik.setFieldValue('parameters.location.country', data.data.country)
-      } else {
-        formik.setFieldValue('parameters.location.city', 'Unknown City')
-        formik.setFieldValue('parameters.location.country', 'Unknown Country')
+        if (data.status === 'SUCCESS' && data.data) {
+          formik.setFieldValue('parameters.location.city', data.data.city)
+          formik.setFieldValue('parameters.location.country', data.data.country)
+        } else {
+          formik.setFieldValue('parameters.location.city', 'Unknown City')
+          formik.setFieldValue('parameters.location.country', 'Unknown Country')
+        }
+      } catch (error) {
+        console.error('Failed to reverse geocode location', error)
+        formik.setFieldValue('parameters.location.city', 'Error Fetching City')
+        formik.setFieldValue(
+          'parameters.location.country',
+          'Error Fetching Country',
+        )
+      } finally {
+        setIsGeocoding(false)
       }
-    } catch (error) {
-      console.error('Failed to reverse geocode location', error)
-      formik.setFieldValue('parameters.location.city', 'Error Fetching City')
-      formik.setFieldValue('parameters.location.country', 'Error Fetching Country')
-    } finally {
-      setIsGeocoding(false)
-    }
-  }, [queryClient, formik.setFieldValue])
+    },
+    [queryClient, formik.setFieldValue],
+  )
 
   // On modal open, if we have a user location, perform reverse geocoding to pre-fill the form.
   useEffect(() => {
@@ -237,7 +261,12 @@ const CreatePostModal: React.FC<createPostProps> = ({
         },
       )
     }
-  }, [isOpen, userCurrentLocation, handlePositionChange, setUserCurrentLocationInStore])
+  }, [
+    isOpen,
+    userCurrentLocation,
+    handlePositionChange,
+    setUserCurrentLocationInStore,
+  ])
 
   // cancel button
   const handleCancel = () => {
@@ -246,17 +275,20 @@ const CreatePostModal: React.FC<createPostProps> = ({
     setIsOpen(false)
   }
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    const currentImages = formik.values.reportImage || []
-    formik.setFieldValue('reportImage', [...currentImages, ...acceptedFiles])
-    acceptedFiles.forEach((file) => {
-      const reader = new FileReader()
-      reader.onload = () => {
-        setPreviewImages((prev) => [...prev, reader.result as string])
-      }
-      reader.readAsDataURL(file)
-    })
-  }, [formik])
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      const currentImages = formik.values.reportImage || []
+      formik.setFieldValue('reportImage', [...currentImages, ...acceptedFiles])
+      acceptedFiles.forEach((file) => {
+        const reader = new FileReader()
+        reader.onload = () => {
+          setPreviewImages((prev) => [...prev, reader.result as string])
+        }
+        reader.readAsDataURL(file)
+      })
+    },
+    [formik],
+  )
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
 
@@ -265,7 +297,10 @@ const CreatePostModal: React.FC<createPostProps> = ({
   // remove selected image
   const handleRemoveImage = (indexToRemove: number) => {
     const currentImages = formik.values.reportImage || []
-    formik.setFieldValue('reportImage', currentImages.filter((_, i) => i !== indexToRemove))
+    formik.setFieldValue(
+      'reportImage',
+      currentImages.filter((_, i) => i !== indexToRemove),
+    )
     setPreviewImages((prev) =>
       prev.filter((_, index) => index !== indexToRemove),
     )
@@ -321,7 +356,10 @@ const CreatePostModal: React.FC<createPostProps> = ({
                     className='block min-h-[50px] w-full appearance-none rounded-[10px] border border-zinc-300 px-4 py-2 text-base font-light text-black transition-colors duration-200 focus:outline-black/30'
                     value={formik.values.parameters.incidentType}
                     onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                      formik.setFieldValue('parameters.incidentType', e.target.value)
+                      formik.setFieldValue(
+                        'parameters.incidentType',
+                        e.target.value,
+                      )
                     }}
                     required
                   >
@@ -337,7 +375,9 @@ const CreatePostModal: React.FC<createPostProps> = ({
                   </div>
                 </div>
                 {formik.errors.parameters?.incidentType && (
-                  <p className='mt-1 text-sm text-red'>{formik.errors.parameters.incidentType}</p>
+                  <p className='text-red mt-1 text-sm'>
+                    {formik.errors.parameters.incidentType}
+                  </p>
                 )}
               </div>
 
@@ -356,7 +396,10 @@ const CreatePostModal: React.FC<createPostProps> = ({
                     className='block min-h-[50px] w-full appearance-none rounded-[10px] border border-zinc-300 px-4 py-2 text-base font-light text-black transition-colors duration-200 focus:outline-black/30'
                     value={formik.values.parameters.severity}
                     onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                      formik.setFieldValue('parameters.severity', e.target.value)
+                      formik.setFieldValue(
+                        'parameters.severity',
+                        e.target.value,
+                      )
                     }}
                     required
                   >
@@ -370,7 +413,9 @@ const CreatePostModal: React.FC<createPostProps> = ({
                   </div>
                 </div>
                 {formik.errors.parameters?.severity && (
-                  <p className='mt-1 text-sm text-red'>{formik.errors.parameters.severity}</p>
+                  <p className='text-red mt-1 text-sm'>
+                    {formik.errors.parameters.severity}
+                  </p>
                 )}
               </div>
               {/* title is name */}
@@ -406,13 +451,18 @@ const CreatePostModal: React.FC<createPostProps> = ({
                   name='description'
                   value={formik.values.parameters.description}
                   onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-                    formik.setFieldValue('parameters.description', e.target.value)
+                    formik.setFieldValue(
+                      'parameters.description',
+                      e.target.value,
+                    )
                   }}
                   className='block min-h-28 w-full appearance-none rounded-[10px] border border-zinc-300 px-4 py-2 text-base font-light text-black transition-colors duration-200 focus:outline-black/30'
                   required
                 ></textarea>
                 {formik.errors.parameters?.description && (
-                  <p className='mt-1 text-sm text-red'>{formik.errors.parameters.description}</p>
+                  <p className='text-red mt-1 text-sm'>
+                    {formik.errors.parameters.description}
+                  </p>
                 )}
               </div>
 
@@ -422,14 +472,23 @@ const CreatePostModal: React.FC<createPostProps> = ({
                   {t('createPost.location')}
                   <span className='text-red'>*</span>
                 </label>
-                {formik.touched.parameters?.location && formik.errors.parameters?.location && typeof formik.errors.parameters.location === 'object' && (
-                  Object.values(formik.errors.parameters.location).map((error, index) => (
-                    <p key={index} className='mt-1 text-sm text-red'>{error}</p>
-                  ))
-                )}
-                {formik.touched.parameters?.location && formik.errors.parameters?.location && typeof formik.errors.parameters.location === 'string' && (
-                  <p className='mt-1 text-sm text-red'>{formik.errors.parameters.location}</p>
-                )}
+                {formik.touched.parameters?.location &&
+                  formik.errors.parameters?.location &&
+                  typeof formik.errors.parameters.location === 'object' &&
+                  Object.values(formik.errors.parameters.location).map(
+                    (error, index) => (
+                      <p key={index} className='text-red mt-1 text-sm'>
+                        {error}
+                      </p>
+                    ),
+                  )}
+                {formik.touched.parameters?.location &&
+                  formik.errors.parameters?.location &&
+                  typeof formik.errors.parameters.location === 'string' && (
+                    <p className='text-red mt-1 text-sm'>
+                      {formik.errors.parameters.location}
+                    </p>
+                  )}
                 <p className='mb-2 text-sm font-thin text-black/50'>
                   {isGeocoding
                     ? 'Fetching address...'
@@ -508,11 +567,7 @@ const CreatePostModal: React.FC<createPostProps> = ({
                 >
                   {t('createPost.cancel')}
                 </Button>
-                <Button
-                  className='w-29'
-                  primary
-                  type='submit'
-                >
+                <Button className='w-29' primary type='submit'>
                   {/* {isPending ? 'Submitting...' : t('createPost.submit')} */}
                   {t('createPost.submit')}
                 </Button>

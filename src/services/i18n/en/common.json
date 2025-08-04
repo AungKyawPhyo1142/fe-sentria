@@ -7,11 +7,11 @@
   },
 
   "disasters": {
-    "earthquake": "Earthquake",
-    "flood": "Flood",
-    "fire": "Fire",
-    "storm": "Storm",
-    "other": "Other"
+    "earthquake": "earthquake",
+    "flood": "flood",
+    "fire": "fire",
+    "storm": "storm",
+    "other": "other"
   },
   "severity": {
     "unknown": "Unknown",

@@ -1,7 +1,14 @@
-import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query'
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query'
 import { STATUS } from './auth'
 import { apiClient } from '../apiClient'
 import { ApiConstantRoutes } from '../path'
+import { CreateReportFormValues } from '@/components/common/CreatePostModal'
+import { toast } from 'react-toastify'
 // import { PlaceInfo } from '@/components/common/MapSelector'
 
 export interface PlaceInfo {
@@ -134,46 +141,106 @@ export const useGetDisasterReportDetail = (id: string) => {
 }
 
 //create report
+// export const useCreateDisasterReport = () => {
+//   return useMutation<CreateReportResponse, Error, CreateReportFormValues>({
+//     mutationFn: async (data: CreateReportFormValues) => {
+//       const formData = new FormData()
+//       data?.reportImage.forEach((file) => {
+//         formData.append('reportImage', file)
+//       })
+//       formData.append('imageCaption', '') // will always send blank
+//       formData.append('reportType', data.reportType)
+//       formData.append('name', data.name)
+
+//       const updatedParams = {
+//         ...data.parameters,
+//         media: [], // always empty
+//       }
+//       formData.append('parameters', JSON.stringify(updatedParams))
+
+//       // ✅ Log form data content before sending
+//       console.log('🔍 FormData being sent:')
+//       formData.forEach((value, key) => {
+//         console.log(`${key}:`, value)
+//       })
+
+//       console.log('url is: ', ApiConstantRoutes.paths.report.create)
+
+//       try {
+//         const res = await apiClient.post(
+//           ApiConstantRoutes.paths.report.create,
+//           formData,
+//           {
+//             headers: {
+//               'Content-Type': 'multipart/form-data',
+//             },
+//           },
+//         )
+//         console.log(' Response:', res.data)
+//         return res.data
+//       } catch (error) {
+//         console.error('Failed to create report:', error)
+//       }
+//     },
+//   })
+// }
+
 export const useCreateDisasterReport = () => {
-  return useMutation<CreateReportResponse, Error, CreateReport>({
-    mutationFn: async (data: CreateReport) => {
-      const formData = new FormData()
-      data.reportImage.forEach((file) => {
-        formData.append('reportImage', file)
-      })
-      formData.append('imageCaption', '') // will always send blank
-      formData.append('reportType', data.reportType)
-      formData.append('name', data.name)
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (
+      formData: CreateReportFormValues,
+    ): Promise<CreateReportResponse> => {
+      const form = new FormData()
 
-      const updatedParams = {
-        ...data.parameters,
-        media: [], // always empty
+      form.append('reportType', formData.reportType)
+      form.append('name', formData.name)
+
+      // imgs
+      if (formData.reportImage && formData.reportImage.length > 0) {
+        formData.reportImage.forEach((file) => {
+          form.append('reportImage', file)
+        })
       }
-      formData.append('parameters', JSON.stringify(updatedParams))
 
-      // ✅ Log form data content before sending
-      console.log('🔍 FormData being sent:')
-      formData.forEach((value, key) => {
-        console.log(`${key}:`, value)
-      })
+      // parameters
+      const parameters = {
+        description: formData.parameters.description,
+        incidentType: formData.parameters.incidentType,
+        severity: formData.parameters.severity,
+        incidentTimestamp: formData.parameters.incidentTimestamp,
+        location: {
+          city: formData.parameters.location.city,
+          country: formData.parameters.location.country,
+          latitude: formData.parameters.location.latitude,
+          longitude: formData.parameters.location.longitude,
+        },
+        media: formData.parameters.media,
+      }
 
-      console.log('url is: ', ApiConstantRoutes.paths.report.create)
+      form.append('parameters', JSON.stringify(parameters))
 
-      try {
-        const res = await apiClient.post(
-          ApiConstantRoutes.paths.report.create,
-          formData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
+      const res = await apiClient.post(
+        ApiConstantRoutes.paths.report.createReport,
+        form,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
           },
-        )
-        console.log(' Response:', res.data)
-        return res.data
-      } catch (error) {
-        console.error('Failed to create report:', error)
-      }
+        },
+      )
+      return res.data
+    },
+    onSuccess: () => {
+      toast.success('Post created successfully!')
+      // refetch all posts
+      queryClient.invalidateQueries({
+        queryKey: ['get-all-disaster-reports'],
+        exact: false,
+      })
+    },
+    onError: () => {
+      toast.error('Failed to create post!')
     },
   })
 }

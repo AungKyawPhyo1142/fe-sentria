@@ -208,7 +208,8 @@ const PostCard = ({
               >
                 {getDisasterIcon(disasterType)}
                 <span className='capitalize'>
-                  {t(`disasters.${disasterType}`)}
+                  {/* {t(`disasters.${disasterType}`)} */}
+                  {disasterType}
                 </span>
               </div>
             </div>
