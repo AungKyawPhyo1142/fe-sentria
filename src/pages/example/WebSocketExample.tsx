@@ -42,18 +42,28 @@ const WebSocketExample = () => {
   }, [])
 
   // 2. Use the WebSocket hook once we have a location
+  // useEffect(() => {
+  //   if (!userLocation) return
+
+  //   const disconnect = useSendLocationWebSocket(userLocation)
+
+  //   return () => {
+  //     disconnect()
+  //   }
+  // }, [userLocation])
+  // 2. Use the WebSocket hook once we have a location
+  const disconnect = userLocation
+    ? useSendLocationWebSocket(userLocation)
+    : () => {}
+
   useEffect(() => {
-    if (!userLocation) return
-
-    const disconnect = useSendLocationWebSocket(userLocation)
-
     return () => {
       disconnect()
     }
-  }, [userLocation])
+  }, [disconnect])
 
   // * Cleanup
-  useEffect(() => reportSocketCleanup, [])
+  useEffect(() => reportSocketCleanup, [reportSocketCleanup])
 
   const handleScroll = () => {
     const { scrollHeight, scrollTop, clientHeight } = document.documentElement
@@ -68,7 +78,7 @@ const WebSocketExample = () => {
     return () => {
       window.removeEventListener('scroll', handleScroll)
     }
-  }, [])
+  }, [handleScroll])
 
   return (
     <>

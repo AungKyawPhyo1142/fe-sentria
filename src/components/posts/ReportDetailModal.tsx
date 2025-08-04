@@ -73,7 +73,7 @@ const ReportDetailModal: React.FC<reportDetailProps> = ({
   onComment,
   reporterId,
   loginUser,
-  _id,
+  // _id,
 }) => {
   const { t } = useTranslation()
 
