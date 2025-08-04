@@ -30,7 +30,14 @@ const SocketExample = () => {
     setupReportUpdateListener(queryClient)
     subscribeToReportsRoom(reportData?.pages ?? [])
     earthquakeAlertListener()
-  }, [connect, setupReportUpdateListener, queryClient, reportData])
+  }, [
+    connect,
+    setupReportUpdateListener,
+    subscribeToReportsRoom,
+    earthquakeAlertListener,
+    queryClient,
+    reportData,
+  ])
 
   // send user location to socket
   // TODO: put this in layout file since we have to send locatino to backend once user logged in
@@ -46,7 +53,7 @@ const SocketExample = () => {
         lng: 96.15,
       })
     }
-  }, [isSocketConnected])
+  }, [isSocketConnected, sendUserLocation])
 
   const handleScroll = () => {
     const { scrollHeight, scrollTop, clientHeight } = document.documentElement
@@ -61,7 +68,7 @@ const SocketExample = () => {
     return () => {
       window.removeEventListener('scroll', handleScroll)
     }
-  }, [])
+  }, [handleScroll])
 
   return (
     <div className='flex flex-col gap-y-10 p-10'>

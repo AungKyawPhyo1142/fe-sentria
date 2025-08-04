@@ -51,11 +51,9 @@ const WebSocketExample = () => {
   //     disconnect()
   //   }
   // }, [userLocation])
-  useEffect(() => {
-    if (userLocation) {
-      useSendLocationWebSocket(userLocation)
-    }
-  }, [userLocation])
+  if (userLocation) {
+    useSendLocationWebSocket(userLocation)
+  }
 
   // * Cleanup
   useEffect(() => reportSocketCleanup, [reportSocketCleanup])

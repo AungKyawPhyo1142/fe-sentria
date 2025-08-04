@@ -8,7 +8,15 @@ import {
 } from '@/zustand/userCurrentLocationStore'
 
 // Fix Leaflet default icon
-delete (L.Icon.Default.prototype as any)._getIconUrl
+// delete (L.Icon.Default.prototype as any)._getIconUrl
+function deleteDefaultIconUrl() {
+  const proto = L.Icon.Default.prototype as unknown as {
+    _getIconUrl?: () => string
+  }
+  delete proto._getIconUrl
+}
+deleteDefaultIconUrl()
+
 L.Icon.Default.mergeOptions({
   iconRetinaUrl:
     'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
