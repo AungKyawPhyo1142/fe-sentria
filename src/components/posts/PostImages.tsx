@@ -23,13 +23,12 @@ const fakeImages = [
 // ////////
 
 const PostImages = ({ images }: { images?: string[] }) => {
+  const [showDetail, setShowDetail] = useState(false)
   if (!images || images.length === 0) return null
 
   const displayImages = images.slice(0, 4)
 
   const extraImageCount = images.length - displayImages.length
-
-  const [showDetail, setShowDetail] = useState(false)
 
   return (
     <div className='mt-1 grid grid-cols-4 gap-3'>

@@ -42,13 +42,18 @@ const WebSocketExample = () => {
   }, [])
 
   // 2. Use the WebSocket hook once we have a location
+  // useEffect(() => {
+  //   if (!userLocation) return
+
+  //   const disconnect = useSendLocationWebSocket(userLocation)
+
+  //   return () => {
+  //     disconnect()
+  //   }
+  // }, [userLocation])
   useEffect(() => {
-    if (!userLocation) return
-
-    const disconnect = useSendLocationWebSocket(userLocation)
-
-    return () => {
-      disconnect()
+    if (userLocation) {
+      useSendLocationWebSocket(userLocation)
     }
   }, [userLocation])
 

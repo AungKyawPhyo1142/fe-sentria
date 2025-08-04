@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { config } from '@config/register'
 import { socket } from '../socket'
 
@@ -14,7 +15,6 @@ class UserLocationSocketManager {
   }
 
   public connect(userLocation: UserLocation) {
-    if (!userLocation) return
     socket.connect()
     socket.on('connect', () => {
       socket.emit(this.userLocationSocket, {
@@ -35,11 +35,14 @@ class UserLocationSocketManager {
 }
 
 export const useSendLocationWebSocket = (userLocation: UserLocation) => {
-  const userSocketManager = new UserLocationSocketManager()
+  useEffect(() => {
+    if (!userLocation) return
 
-  if (userLocation) {
+    const userSocketManager = new UserLocationSocketManager()
     userSocketManager.connect(userLocation)
-  }
 
-  return () => userSocketManager.disconnect
+    return () => {
+      userSocketManager.disconnect()
+    }
+  }, [userLocation])
 }
