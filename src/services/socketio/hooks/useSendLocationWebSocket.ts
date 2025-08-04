@@ -34,7 +34,7 @@ class UserLocationSocketManager {
   }
 }
 
-export const useSendLocationWebSocket = (userLocation: UserLocation) => {
+export const useSendLocationWebSocket = (userLocation: UserLocation | null) => {
   useEffect(() => {
     if (!userLocation) return
 
