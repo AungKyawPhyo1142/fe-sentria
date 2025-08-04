@@ -25,8 +25,9 @@ import TrustScoreBadge from './TrustScoreBadge'
 import VerifyBadge from '@/assets/VerifiedBadge.svg?react'
 import PostImageSlider from './PostImagesSlider'
 import { formatNumber } from '@/helpers/helpers'
-import CommentCard, { fakeComments } from './CommentCard'
+import CommentCard from './CommentCard'
 import CommentInputBox from './CommentInputBox'
+import { fakeComments } from './fakeData/fakeComments'
 
 interface reportDetailProps {
   className?: string
