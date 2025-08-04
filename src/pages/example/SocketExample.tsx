@@ -5,7 +5,7 @@ import {
 } from '@/services/network/lib/disasterReport'
 import { useSocketStore } from '@/zustand/socketStore'
 import { useQueryClient } from '@tanstack/react-query'
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import { toast } from 'react-toastify'
 
 const SocketExample = () => {
@@ -55,12 +55,18 @@ const SocketExample = () => {
     }
   }, [isSocketConnected, sendUserLocation])
 
-  const handleScroll = () => {
+  // const handleScroll = () => {
+  //   const { scrollHeight, scrollTop, clientHeight } = document.documentElement
+  //   if (scrollTop + clientHeight >= scrollHeight - 5) {
+  //     fetchNextPage()
+  //   }
+  // }
+  const handleScroll = useCallback(() => {
     const { scrollHeight, scrollTop, clientHeight } = document.documentElement
     if (scrollTop + clientHeight >= scrollHeight - 5) {
       fetchNextPage()
     }
-  }
+  }, [fetchNextPage])
 
   // Scroll listener
   useEffect(() => {

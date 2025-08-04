@@ -32,6 +32,7 @@ export interface User {
   avatar: string | null
   isVerified: boolean
 }
+type DisasterType = 'earthquake' | 'flood' | 'fire' | 'storm' | 'other'
 
 interface PostCardProps {
   id: string
@@ -86,7 +87,7 @@ const PostCard = ({
 
   const [showMenu, setShowMenu] = useState(false)
   const [showDetail, setShowDetail] = useState(false)
-  const [selectedId, setSelectedId] = useState<string | null>(null)
+  // const [selectedId, setSelectedId] = useState<string | null>(null)
 
   const getTrustWarning = (score: number, isDebunked: boolean) => {
     if (isDebunked) {
@@ -224,7 +225,7 @@ const PostCard = ({
           {/* post title */}
           <div
             onClick={() => {
-              setSelectedId(id)
+              // setSelectedId(id)
               setShowDetail(true)
             }}
             className='mt-2 text-[14px] hover:cursor-pointer'
@@ -274,7 +275,10 @@ const PostCard = ({
             title={reportDetail?.reportName ?? ''}
             content={reportDetail?.description ?? ''}
             images={imgUrl}
-            disasterType={reportDetail?.incidentType as any}
+            // disasterType={reportDetail?.incidentType as any}
+            disasterType={
+              (reportDetail?.incidentType as DisasterType) ?? 'other'
+            }
             upvotes={reportDetail?.factCheck.communityScore?.upvotes ?? 0}
             downvotes={reportDetail?.factCheck.communityScore?.downvotes ?? 0}
             comments={12}
