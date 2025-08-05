@@ -193,7 +193,7 @@ const CreatePostModal: React.FC<createPostProps> = ({
         setIsGeocoding(false)
       }
     },
-    [queryClient, formik.setFieldValue],
+    [queryClient, formik],
   )
 
   // On modal open, if we have a user location, perform reverse geocoding to pre-fill the form.
@@ -261,7 +261,8 @@ const CreatePostModal: React.FC<createPostProps> = ({
         reader.readAsDataURL(file)
       })
     },
-    [formik.setFieldValue],
+    // [formik.values.reportImage, formik.setFieldValue],
+    [formik],
   )
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
