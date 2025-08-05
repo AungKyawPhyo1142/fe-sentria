@@ -1,7 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import React, { useState } from 'react'
 import clsx from 'clsx'
-import { backdropVariants, modalVariants } from '../common/CreatePostModal'
 import { X } from 'lucide-react'
 import ReactDOM from 'react-dom'
 import { User } from './PostCard'
@@ -28,6 +27,7 @@ import { formatNumber } from '@/helpers/helpers'
 import CommentCard from './CommentCard'
 import CommentInputBox from './CommentInputBox'
 import { fakeComments } from './constants/fakeComments'
+import { backdropVariants, modalVariants } from './constants/constants'
 
 interface reportDetailProps {
   className?: string
