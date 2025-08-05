@@ -24,6 +24,7 @@ import { useState } from 'react'
 import ReportDetailModal from './ReportDetailModal'
 import { useGetDisasterReportDetail } from '@/services/network/lib/disasterReport'
 import { selectAuth, useAuthStore } from '@/zustand/authStore'
+import DeleteReportModal from './DeleteReportModal'
 
 // fake data for report detail
 
@@ -88,6 +89,7 @@ const PostCard = ({
   const [showMenu, setShowMenu] = useState(false)
   const [showDetail, setShowDetail] = useState(false)
   // const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [isDelete, setIsDelete] = useState(false)
 
   const getTrustWarning = (score: number, isDebunked: boolean) => {
     if (isDebunked) {
@@ -142,6 +144,13 @@ const PostCard = ({
           m.url.trim() !== '',
       )
       .map((m) => m.url) ?? []
+
+  // delete
+  const handleDelete = () => {
+    console.log('delete button clicked!')
+    setShowMenu(false)
+    setIsDelete(true)
+  }
 
   return (
     <div className='mb-4 max-w-full bg-white'>
@@ -336,7 +345,7 @@ const PostCard = ({
             {isOwner && (
               <div className='relative'>
                 <button
-                  onClick={() => setShowMenu(!showMenu)}
+                  onClick={() => setShowMenu((prev) => !prev)}
                   className='text-[#33333430] focus-within:ring-0 hover:cursor-pointer hover:text-[#33333430]/80 focus:ring-0 focus:outline-none focus-visible:ring-0'
                 >
                   <Ellipsis className='h-6 w-6 stroke-1' />
@@ -351,7 +360,7 @@ const PostCard = ({
                       <EditIcon className='h-4 w-4' /> Edit
                     </button>
                     <button
-                      onClick={() => console.log('Delete Post')}
+                      onClick={handleDelete}
                       className='flex w-full items-center gap-2 px-4 py-2 text-xs text-[#B22222] hover:cursor-pointer hover:text-[#B22222]/80 focus:ring-0 focus:outline-none focus-visible:ring-0'
                     >
                       <Trash className='h-4 w-4' /> Delete
@@ -359,6 +368,13 @@ const PostCard = ({
                   </div>
                 )}
               </div>
+            )}
+            {isDelete && (
+              <DeleteReportModal
+                isOpen={isDelete}
+                setIsOpen={setIsDelete}
+                id={id}
+              />
             )}
           </div>
         </div>

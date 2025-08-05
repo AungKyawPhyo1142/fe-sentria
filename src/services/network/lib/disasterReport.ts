@@ -112,6 +112,21 @@ interface CreateReportResponse {
   status: STATUS
 }
 
+// delete response
+interface BackendReport {
+  report: {
+    mongoResourceId: string
+    postgresResourceId: string
+    message: string
+    deletedAt: string
+  }
+}
+
+interface DeleteReportResponse {
+  data: BackendReport
+  status: 'SUCCESS' | 'ERROR'
+}
+
 //get all reports
 export const useGetAllDisasterReports = (searchQuery?: string) => {
   return useInfiniteQuery<ReportResponse>({
@@ -243,4 +258,63 @@ export const useCreateDisasterReport = () => {
       toast.error('Failed to create post!')
     },
   })
+}
+
+// delete report
+// export const deleteReportById = async (
+//   id: string,
+// ): Promise<DeleteReportResponse> => {
+//   try {
+//     const res = await apiClient.delete<DeleteReportResponse>(
+//       ApiConstantRoutes.paths.report.deleteReport(id),
+//     )
+//     console.log('res.data:', res.data) // Axios .data (your backend response)
+//     console.log('res.data.status:', res.data.status) // ✅ Should be 'SUCCESS'
+
+//     if (res.data.status === 'SUCCESS') {
+//       toast.success('Post deleted successfully!')
+//     } else {
+//       toast.error('Error deleting post!')
+//     }
+//     return res.data
+//   } catch (error) {
+//     throw new Error('Failed to delete the report')
+//   }
+// }
+
+// Define your response shape based on your real backend response
+
+export const useDeleteReport = () => {
+  const queryClient = useQueryClient()
+
+  const deleteReportById = async (
+    id: string,
+  ): Promise<DeleteReportResponse> => {
+    try {
+      const res = await apiClient.delete<DeleteReportResponse>(
+        ApiConstantRoutes.paths.report.deleteReport(id),
+      )
+      console.log('res.data:', res.data) // => { report: {...} }
+      console.log('res.data.status:', res.data.status) // => 'SUCCESS' ✅
+      console.log('FULL RES:', JSON.stringify(res, null, 2))
+      console.log('FULL RES:', res)
+      if (String(res.status) === 'SUCCESS') {
+        toast.success('Report deleted successfully!')
+        // Refetch or invalidate queries related to reports here:
+        queryClient.invalidateQueries({
+          queryKey: ['get-all-disaster-reports'],
+          exact: false,
+        })
+      } else {
+        toast.error('Failed to delete the report!')
+      }
+
+      return res.data
+    } catch (error) {
+      toast.error('Error deleting report. Please try again.')
+      throw error
+    }
+  }
+
+  return { deleteReportById }
 }

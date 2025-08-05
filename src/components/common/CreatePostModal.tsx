@@ -421,7 +421,7 @@ const CreatePostModal: React.FC<createPostProps> = ({
                   <span className='text-red'>*</span>
                 </label>
                 <textarea
-                  maxLength={300}
+                  // maxLength={300}
                   id='description'
                   name='description'
                   value={formik.values.parameters.description}
