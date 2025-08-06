@@ -9,7 +9,6 @@ import { apiClient } from '../apiClient'
 import { ApiConstantRoutes } from '../path'
 import { CreateReportFormValues } from '@/components/common/CreatePostModal'
 import { toast } from 'react-toastify'
-// import { PlaceInfo } from '@/components/common/MapSelector'
 
 export interface PlaceInfo {
   city: string
@@ -127,6 +126,37 @@ interface DeleteReportResponse {
   status: 'SUCCESS' | 'ERROR'
 }
 
+// edit report
+export interface UpdateReportRequest {
+  reportType: 'DISASTER_INCIDENT'
+  name: string
+  parameters: {
+    description: string
+    incidentType: string
+    severity: string
+    incidentTimestamp: string
+    location: {
+      city: string
+      country: string
+      latitude: number
+      longitude: number
+    }
+    media: string[] | null
+  }
+}
+
+export interface UpdateReportResponse {
+  data: {
+    result: {
+      mongoReportId: string
+      postgresReportId: string
+      message: string
+      updatedAt: string
+    }
+  }
+  status: STATUS
+}
+
 //get all reports
 export const useGetAllDisasterReports = (searchQuery?: string) => {
   return useInfiniteQuery<ReportResponse>({
@@ -156,50 +186,6 @@ export const useGetDisasterReportDetail = (id: string) => {
 }
 
 //create report
-// export const useCreateDisasterReport = () => {
-//   return useMutation<CreateReportResponse, Error, CreateReportFormValues>({
-//     mutationFn: async (data: CreateReportFormValues) => {
-//       const formData = new FormData()
-//       data?.reportImage.forEach((file) => {
-//         formData.append('reportImage', file)
-//       })
-//       formData.append('imageCaption', '') // will always send blank
-//       formData.append('reportType', data.reportType)
-//       formData.append('name', data.name)
-
-//       const updatedParams = {
-//         ...data.parameters,
-//         media: [], // always empty
-//       }
-//       formData.append('parameters', JSON.stringify(updatedParams))
-
-//       // ✅ Log form data content before sending
-//       console.log('🔍 FormData being sent:')
-//       formData.forEach((value, key) => {
-//         console.log(`${key}:`, value)
-//       })
-
-//       console.log('url is: ', ApiConstantRoutes.paths.report.create)
-
-//       try {
-//         const res = await apiClient.post(
-//           ApiConstantRoutes.paths.report.create,
-//           formData,
-//           {
-//             headers: {
-//               'Content-Type': 'multipart/form-data',
-//             },
-//           },
-//         )
-//         console.log(' Response:', res.data)
-//         return res.data
-//       } catch (error) {
-//         console.error('Failed to create report:', error)
-//       }
-//     },
-//   })
-// }
-
 export const useCreateDisasterReport = () => {
   const queryClient = useQueryClient()
   return useMutation({
@@ -261,29 +247,6 @@ export const useCreateDisasterReport = () => {
 }
 
 // delete report
-// export const deleteReportById = async (
-//   id: string,
-// ): Promise<DeleteReportResponse> => {
-//   try {
-//     const res = await apiClient.delete<DeleteReportResponse>(
-//       ApiConstantRoutes.paths.report.deleteReport(id),
-//     )
-//     console.log('res.data:', res.data) // Axios .data (your backend response)
-//     console.log('res.data.status:', res.data.status) // ✅ Should be 'SUCCESS'
-
-//     if (res.data.status === 'SUCCESS') {
-//       toast.success('Post deleted successfully!')
-//     } else {
-//       toast.error('Error deleting post!')
-//     }
-//     return res.data
-//   } catch (error) {
-//     throw new Error('Failed to delete the report')
-//   }
-// }
-
-// Define your response shape based on your real backend response
-
 export const useDeleteReport = () => {
   const queryClient = useQueryClient()
 
@@ -317,4 +280,16 @@ export const useDeleteReport = () => {
   }
 
   return { deleteReportById }
+}
+
+// edit report
+export const editReport = async (
+  id: string,
+  reportData: UpdateReportRequest,
+): Promise<UpdateReportResponse> => {
+  const res = await apiClient.patch<UpdateReportResponse>(
+    ApiConstantRoutes.paths.report.editReport(id),
+    reportData,
+  )
+  return res.data
 }

@@ -433,7 +433,7 @@ const CreatePostModal: React.FC<createPostProps> = ({
                   }}
                   className='block min-h-28 w-full appearance-none rounded-[10px] border border-zinc-300 px-4 py-2 text-base font-light text-black transition-colors duration-200 focus:outline-black/30'
                   required
-                ></textarea>
+                />
                 {formik.errors.parameters?.description && (
                   <p className='text-red mt-1 text-sm'>
                     {formik.errors.parameters.description}

@@ -50,6 +50,9 @@ export const ApiConstantRoutes = {
         deleteReport(id: string) {
           return `${this.default}/delete/${id}`
         },
+        editReport(id: string) {
+          return `${this.default}/update/${id}`
+        },
       }
     },
     get location() {

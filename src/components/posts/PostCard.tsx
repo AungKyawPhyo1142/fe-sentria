@@ -25,6 +25,7 @@ import ReportDetailModal from './ReportDetailModal'
 import { useGetDisasterReportDetail } from '@/services/network/lib/disasterReport'
 import { selectAuth, useAuthStore } from '@/zustand/authStore'
 import DeleteReportModal from './DeleteReportModal'
+import EditReportModal from './EditReportModal'
 
 // fake data for report detail
 
@@ -80,16 +81,12 @@ const PostCard = ({
   const { t } = useTranslation()
   const { userId } = useAuthStore(selectAuth)
   const isOwner = String(reporterId) === String(loginUser)
-  // console.log('Owner / reporter', isOwner)
-  // console.log('reporterId: ', reporterId)
-  // console.log('loginUser: ', loginUser)
-  // console.log('reporterId type:', typeof reporterId)
-  // console.log('loginUser type:', typeof loginUser)
 
   const [showMenu, setShowMenu] = useState(false)
   const [showDetail, setShowDetail] = useState(false)
   // const [selectedId, setSelectedId] = useState<string | null>(null)
   const [isDelete, setIsDelete] = useState(false)
+  const [isEdit, setIsEdit] = useState(false)
 
   const getTrustWarning = (score: number, isDebunked: boolean) => {
     if (isDebunked) {
@@ -150,6 +147,12 @@ const PostCard = ({
     console.log('delete button clicked!')
     setShowMenu(false)
     setIsDelete(true)
+  }
+  // edit
+  const handleEdit = () => {
+    console.log('edit button clicked!')
+    setShowMenu(false)
+    setIsEdit(true)
   }
 
   return (
@@ -353,15 +356,14 @@ const PostCard = ({
                 {showMenu && (
                   <div className='absolute right-0 bottom-full z-50 mb-1 w-28 rounded-md border border-[#333334]/30 bg-white'>
                     <button
-                      onClick={() => console.log('Edit Post')}
+                      onClick={handleEdit}
                       className='flex w-full cursor-pointer items-center gap-2 px-4 py-2 text-xs text-[#333334]/80 hover:text-[#333334]/30 focus:ring-0 focus:outline-none focus-visible:ring-0'
-                      disabled
                     >
                       <EditIcon className='h-4 w-4' /> Edit
                     </button>
                     <button
                       onClick={handleDelete}
-                      className='flex w-full items-center gap-2 px-4 py-2 text-xs text-[#B22222] hover:cursor-pointer hover:text-[#B22222]/80 focus:ring-0 focus:outline-none focus-visible:ring-0'
+                      className='flex w-full items-center gap-2 px-4 py-2 text-xs text-[#B22222] hover:cursor-pointer hover:text-[#B22222]/50 focus:ring-0 focus:outline-none focus-visible:ring-0'
                     >
                       <Trash className='h-4 w-4' /> Delete
                     </button>
@@ -375,6 +377,9 @@ const PostCard = ({
                 setIsOpen={setIsDelete}
                 id={id}
               />
+            )}
+            {isEdit && (
+              <EditReportModal isOpen={isEdit} setIsOpen={setIsEdit} id={id} />
             )}
           </div>
         </div>

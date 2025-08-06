@@ -2,13 +2,8 @@ import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
 import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet'
 import React, { useEffect, useState } from 'react'
-import {
-  selectUserCurrentLocation,
-  useUserCurrentLocationStore,
-} from '@/zustand/userCurrentLocationStore'
 
 // Fix Leaflet default icon
-// delete (L.Icon.Default.prototype as any)._getIconUrl
 function deleteDefaultIconUrl() {
   const proto = L.Icon.Default.prototype as unknown as {
     _getIconUrl?: () => string
@@ -26,30 +21,32 @@ L.Icon.Default.mergeOptions({
 
 function SetViewLocation({ position }: { position: [number, number] }) {
   const map = useMap()
-  map.setView(position, 13)
+  useEffect(() => {
+    map.setView(position, 13)
+  }, [position, map])
   return null
 }
 
 export interface LocationCoordinates {
-  lat: number | null
-  lng: number | null
+  lat: number
+  lng: number
 }
 
-interface MapSelectorProps {
-  onPositionChange: (position: { lat: number; lng: number }) => void
+interface LocationEditorProps {
+  postLocation: LocationCoordinates
+  onPositionChange: (position: LocationCoordinates) => void
 }
 
-const MapSelector: React.FC<MapSelectorProps> = ({ onPositionChange }) => {
-  const [position, setPosition] = useState<LocationCoordinates | null>(null)
+const LocationEditor: React.FC<LocationEditorProps> = ({
+  postLocation,
+  onPositionChange,
+}) => {
+  const [position, setPosition] = useState<LocationCoordinates>(postLocation)
 
-  //! use the global state instead of calling the useEffect again
-  // because user current location will & should be available almost everytime
-  const userCurrentLocation = useUserCurrentLocationStore(
-    selectUserCurrentLocation,
-  )
+  // Reset to original post location when postLocation changes (e.g., after reload)
   useEffect(() => {
-    setPosition(userCurrentLocation)
-  }, [userCurrentLocation])
+    setPosition(postLocation)
+  }, [postLocation])
 
   const handleDragEnd = (e: L.DragEndEvent) => {
     const marker = e.target as L.Marker
@@ -61,14 +58,10 @@ const MapSelector: React.FC<MapSelectorProps> = ({ onPositionChange }) => {
     onPositionChange(newCoords)
   }
 
-  if (!position) {
-    return <div>Loading map…</div>
-  }
-
   return (
     <div className='relative z-0'>
       <MapContainer
-        center={[position.lat ?? 16.0544, position.lng ?? 108.2022]}
+        center={[position.lat, position.lng]}
         zoom={13}
         style={{ height: '400px', width: '100%' }}
         scrollWheelZoom={false}
@@ -78,18 +71,16 @@ const MapSelector: React.FC<MapSelectorProps> = ({ onPositionChange }) => {
           url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
         />
         <Marker
-          position={[position.lat ?? 16.0544, position.lng ?? 108.2022]}
+          position={[position.lat, position.lng]}
           draggable
           eventHandlers={{ dragend: handleDragEnd }}
         >
-          <Popup>Choose Location that you want to post!</Popup>
+          <Popup>Drag to change post location</Popup>
         </Marker>
-        <SetViewLocation
-          position={[position.lat ?? 16.0544, position.lng ?? 108.2022]}
-        />
+        <SetViewLocation position={[position.lat, position.lng]} />
       </MapContainer>
     </div>
   )
 }
 
-export default MapSelector
+export default LocationEditor
