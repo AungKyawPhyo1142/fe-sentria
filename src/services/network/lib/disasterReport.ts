@@ -283,13 +283,53 @@ export const useDeleteReport = () => {
 }
 
 // edit report
-export const editDisasterReport = async (
-  id: string,
-  reportData: UpdateReportRequest,
-): Promise<UpdateReportResponse> => {
-  const response = await apiClient.patch<UpdateReportResponse>(
-    ApiConstantRoutes.paths.report.editReport(id),
-    reportData,
-  )
-  return response.data
+// export const editDisasterReport = async (
+//   id: string,
+//   reportData: UpdateReportRequest,
+// ): Promise<UpdateReportResponse> => {
+//   const response = await apiClient.patch<UpdateReportResponse>(
+//     ApiConstantRoutes.paths.report.editReport(id),
+//     reportData,
+//   )
+//   return response.data
+// }
+
+export const useEditDisasterReport = () => {
+  const queryClient = useQueryClient()
+  const editDisasterReport = async (
+    id: string,
+    reportData: UpdateReportRequest,
+  ): Promise<UpdateReportResponse> => {
+    const response = await apiClient.patch<UpdateReportResponse>(
+      ApiConstantRoutes.paths.report.editReport(id),
+      reportData,
+    )
+    return response.data
+  }
+
+  // useMutation hook for editing a report
+  return useMutation<
+    UpdateReportResponse,
+    Error,
+    { id: string; data: UpdateReportRequest }
+  >({
+    mutationFn: ({ id, data }) => editDisasterReport(id, data),
+
+    onSuccess: (data) => {
+      console.log('✅ Report updated:', data)
+      toast.success('Report updated successfully!')
+
+      // Invalidate caches if needed
+      // queryClient.invalidateQueries({ queryKey: ['report', variables.id] })
+      queryClient.invalidateQueries({
+        queryKey: ['get-all-disaster-reports'],
+        exact: false,
+      })
+    },
+
+    onError: (error) => {
+      toast.error('Failed to update report!')
+      console.error('❌ Failed to update report:', error.message || error)
+    },
+  })
 }

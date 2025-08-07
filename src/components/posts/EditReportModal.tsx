@@ -3,15 +3,15 @@ import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
 import ReactDOM from 'react-dom'
 import { backdropVariants, modalVariants } from './constants/constants'
-import { ChevronDown, CloudUpload, Loader, X } from 'lucide-react'
+import { ChevronDown, Loader, X } from 'lucide-react'
 import Input from '../common/Input'
 import Button from '../common/Button'
 import {
-  editDisasterReport,
   UpdateReportRequest,
+  useEditDisasterReport,
   useGetDisasterReportDetail,
 } from '@/services/network/lib/disasterReport'
-import { useDropzone } from 'react-dropzone'
+// import { useDropzone } from 'react-dropzone'
 import LocationEditor, { LocationCoordinates } from '../common/LocationEditor'
 import { useQueryClient } from '@tanstack/react-query'
 import { ReverseGeocodeResponse } from '@/services/network/lib/report'
@@ -38,7 +38,7 @@ const EditReportModal: React.FC<EditReportModalProps> = ({
   const [severity, setSeverity] = useState('UNKNOWN')
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
-  const [previewImages, setPreviewImages] = useState<string[]>([])
+  // const [previewImages, setPreviewImages] = useState<string[]>([])
   const [isGeocoding, setIsGeocoding] = useState(false)
   const [pinPosition, setPinPosition] = useState({
     lat: report?.location?.latitude || 0,
@@ -48,36 +48,28 @@ const EditReportModal: React.FC<EditReportModalProps> = ({
     city: string
     country: string
   } | null>(null)
-  const [formValues, setFormValues] = useState({
-    name: report?.name ?? '',
-    description: report?.description ?? '',
-    incidentType: report?.incidentType ?? '',
-    severity: report?.severity ?? '',
-    incidentTimestamp: report?.incidentTimestamp ?? '',
-  })
+
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const { mutate: editReport, isPending } = useEditDisasterReport()
+  const reportID: string | undefined = report?._id || id // Fallback to id prop if report is not loaded
 
   const queryClient = useQueryClient()
 
-  const { getRootProps, getInputProps, open, isDragActive } = useDropzone({
-    accept: { 'image/*': [] },
-    noClick: true,
-    noKeyboard: true,
-    onDrop: (acceptedFiles) => {
-      const imageUrls = acceptedFiles.map((file) => URL.createObjectURL(file))
-      setPreviewImages((prev) => [...prev, ...imageUrls])
-    },
-  })
+  // const { getRootProps, getInputProps, open, isDragActive } = useDropzone({
+  //   accept: { 'image/*': [] },
+  //   noClick: true,
+  //   noKeyboard: true,
+  //   onDrop: (acceptedFiles) => {
+  //     const imageUrls = acceptedFiles.map((file) => URL.createObjectURL(file))
+  //     setPreviewImages((prev) => [...prev, ...imageUrls])
+  //   },
+  // })
 
-  const handleRemoveImage = (index: number) => {
-    setPreviewImages((prev) => prev.filter((_, i) => i !== index))
-  }
-
-  // handle position change from LocationEditor
-  // const handlePositionChange = (position: { lat: number; lng: number }) => {
-  //   console.log('New position:', position)
-  //   setPinPosition(position)
+  // const handleRemoveImage = (index: number) => {
+  //   setPreviewImages((prev) => prev.filter((_, i) => i !== index))
   // }
+
   const handlePositionChange = useCallback(
     async (position: LocationCoordinates) => {
       console.log('New position editrd:', position)
@@ -110,18 +102,11 @@ const EditReportModal: React.FC<EditReportModalProps> = ({
 
   useEffect(() => {
     if (report) {
-      setFormValues({
-        name: report.reportName ?? '',
-        description: report.description ?? '',
-        incidentType: report.incidentType ?? '',
-        severity: report.severity ?? '',
-        incidentTimestamp: report.incidentTimestamp ?? '',
-      })
       setTitle(report.reportName ?? '')
       setDescription(report.description ?? '')
       setIncidentType(report.incidentType ?? '')
       setSeverity(report.severity ?? '')
-      setPreviewImages(report.media.map((m) => m.url) ?? [])
+      // setPreviewImages(report.media.map((m) => m.url) ?? [])
       setPinPosition({
         lat: report.location.latitude ?? 0,
         lng: report.location.longitude ?? 0,
@@ -134,70 +119,33 @@ const EditReportModal: React.FC<EditReportModalProps> = ({
     }
   }, [report])
 
-  // const handleSubmit = (e: React.FormEvent) => {
-  //   e.preventDefault()
-  //   console.log('Submitted edit for ID:', id)
-  //   const payload = {
-  //     incidentType,
-  //     severity,
-  //     title,
-  //     description,
-  //     location: {
-  //       latitude: pinPosition.lat,
-  //       longitude: pinPosition.lng,
-  //       city: locationInfo?.city ?? '',
-  //       country: locationInfo?.country ?? '',
-  //     },
-  //     images: previewImages,
-  //   }
-
-  //   console.log('Submitting payload:', payload)
-  //   // TODO: Call your update API here
-  //   setIsOpen(false)
-  // }
-
-  // submit handler
-
-  const handleSubmit = async () => {
-    if (!report) return
-    setIsSubmitting(true)
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    console.log('Submitted edit for ID:', id)
     const payload: UpdateReportRequest = {
       reportType: 'DISASTER_INCIDENT',
-      name: formValues.name,
+      name: title,
       parameters: {
-        description: formValues.description,
-        incidentType: incidentType,
         severity: severity,
+        description: description,
         incidentTimestamp: new Date().toISOString(),
+        incidentType: incidentType,
         location: {
-          city: locationInfo?.city ?? '',
-          country: locationInfo?.country ?? '',
           latitude: pinPosition.lat,
           longitude: pinPosition.lng,
+          city: locationInfo?.city ?? '',
+          country: locationInfo?.country ?? '',
         },
-        media: previewImages.length > 0 ? previewImages : [],
+        // media: previewImages,
+        media: [],
       },
     }
-    try {
-      const res = await editDisasterReport(id, payload)
-      if (res.status === 'SUCCESS') {
-        console.log('✅ Report updated:', res.data.result.message)
 
-        // Refresh report list
-        queryClient.invalidateQueries({
-          queryKey: ['get-all-disaster-reports'],
-          exact: false,
-        })
-
-        setIsOpen(false)
-      } else {
-        console.error('❌ Failed to update:', res.data.result.message)
-      }
-    } catch (error) {
-      console.error('Error updating report:', error)
-    } finally {
-      setIsSubmitting(false)
-    }
+    console.log('Submitting payload:', payload)
+    editReport({ id: reportID, data: payload })
+    setIsSubmitting(true)
+    // TODO: Call your update API here
+    setIsOpen(false)
   }
 
   if (isLoading) return <div>Loading...</div>
@@ -342,7 +290,7 @@ const EditReportModal: React.FC<EditReportModalProps> = ({
                 <label className='mb-2 block text-xl font-semibold'>
                   Uploaded Images
                 </label>
-                <div
+                {/* <div
                   {...getRootProps()}
                   className='cursor-pointer rounded-lg border-2 border-dashed border-zinc-300 px-6 py-10 text-center'
                 >
@@ -365,9 +313,9 @@ const EditReportModal: React.FC<EditReportModalProps> = ({
                       </button>
                     </div>
                   )}
-                </div>
+                </div> */}
                 {/* image preview */}
-                {previewImages.length > 0 && (
+                {/* {previewImages.length > 0 && (
                   <div className='mt-4 grid grid-cols-5 gap-4'>
                     {previewImages.map((src, index) => (
                       <div
@@ -392,7 +340,7 @@ const EditReportModal: React.FC<EditReportModalProps> = ({
                       </div>
                     ))}
                   </div>
-                )}
+                )} */}
               </div>
 
               {/* Buttons */}
@@ -410,7 +358,7 @@ const EditReportModal: React.FC<EditReportModalProps> = ({
                   primary
                   type='submit'
                 >
-                  {isSubmitting ? (
+                  {isSubmitting && isPending ? (
                     <span>
                       <Loader size={30} className='animate-spin' />
                     </span>
