@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
 import ReactDOM from 'react-dom'
@@ -8,7 +8,11 @@ import Input from '../common/Input'
 import Button from '../common/Button'
 import { useGetDisasterReportDetail } from '@/services/network/lib/disasterReport'
 import { useDropzone } from 'react-dropzone'
-import LocationEditor from '../common/LocationEditor'
+import LocationEditor, { LocationCoordinates } from '../common/LocationEditor'
+import { useQueryClient } from '@tanstack/react-query'
+import { ReverseGeocodeResponse } from '@/services/network/lib/report'
+import { apiClient } from '@/services/network/apiClient'
+import { ApiConstantRoutes } from '@/services/network/path'
 
 interface EditReportModalProps {
   isOpen: boolean
@@ -31,10 +35,17 @@ const EditReportModal: React.FC<EditReportModalProps> = ({
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [previewImages, setPreviewImages] = useState<string[]>([])
-  const [updatedLocation, setUpdatedLocation] = useState({
+  const [isGeocoding, setIsGeocoding] = useState(false)
+  const [pinPosition, setPinPosition] = useState({
     lat: report?.location?.latitude || 0,
     lng: report?.location?.longitude || 0,
   })
+  const [locationInfo, setLocationInfo] = useState<{
+    city: string
+    country: string
+  } | null>(null)
+
+  const queryClient = useQueryClient()
 
   const { getRootProps, getInputProps, open, isDragActive } = useDropzone({
     accept: { 'image/*': [] },
@@ -51,11 +62,39 @@ const EditReportModal: React.FC<EditReportModalProps> = ({
   }
 
   // handle position change from LocationEditor
-const handlePositionChange = (position: { lat: number; lng: number }) => {
-  console.log('New position:', position)
-  setUpdatedLocation(position)
-}
-
+  // const handlePositionChange = (position: { lat: number; lng: number }) => {
+  //   console.log('New position:', position)
+  //   setPinPosition(position)
+  // }
+  const handlePositionChange = useCallback(
+    async (position: LocationCoordinates) => {
+      console.log('New position editrd:', position)
+      const { lat, lng } = position
+      setPinPosition({ lat, lng })
+      if (!lat || !lng) return
+      setIsGeocoding(true)
+      try {
+        const data = await queryClient.fetchQuery<ReverseGeocodeResponse>({
+          queryKey: ['get-reverse-geocode', lat, lng],
+          queryFn: () =>
+            apiClient.post(ApiConstantRoutes.paths.location.reverseGeocode, {
+              lat,
+              lng,
+            }),
+          staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+        })
+        if (data.status === 'SUCCESS' && data.data) {
+          const { city, country } = data.data
+          setLocationInfo({ city, country })
+          console.log('Geocoding result:', data.data)
+        }
+      } catch (error) {
+        console.error('Error fetching reverse geocode:', error)
+      }
+      setIsGeocoding(false)
+    },
+    [queryClient],
+  )
 
   useEffect(() => {
     if (report) {
@@ -87,13 +126,15 @@ const handlePositionChange = (position: { lat: number; lng: number }) => {
       title,
       description,
       location: {
-        latitude: updatedLocation.lat,
-        longitude: updatedLocation.lng,
+        latitude: pinPosition.lat,
+        longitude: pinPosition.lng,
+        city: locationInfo?.city ?? '',
+        country: locationInfo?.country ?? '',
       },
       images: previewImages,
     }
 
-    console.log('Submitting payload:', payload) 
+    console.log('Submitting payload:', payload)
     // TODO: Call your update API here
     setIsOpen(false)
   }
@@ -223,10 +264,15 @@ const handlePositionChange = (position: { lat: number; lng: number }) => {
                   className='block w-full rounded-[10px] border border-zinc-300 px-4 py-2 text-base font-light text-black transition-colors duration-200 focus:outline-black/30'
                 />
               </div>
+              <p className='mb-2 text-sm font-thin text-black/50'>
+                {isGeocoding
+                  ? 'Fetching address...'
+                  : 'Drag and drop to change location'}
+              </p>
 
               {/* loacation editor */}
               <LocationEditor
-                postLocation={updatedLocation}
+                postLocation={pinPosition}
                 onPositionChange={handlePositionChange}
               />
 
