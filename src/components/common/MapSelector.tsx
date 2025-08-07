@@ -1,11 +1,12 @@
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
 import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {
   selectUserCurrentLocation,
   useUserCurrentLocationStore,
 } from '@/zustand/userCurrentLocationStore'
+import { Locate } from 'lucide-react'
 
 // Fix Leaflet default icon
 // delete (L.Icon.Default.prototype as any)._getIconUrl
@@ -26,7 +27,9 @@ L.Icon.Default.mergeOptions({
 
 function SetViewLocation({ position }: { position: [number, number] }) {
   const map = useMap()
-  map.setView(position, 13)
+  useEffect(() => {
+    map.setView(position, 13)
+  }, [position, map])
   return null
 }
 
@@ -41,6 +44,7 @@ interface MapSelectorProps {
 
 const MapSelector: React.FC<MapSelectorProps> = ({ onPositionChange }) => {
   const [position, setPosition] = useState<LocationCoordinates | null>(null)
+  const markerRef = useRef<L.Marker | null>(null)
 
   //! use the global state instead of calling the useEffect again
   // because user current location will & should be available almost everytime
@@ -61,12 +65,37 @@ const MapSelector: React.FC<MapSelectorProps> = ({ onPositionChange }) => {
     onPositionChange(newCoords)
   }
 
+  const handleLocateMe = () => {
+    if (userCurrentLocation.lat && userCurrentLocation.lng) {
+      const newCoords = {
+        lat: userCurrentLocation.lat,
+        lng: userCurrentLocation.lng,
+      }
+      setPosition(newCoords)
+
+      // Move the marker manually
+      if (markerRef.current) {
+        markerRef.current.setLatLng(newCoords)
+      }
+
+      onPositionChange(newCoords)
+    }
+  }
+
   if (!position) {
     return <div>Loading map…</div>
   }
 
   return (
     <div className='relative z-0'>
+      <div className='bg-primary absolute top-3 left-15 z-[1000] cursor-pointer rounded-sm p-2 text-white'>
+        <div onClick={handleLocateMe} className='relative'>
+          <Locate />
+          <div className='pointer-events-none absolute top-1/2 left-full ml-2 w-auto -translate-y-1/2 rounded bg-black px-2 py-1 text-xs whitespace-nowrap text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100'>
+            Locate me
+          </div>
+        </div>
+      </div>
       <MapContainer
         center={[position.lat ?? 16.0544, position.lng ?? 108.2022]}
         zoom={13}
@@ -81,6 +110,9 @@ const MapSelector: React.FC<MapSelectorProps> = ({ onPositionChange }) => {
           position={[position.lat ?? 16.0544, position.lng ?? 108.2022]}
           draggable
           eventHandlers={{ dragend: handleDragEnd }}
+          ref={(ref) => {
+            markerRef.current = ref
+          }}
         >
           <Popup>Choose Location that you want to post!</Popup>
         </Marker>
