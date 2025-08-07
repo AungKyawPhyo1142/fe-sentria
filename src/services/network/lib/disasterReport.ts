@@ -283,13 +283,13 @@ export const useDeleteReport = () => {
 }
 
 // edit report
-export const editReport = async (
+export const editDisasterReport = async (
   id: string,
   reportData: UpdateReportRequest,
 ): Promise<UpdateReportResponse> => {
-  const res = await apiClient.patch<UpdateReportResponse>(
+  const response = await apiClient.patch<UpdateReportResponse>(
     ApiConstantRoutes.paths.report.editReport(id),
     reportData,
   )
-  return res.data
+  return response.data
 }

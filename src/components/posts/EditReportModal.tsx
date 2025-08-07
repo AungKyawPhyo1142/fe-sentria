@@ -3,10 +3,14 @@ import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
 import ReactDOM from 'react-dom'
 import { backdropVariants, modalVariants } from './constants/constants'
-import { ChevronDown, CloudUpload, X } from 'lucide-react'
+import { ChevronDown, CloudUpload, Loader, X } from 'lucide-react'
 import Input from '../common/Input'
 import Button from '../common/Button'
-import { useGetDisasterReportDetail } from '@/services/network/lib/disasterReport'
+import {
+  editDisasterReport,
+  UpdateReportRequest,
+  useGetDisasterReportDetail,
+} from '@/services/network/lib/disasterReport'
 import { useDropzone } from 'react-dropzone'
 import LocationEditor, { LocationCoordinates } from '../common/LocationEditor'
 import { useQueryClient } from '@tanstack/react-query'
@@ -44,6 +48,14 @@ const EditReportModal: React.FC<EditReportModalProps> = ({
     city: string
     country: string
   } | null>(null)
+  const [formValues, setFormValues] = useState({
+    name: report?.name ?? '',
+    description: report?.description ?? '',
+    incidentType: report?.incidentType ?? '',
+    severity: report?.severity ?? '',
+    incidentTimestamp: report?.incidentTimestamp ?? '',
+  })
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const queryClient = useQueryClient()
 
@@ -98,45 +110,94 @@ const EditReportModal: React.FC<EditReportModalProps> = ({
 
   useEffect(() => {
     if (report) {
-      setIncidentType(report.incidentType || 'earthquake')
-      setSeverity(report?.severity || 'UNKNOWN')
-      setTitle(report.reportName || '')
-      setDescription(report.description || '')
+      setFormValues({
+        name: report.reportName ?? '',
+        description: report.description ?? '',
+        incidentType: report.incidentType ?? '',
+        severity: report.severity ?? '',
+        incidentTimestamp: report.incidentTimestamp ?? '',
+      })
+      setTitle(report.reportName ?? '')
+      setDescription(report.description ?? '')
+      setIncidentType(report.incidentType ?? '')
+      setSeverity(report.severity ?? '')
+      setPreviewImages(report.media.map((m) => m.url) ?? [])
+      setPinPosition({
+        lat: report.location.latitude ?? 0,
+        lng: report.location.longitude ?? 0,
+      })
 
-      const images =
-        report?.media
-          ?.filter(
-            (m) =>
-              typeof m?.type === 'string' &&
-              m.type.toLowerCase() === 'image' &&
-              typeof m.url === 'string' &&
-              m.url.trim() !== '',
-          )
-          .map((m) => m.url) ?? []
-      setPreviewImages(images)
+      setLocationInfo({
+        city: report.location.city ?? '',
+        country: report.location.country ?? '',
+      })
     }
   }, [report])
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log('Submitted edit for ID:', id)
-    const payload = {
-      incidentType,
-      severity,
-      title,
-      description,
-      location: {
-        latitude: pinPosition.lat,
-        longitude: pinPosition.lng,
-        city: locationInfo?.city ?? '',
-        country: locationInfo?.country ?? '',
-      },
-      images: previewImages,
-    }
+  // const handleSubmit = (e: React.FormEvent) => {
+  //   e.preventDefault()
+  //   console.log('Submitted edit for ID:', id)
+  //   const payload = {
+  //     incidentType,
+  //     severity,
+  //     title,
+  //     description,
+  //     location: {
+  //       latitude: pinPosition.lat,
+  //       longitude: pinPosition.lng,
+  //       city: locationInfo?.city ?? '',
+  //       country: locationInfo?.country ?? '',
+  //     },
+  //     images: previewImages,
+  //   }
 
-    console.log('Submitting payload:', payload)
-    // TODO: Call your update API here
-    setIsOpen(false)
+  //   console.log('Submitting payload:', payload)
+  //   // TODO: Call your update API here
+  //   setIsOpen(false)
+  // }
+
+  // submit handler
+
+  const handleSubmit = async () => {
+    if (!report) return
+    setIsSubmitting(true)
+    const payload: UpdateReportRequest = {
+      reportType: 'DISASTER_INCIDENT',
+      name: formValues.name,
+      parameters: {
+        description: formValues.description,
+        incidentType: incidentType,
+        severity: severity,
+        incidentTimestamp: new Date().toISOString(),
+        location: {
+          city: locationInfo?.city ?? '',
+          country: locationInfo?.country ?? '',
+          latitude: pinPosition.lat,
+          longitude: pinPosition.lng,
+        },
+        media: previewImages.length > 0 ? previewImages : [],
+      },
+    }
+    try {
+      const res = await editDisasterReport(id, payload)
+      if (res.status === 'SUCCESS') {
+        console.log('✅ Report updated:', res.data.result.message)
+
+        // Refresh report list
+        queryClient.invalidateQueries({
+          queryKey: ['get-all-disaster-reports'],
+          exact: false,
+        })
+
+        setIsOpen(false)
+      } else {
+        console.error('❌ Failed to update:', res.data.result.message)
+      }
+    } catch (error) {
+      console.error('Error updating report:', error)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   if (isLoading) return <div>Loading...</div>
@@ -344,8 +405,18 @@ const EditReportModal: React.FC<EditReportModalProps> = ({
                 >
                   Cancel
                 </Button>
-                <Button className='w-40' primary type='submit'>
-                  Save Changes
+                <Button
+                  className='flex w-40 items-center justify-center text-center'
+                  primary
+                  type='submit'
+                >
+                  {isSubmitting ? (
+                    <span>
+                      <Loader size={30} className='animate-spin' />
+                    </span>
+                  ) : (
+                    <p> Save Changes</p>
+                  )}
                 </Button>
               </div>
             </form>
