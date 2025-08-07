@@ -3,7 +3,7 @@ import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
 import ReactDOM from 'react-dom'
 import { backdropVariants, modalVariants } from './constants/constants'
-import { ChevronDown, Loader, X } from 'lucide-react'
+import { ChevronDown, CloudUpload, Loader, X } from 'lucide-react'
 import Input from '../common/Input'
 import Button from '../common/Button'
 import {
@@ -11,7 +11,7 @@ import {
   useEditDisasterReport,
   useGetDisasterReportDetail,
 } from '@/services/network/lib/disasterReport'
-// import { useDropzone } from 'react-dropzone'
+import { useDropzone } from 'react-dropzone'
 import LocationEditor, { LocationCoordinates } from '../common/LocationEditor'
 import { useQueryClient } from '@tanstack/react-query'
 import { ReverseGeocodeResponse } from '@/services/network/lib/report'
@@ -38,7 +38,7 @@ const EditReportModal: React.FC<EditReportModalProps> = ({
   const [severity, setSeverity] = useState('UNKNOWN')
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
-  // const [previewImages, setPreviewImages] = useState<string[]>([])
+  const [previewImages, setPreviewImages] = useState<string[]>([])
   const [isGeocoding, setIsGeocoding] = useState(false)
   const [pinPosition, setPinPosition] = useState({
     lat: report?.location?.latitude || 0,
@@ -56,19 +56,19 @@ const EditReportModal: React.FC<EditReportModalProps> = ({
 
   const queryClient = useQueryClient()
 
-  // const { getRootProps, getInputProps, open, isDragActive } = useDropzone({
-  //   accept: { 'image/*': [] },
-  //   noClick: true,
-  //   noKeyboard: true,
-  //   onDrop: (acceptedFiles) => {
-  //     const imageUrls = acceptedFiles.map((file) => URL.createObjectURL(file))
-  //     setPreviewImages((prev) => [...prev, ...imageUrls])
-  //   },
-  // })
+  const { getRootProps, getInputProps, open, isDragActive } = useDropzone({
+    accept: { 'image/*': [] },
+    noClick: true,
+    noKeyboard: true,
+    onDrop: (acceptedFiles) => {
+      const imageUrls = acceptedFiles.map((file) => URL.createObjectURL(file))
+      setPreviewImages((prev) => [...prev, ...imageUrls])
+    },
+  })
 
-  // const handleRemoveImage = (index: number) => {
-  //   setPreviewImages((prev) => prev.filter((_, i) => i !== index))
-  // }
+  const handleRemoveImage = (index: number) => {
+    setPreviewImages((prev) => prev.filter((_, i) => i !== index))
+  }
 
   const handlePositionChange = useCallback(
     async (position: LocationCoordinates) => {
@@ -106,7 +106,7 @@ const EditReportModal: React.FC<EditReportModalProps> = ({
       setDescription(report.description ?? '')
       setIncidentType(report.incidentType ?? '')
       setSeverity(report.severity ?? '')
-      // setPreviewImages(report.media.map((m) => m.url) ?? [])
+      setPreviewImages(report.media.map((m) => m.url) ?? [])
       setPinPosition({
         lat: report.location.latitude ?? 0,
         lng: report.location.longitude ?? 0,
@@ -136,8 +136,8 @@ const EditReportModal: React.FC<EditReportModalProps> = ({
           city: locationInfo?.city ?? '',
           country: locationInfo?.country ?? '',
         },
-        // media: previewImages,
-        media: [],
+        media: previewImages,
+        // media: [],
       },
     }
 
@@ -290,7 +290,7 @@ const EditReportModal: React.FC<EditReportModalProps> = ({
                 <label className='mb-2 block text-xl font-semibold'>
                   Uploaded Images
                 </label>
-                {/* <div
+                <div
                   {...getRootProps()}
                   className='cursor-pointer rounded-lg border-2 border-dashed border-zinc-300 px-6 py-10 text-center'
                 >
@@ -313,9 +313,9 @@ const EditReportModal: React.FC<EditReportModalProps> = ({
                       </button>
                     </div>
                   )}
-                </div> */}
+                </div>
                 {/* image preview */}
-                {/* {previewImages.length > 0 && (
+                {previewImages.length > 0 && (
                   <div className='mt-4 grid grid-cols-5 gap-4'>
                     {previewImages.map((src, index) => (
                       <div
@@ -340,7 +340,7 @@ const EditReportModal: React.FC<EditReportModalProps> = ({
                       </div>
                     ))}
                   </div>
-                )} */}
+                )}
               </div>
 
               {/* Buttons */}
