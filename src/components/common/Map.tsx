@@ -1,3 +1,4 @@
+import { Activity, useGetActivities } from '@/services/network/lib/activity'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { useEffect, useState } from 'react'
@@ -72,115 +73,46 @@ const Map = () => {
     disasterType: string
     helpType: 'needed' | 'available'
     position: [number, number]
+  };
+
+    const [activities, setActivities] = useState<Activity[] | null>(null)
+
+const { data: activitiesData } =
+    useGetActivities();
+
+    useEffect(() => {
+    if (activitiesData?.data) {
+      setActivities(activitiesData.data)
+    } else {
+      setActivities([])
+    }
+  }, [activitiesData])
+
+  const convertActivitiesToDisasterHelp = (activities: Activity[]): DisasterHelp[] => {
+    return activities.map((activity, index) => ({
+      id: index + 1,
+      disasterType: activity.helpItems[0].helpType,
+      helpType: activity.activityType === 'REQUEST' ? 'needed' : 'available',
+      position: [activity.latitude, activity.longitude] as [number, number],
+    }))
   }
 
-  const disasterHelpList: DisasterHelp[] = [
-    {
-      id: 1,
-      disasterType: 'shelter',
-      helpType: 'needed',
-      position: position
-        ? [position[0] + 0.003, position[1] + 0.003]
-        : [0.003, 0.003],
-    },
-    {
-      id: 2,
-      disasterType: 'water',
-      helpType: 'available',
-      position: position
-        ? [position[0] - 0.003, position[1] - 0.003]
-        : [-0.003, -0.003],
-    },
-    {
-      id: 3,
-      disasterType: 'food',
-      helpType: 'needed',
-      position: position
-        ? [position[0] + 0.003, position[1] - 0.003]
-        : [0.003, -0.003],
-    },
-    {
-      id: 4,
-      disasterType: 'wifi',
-      helpType: 'available',
-      position: position
-        ? [position[0] - 0.003, position[1] + 0.003]
-        : [-0.003, 0.003],
-    },
-    {
-      id: 5,
-      disasterType: 'shelter',
-      helpType: 'available',
-      position: position ? [position[0] + 0.006, position[1]] : [0.006, 0],
-    },
-    {
-      id: 6,
-      disasterType: 'water',
-      helpType: 'needed',
-      position: position ? [position[0], position[1] + 0.006] : [0, 0.006],
-    },
-    {
-      id: 7,
-      disasterType: 'food',
-      helpType: 'available',
-      position: position ? [position[0] - 0.006, position[1]] : [-0.006, 0],
-    },
-    {
-      id: 8,
-      disasterType: 'wifi',
-      helpType: 'needed',
-      position: position ? [position[0], position[1] - 0.006] : [0, -0.006],
-    },
-    {
-      id: 9,
-      disasterType: 'shelter',
-      helpType: 'needed',
-      position: position
-        ? [position[0] + 0.0045, position[1] + 0.0045]
-        : [0.0045, 0.0045],
-    },
-    {
-      id: 10,
-      disasterType: 'food',
-      helpType: 'available',
-      position: position
-        ? [position[0] - 0.0045, position[1] - 0.0045]
-        : [-0.0045, -0.0045],
-    },
-    // Places over 0.5km (~0.005 deg latitude/longitude) from current position
-    {
-      id: 11,
-      disasterType: 'shelter',
-      helpType: 'available',
-      position: position
-        ? [position[0] + 0.01, position[1] + 0.01]
-        : [0.01, 0.01],
-    },
-    {
-      id: 12,
-      disasterType: 'water',
-      helpType: 'needed',
-      position: position
-        ? [position[0] - 0.012, position[1] + 0.012]
-        : [-0.012, 0.012],
-    },
-    {
-      id: 13,
-      disasterType: 'food',
-      helpType: 'available',
-      position: position
-        ? [position[0] + 0.015, position[1] - 0.015]
-        : [0.015, -0.015],
-    },
-    {
-      id: 14,
-      disasterType: 'wifi',
-      helpType: 'needed',
-      position: position
-        ? [position[0] - 0.02, position[1] - 0.02]
-        : [-0.02, -0.02],
-    },
-  ]
+  
+    
+  const disasterHelpList: DisasterHelp[] = activities
+    ? convertActivitiesToDisasterHelp(activities)
+    : [
+        {
+          id: 1,
+          disasterType: 'shelter',
+          helpType: 'needed',
+          position: position
+            ? [position[0] + 0.003, position[1] + 0.003]
+            : [0.003, 0.003],
+        },
+      ]
+
+     
 
   const { selectedTypes, needed, available } = useMapFilter()
 
@@ -263,19 +195,19 @@ const Map = () => {
                 position={help.position}
                 icon={L.icon({
                   iconUrl:
-                    help.disasterType === 'shelter'
+                    help.disasterType === 'SHELTER'
                       ? help.helpType === 'needed'
                         ? ShelterNeeded
                         : ShelterAvailable
-                      : help.disasterType === 'water'
+                      : help.disasterType === 'WATER'
                         ? help.helpType === 'needed'
                           ? WaterNeeded
                           : WaterAvailable
-                        : help.disasterType === 'food'
+                        : help.disasterType === 'FOOD'
                           ? help.helpType === 'needed'
                             ? FoodNeeded
                             : FoodAvailable
-                          : help.disasterType === 'wifi'
+                          : help.disasterType === 'WIFI'
                             ? help.helpType === 'needed'
                               ? WifiNeeded
                               : WifiAvailable
