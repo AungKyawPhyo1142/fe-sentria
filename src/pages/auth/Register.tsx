@@ -16,7 +16,6 @@ const Register = () => {
   const navigate = useNavigate()
   const { t } = useTranslation()
   const [errorModal, setErrorModal] = useState(false)
-  
 
   const countryOptions = countryList()
     .getData()
