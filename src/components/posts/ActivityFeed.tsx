@@ -219,8 +219,8 @@ export const ActivityFeed = () => {
                 itemList={sortOptions.map(
                   (option) => option[0].toUpperCase() + option.slice(1),
                 )}
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
+                value={sortBy[0].toUpperCase() + sortBy.slice(1)}
+                onChange={(e) => setSortBy(e.target.value.toLowerCase())}
                 placeholder='Sort by'
               />
               <ChevronDown className='pointer-events-none absolute top-1/2 right-4 h-6 w-6 -translate-y-1/2 text-black' />
@@ -298,7 +298,7 @@ export const ActivityFeed = () => {
 
       <div className='w-80 p-6'>
         <div className='flex flex-col gap-y-5'>
-          <div className='mt-4 flex w-full flex-col gap-y-4 rounded-lg border border-[#33333430] p-4'>
+          <div className='mt-2 flex w-full flex-col gap-y-4 rounded-lg border border-[#33333430] p-4'>
             <div className='flex items-center justify-between'>
               <h2 className='text-lg font-light text-[#3333344d]'>Filter by</h2>
               <button

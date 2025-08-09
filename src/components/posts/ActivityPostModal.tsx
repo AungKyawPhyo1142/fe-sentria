@@ -220,15 +220,15 @@ const ActivityPostModal: React.FC<Props> = ({
           variants={backdropVariants}
         >
           <motion.div
-            className='custom-scroll relative max-h-[90vh] w-[756px] rounded-lg bg-white px-8 shadow-xl'
+            className='scrollbar-hide relative max-h-[90vh] w-[756px] overflow-y-auto rounded-lg bg-white px-8 shadow-xl'
             variants={modalVariants}
             initial='hidden'
             animate='visible'
             exit='exit'
           >
             {/* Header */}
-            <div className='sticky top-0 z-20 flex items-baseline justify-between border-b-1 border-black/30 bg-white py-5'>
-              <h1 className='text-2xl font-semibold'>
+            <div className='sticky top-0 z-[9998] flex items-baseline justify-between border-b-1 border-black/30 bg-white py-5'>
+              <h1 className='text-[32px] font-semibold'>
                 {initialData ? 'Edit Activity' : 'Request / Offer Help'}
               </h1>
               <button
@@ -240,9 +240,9 @@ const ActivityPostModal: React.FC<Props> = ({
             </div>
 
             {/* Form */}
-            <form className='space-y-5 pt-6'>
+            <div className='space-y-5 pt-6'>
               <div>
-                <h3 className='mb-3 text-[32px] font-semibold'>
+                <h3 className='mb-3 text-[24px] font-semibold'>
                   {formData.activityType === 'request'
                     ? 'Request for help'
                     : 'Offer help'}
@@ -384,9 +384,9 @@ const ActivityPostModal: React.FC<Props> = ({
               </div>
 
               {/* Buttons */}
-              <div className='sticky bottom-0 z-20 flex justify-end space-x-5 bg-white py-4'>
+              <div className='sticky bottom-0 z-[9999] flex justify-end space-x-5 bg-white py-4'>
                 <Button
-                  className='w-[116px] bg-black/25'
+                  className='w-20 bg-black/25'
                   type='button'
                   onClick={closeModal}
                 >
@@ -396,7 +396,7 @@ const ActivityPostModal: React.FC<Props> = ({
                   destructive={formData.activityType === 'request'}
                   primary={formData.activityType === 'offer'}
                   onClick={handleSubmit}
-                  className='w-[116px]'
+                  className='w-35'
                   type='button'
                 >
                   {initialData
@@ -406,7 +406,7 @@ const ActivityPostModal: React.FC<Props> = ({
                       : 'Help people in need'}
                 </Button>
               </div>
-            </form>
+            </div>
           </motion.div>
         </motion.div>
       )}

@@ -255,7 +255,7 @@ export default function ResourcePage() {
       </div>
 
       {/* Resource Filter */}
-      <div className='flex w-2/6 flex-col items-center justify-center gap-y-5'>
+      <div className='flex w-2/6 flex-col items-center justify-center gap-y-5 pt-8'>
         <div className='flex w-full flex-col gap-y-4 rounded-lg border border-[#33333430] p-4'>
           <h2 className='text-lg font-light text-[#3333344d]'>Filter by</h2>
           <hr className='mb-1 border-t border-[#33333430]' />

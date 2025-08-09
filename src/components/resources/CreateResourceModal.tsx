@@ -257,15 +257,15 @@ const CreateResourceModal: React.FC<Props> = ({
           variants={backdropVariants}
         >
           <motion.div
-            className='custom-scroll relative max-h-[90vh] w-[756px] rounded-lg bg-white px-8 shadow-xl'
+            className='scrollbar-hide relative max-h-[90vh] w-[756px] overflow-y-auto rounded-lg bg-white px-8 shadow-xl'
             variants={modalVariants}
             initial='hidden'
             animate='visible'
             exit='exit'
           >
             {/* Header */}
-            <div className='sticky top-0 z-20 flex items-baseline justify-between border-b-1 border-black/30 bg-white py-5'>
-              <h1 className='text-2xl font-semibold'>Create Resource</h1>
+            <div className='sticky top-0 z-[9998] flex items-baseline justify-between border-b-1 border-black/30 bg-white py-5'>
+              <h1 className='text-[32px] font-semibold'>Create Resource</h1>
               <button
                 onClick={closeModal}
                 className='absolute right-0 cursor-pointer text-gray-500 hover:text-gray-700'
@@ -275,7 +275,7 @@ const CreateResourceModal: React.FC<Props> = ({
             </div>
 
             {/* Form */}
-            <form className='space-y-5 pt-6'>
+            <div className='space-y-5 pt-6'>
               {/* Resource Name */}
               <div>
                 <label className='mb-2 block text-xl font-semibold'>
@@ -486,16 +486,16 @@ const CreateResourceModal: React.FC<Props> = ({
               </div>
 
               {/* Buttons */}
-              <div className='sticky bottom-0 z-20 flex justify-end space-x-5 bg-white py-4'>
+              <div className='sticky bottom-0 z-[9999] flex justify-end space-x-5 bg-white py-4'>
                 <Button
-                  className='w-[116px] bg-black/25'
+                  className='w-30 bg-black/25'
                   type='button'
                   onClick={closeModal}
                 >
                   Cancel
                 </Button>
                 <Button
-                  className='w-[116px]'
+                  className='w-30'
                   primary
                   type='button'
                   onClick={handleSave}
@@ -503,7 +503,7 @@ const CreateResourceModal: React.FC<Props> = ({
                   Create
                 </Button>
               </div>
-            </form>
+            </div>
           </motion.div>
         </motion.div>
       )}

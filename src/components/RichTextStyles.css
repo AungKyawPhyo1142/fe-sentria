@@ -55,6 +55,16 @@
   color: #555;
 }
 
+.ProseMirror strong,
+.ProseMirror b {
+  font-weight: 700;
+}
+
+.ProseMirror em,
+.ProseMirror i {
+  font-style: italic;
+}
+
 .ProseMirror a {
   color: #0066cc;
   text-decoration: underline;
