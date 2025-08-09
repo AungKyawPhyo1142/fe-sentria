@@ -182,9 +182,7 @@ const Navbar = () => {
             className='bg-secondary flex h-12.5 items-center justify-center rounded-xl px-4 py-1 font-light text-white hover:cursor-pointer'
           >
             <CirclePlus size={26} strokeWidth={1} />
-            <span className='ml-2 text-[20px] font-light'>
-              I need / I can help
-            </span>
+            <span className='ml-3 text-[16px]'>I need / I can help</span>
           </button>
         ) : (
           <button className='bg-primary flex h-12.5 items-center justify-center rounded-xl px-4 py-1 font-light text-white hover:cursor-pointer'>

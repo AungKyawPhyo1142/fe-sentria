@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { X, CloudUpload, ChevronDown } from 'lucide-react'
 import clsx from 'clsx'
 import L from 'leaflet'
@@ -241,10 +242,11 @@ const CreateResourceModal: React.FC<Props> = ({
 
   if (!isOpen) return null
 
-  return (
+  const modalContent = (
     <div
-      className='fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4'
+      className='fixed inset-0 z-[99999] flex items-center justify-center bg-black/40 p-4'
       onClick={(e) => e.target === e.currentTarget && closeModal()}
+      style={{ zIndex: 99999 }}
     >
       <div className='relative max-h-[90vh] w-full max-w-[50%] overflow-y-auto rounded-lg bg-white px-6'>
         <div className='sticky top-0 z-10 flex items-baseline justify-between border-b border-[#33333430] bg-white px-3 py-4'>
@@ -480,6 +482,8 @@ const CreateResourceModal: React.FC<Props> = ({
       </div>
     </div>
   )
+
+  return createPortal(modalContent, document.body)
 }
 
 export default CreateResourceModal
