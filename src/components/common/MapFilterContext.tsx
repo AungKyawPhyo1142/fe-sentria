@@ -19,7 +19,7 @@ export const MapFilterProvider = ({
   children: React.ReactNode
 }) => {
   const [selectedTypes, setSelectedTypes] = useState<Set<string>>(
-    new Set(['shelter', 'water', 'food', 'wifi']),
+    new Set(['SHELTER', 'WATER', 'FOOD', 'WIFI']),
   )
   const [needed, setNeeded] = useState(true)
   const [available, setAvailable] = useState(true)
