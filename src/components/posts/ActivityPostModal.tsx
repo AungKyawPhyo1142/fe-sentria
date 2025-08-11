@@ -253,7 +253,7 @@ const ActivityPostModal: React.FC<Props> = ({
           >
             {/* Header */}
             <div className='sticky top-0 z-[9998] flex items-baseline justify-between border-b-1 border-black/30 bg-white py-5'>
-              <h1 className='!text-[32px] font-semibold'>
+              <h1 className='text-[26px] font-semibold'>
                 {initialData ? 'Edit Activity' : 'Request / Offer Help'}
               </h1>
               <button

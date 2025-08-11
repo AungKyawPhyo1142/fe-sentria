@@ -265,7 +265,7 @@ const CreateResourceModal: React.FC<Props> = ({
           >
             {/* Header */}
             <div className='sticky top-0 z-[9998] flex items-baseline justify-between border-b-1 border-black/30 bg-white py-5'>
-              <h1 className='text-[32px] font-semibold'>Create Resource</h1>
+              <h1 className='text-[26px] font-semibold'>Create Resource</h1>
               <button
                 onClick={closeModal}
                 className='absolute right-0 cursor-pointer text-gray-500 hover:text-gray-700'
