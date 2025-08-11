@@ -253,7 +253,7 @@ const ActivityPostModal: React.FC<Props> = ({
           >
             {/* Header */}
             <div className='sticky top-0 z-[9998] flex items-baseline justify-between border-b-1 border-black/30 bg-white py-5'>
-              <h1 className='text-[32px] font-semibold'>
+              <h1 className='!text-[32px] font-semibold'>
                 {initialData ? 'Edit Activity' : 'Request / Offer Help'}
               </h1>
               <button
@@ -287,7 +287,7 @@ const ActivityPostModal: React.FC<Props> = ({
                         name='activityType'
                         checked={formData.activityType === 'offer'}
                         onChange={() => handleTypeChange('offer')}
-                        className='accent-primary mr-2 h-[30px] w-[30px]'
+                        className='accent-primary mr-2 h-[20px] w-[20px]'
                       />
                       <span className='text-base font-light'>Offer help</span>
                     </label>
@@ -297,7 +297,7 @@ const ActivityPostModal: React.FC<Props> = ({
                         name='activityType'
                         checked={formData.activityType === 'request'}
                         onChange={() => handleTypeChange('request')}
-                        className='accent-primary mr-2 h-[30px] w-[30px]'
+                        className='accent-primary mr-2 h-[20px] w-[20px]'
                       />
                       <span className='text-base font-light'>
                         Request for help
@@ -412,17 +412,19 @@ const ActivityPostModal: React.FC<Props> = ({
               {/* Buttons */}
               <div className='sticky bottom-0 z-[9999] flex justify-end space-x-5 bg-white py-4'>
                 <Button
-                  className='w-20 bg-black/25'
+                  className='w-25 bg-black/25'
                   type='button'
                   onClick={closeModal}
                 >
                   Cancel
                 </Button>
                 <Button
-                  destructive={formData.activityType === 'request'}
-                  primary={formData.activityType === 'offer'}
+                  destructive={
+                    !initialData && formData.activityType === 'request'
+                  }
+                  primary={!!initialData || formData.activityType === 'offer'}
                   onClick={handleSubmit}
-                  className='w-35'
+                  className={`w-50`}
                   type='button'
                 >
                   {initialData
