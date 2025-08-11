@@ -75,19 +75,17 @@ export const ApiConstantRoutes = {
         get delete() {
           return `${this.default}/:id`
         },
-        
       }
     },
-    get location(){
+    get location() {
       return {
         get default() {
           return '/location'
         },
         get getLocation() {
-           return `${this.default}/reverse-geocode`
+          return `${this.default}/reverse-geocode`
         },
       }
-    }
-    
+    },
   },
 }

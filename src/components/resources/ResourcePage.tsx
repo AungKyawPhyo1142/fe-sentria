@@ -159,8 +159,8 @@ export default function ResourcePage() {
   return (
     <div className='flex w-full items-start gap-6 p-6'>
       {/* resources */}
-      <div className='flex w-full flex-col items-center justify-center'>
-        <div className='mt-4 flex w-full items-center justify-between gap-4 px-6 py-4'>
+      <div className='flex w-full flex-col items-center justify-between'>
+        <div className='mt-2 flex w-full items-center justify-between gap-4 py-4'>
           <div className='flex flex-shrink-0 items-center gap-4'>
             <span className='text-[16px] font-extralight whitespace-nowrap text-black'>
               Sort by:
@@ -171,9 +171,11 @@ export default function ResourcePage() {
                 itemList={sortOptions.map(
                   (option) => option[0].toUpperCase() + option.slice(1),
                 )}
-                value={sortOrder}
+                value={sortOrder[0].toUpperCase() + sortOrder.slice(1)}
                 onChange={(e) =>
-                  setSortOrder(e.target.value as 'latest' | 'oldest')
+                  setSortOrder(
+                    e.target.value.toLowerCase() as 'latest' | 'oldest',
+                  )
                 }
                 placeholder='Sort by'
               />
@@ -255,7 +257,7 @@ export default function ResourcePage() {
       </div>
 
       {/* Resource Filter */}
-      <div className='flex w-2/6 flex-col items-center justify-center gap-y-5 pt-8'>
+      <div className='flex w-2/6 flex-col items-center justify-center gap-y-5 pt-6'>
         <div className='flex w-full flex-col gap-y-4 rounded-lg border border-[#33333430] p-4'>
           <h2 className='text-lg font-light text-[#3333344d]'>Filter by</h2>
           <hr className='mb-1 border-t border-[#33333430]' />

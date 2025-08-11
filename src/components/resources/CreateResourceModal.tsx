@@ -6,6 +6,8 @@ import { AnimatePresence, motion } from 'motion/react'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { MapContainer, Marker, TileLayer, useMapEvents } from 'react-leaflet'
+import { apiClient } from '@/services/network/apiClient'
+import { ApiConstantRoutes } from '@/services/network/path'
 import Button from '../common/Button'
 import Input from '../common/Input'
 import LocateButton from '../common/LocateButton'
@@ -133,15 +135,15 @@ const CreateResourceModal: React.FC<Props> = ({
       parameters: {
         description: '',
         location: {
-          city: '',
-          country: '',
+          city: 'Bangkok',
+          country: 'Thailand',
           latitude: 0,
           longitude: 0,
         },
         address: {
-          street: '',
-          district: '',
-          fullAddress: '',
+          street: '123 Main St',
+          district: 'Central',
+          fullAddress: '123 Main St, Central, Bangkok, Thailand',
         },
       },
     })
@@ -178,6 +180,29 @@ const CreateResourceModal: React.FC<Props> = ({
 
     onSave?.(dataWithFiles)
     closeModal()
+  }
+
+  const getLocation = async (lat: number, lng: number) => {
+    try {
+      const response = await apiClient.post(
+        ApiConstantRoutes.paths.location.getLocation,
+        {
+          lat: lat,
+          lng: lng,
+        },
+      )
+      const data = await response.data
+      return {
+        city: data.city || 'Location Selected',
+        country: data.country || 'Thailand',
+      }
+    } catch (error) {
+      console.error('Error fetching location:', error)
+      return {
+        city: 'Location Selected',
+        country: 'Thailand',
+      }
+    }
   }
 
   function handleImageSelect(files: FileList) {
@@ -391,27 +416,37 @@ const CreateResourceModal: React.FC<Props> = ({
                           : null
                       }
                       onPositionChange={(pos) => {
-                        setFormData((prev) => ({
-                          ...prev,
-                          parameters: {
-                            ...prev.parameters,
-                            location: {
-                              ...prev.parameters.location,
-                              latitude: pos[0],
-                              longitude: pos[1],
+                        getLocation(pos[0], pos[1]).then((location) => {
+                          setFormData((prev) => ({
+                            ...prev,
+                            parameters: {
+                              ...prev.parameters,
+                              location: {
+                                ...prev.parameters.location,
+                                latitude: pos[0],
+                                longitude: pos[1],
+                                city: location.city,
+                                country: location.country,
+                              },
                             },
-                          },
-                        }))
+                          }))
+                        })
                       }}
                     />
                   </MapContainer>
                 </div>
                 {formData.parameters.location.latitude !== 0 &&
                   formData.parameters.location.longitude !== 0 && (
-                    <div className='mt-2 text-sm text-gray-600'>
-                      Coordinates:{' '}
-                      {formData.parameters.location.latitude.toFixed(6)},{' '}
-                      {formData.parameters.location.longitude.toFixed(6)}
+                    <div className='mt-2 space-y-1'>
+                      <div className='text-sm text-gray-600'>
+                        Coordinates:{' '}
+                        {formData.parameters.location.latitude.toFixed(6)},{' '}
+                        {formData.parameters.location.longitude.toFixed(6)}
+                      </div>
+                      <div className='text-xs text-gray-500'>
+                        Location: {formData.parameters.location.city},{' '}
+                        {formData.parameters.location.country}
+                      </div>
                     </div>
                   )}
               </div>

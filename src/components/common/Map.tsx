@@ -77,17 +77,17 @@ const Map = () => {
 
   const { data: activitiesData } = useGetActivities()
 
-  const disasterHelpList: DisasterHelp[] = activitiesData?.data.map((activity) => ({
-    id: activity.id,
-    helpType: activity.helpItems[0].helpType,
-    activityType: activity.activityType,
-    position: [activity.latitude, activity.longitude],
-  })) || []
+  const disasterHelpList: DisasterHelp[] =
+    activitiesData?.data.map((activity) => ({
+      id: activity.id,
+      helpType: activity.helpItems[0].helpType,
+      activityType: activity.activityType,
+      position: [activity.latitude, activity.longitude],
+    })) || []
 
   const { selectedTypes, needed, available } = useMapFilter()
 
   console.log('disasterHelpList:', disasterHelpList)
-  
 
   const filteredHelpList = disasterHelpList.filter((help) => {
     const matchesStatus =
