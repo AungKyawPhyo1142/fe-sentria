@@ -1,19 +1,19 @@
 import Profile from '@/assets/default-profile.svg?react'
 import Home from '@/assets/icons/home.svg?react'
 import Hand from '@/assets/icons/OfferHand2.svg?react'
+import { CreateActivityFormValues } from '@/components/posts/ActivityPostModal'
+import {
+  ActivityType,
+  CreateActivityRequest,
+  HelpType,
+  useCreateActivity,
+} from '@/services/network/lib/activity'
 import { AppConstantRoutes } from '@/services/routes/path'
 import { CirclePlus, HeartHandshake, Map, Phone } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router'
-import SearchInput from './SearchInput'
 import ActivityPostModal from '../posts/ActivityPostModal'
-import { CreateActivityFormValues } from '@/components/posts/ActivityPostModal'
-import {
-  useCreateActivity,
-  ActivityType,
-  HelpType,
-  CreateActivityRequest,
-} from '@/services/network/lib/activity'
+import SearchInput from './SearchInput'
 
 const NavbarItems = [
   {

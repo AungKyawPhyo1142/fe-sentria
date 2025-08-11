@@ -1,12 +1,14 @@
-import { useState, useEffect } from 'react'
+import { apiClient } from '@/services/network/apiClient'
 import ReactDOM from 'react-dom'
-import { X } from 'lucide-react'
+import { CreateActivityRequest } from '@/services/network/lib/activity'
+import { ApiConstantRoutes } from '@/services/network/path'
 import clsx from 'clsx'
 import { AnimatePresence, motion } from 'motion/react'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
+import { X } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { MapContainer, Marker, TileLayer, useMapEvents } from 'react-leaflet'
-import { CreateActivityRequest } from '@/services/network/lib/activity'
 import Button from '../common/Button'
 import LocateButton from '../common/LocateButton'
 import RichTextEditor from '../RichTextEditor'
@@ -205,6 +207,29 @@ const ActivityPostModal: React.FC<Props> = ({
     closeModal()
   }
 
+  const getLocation = async (lat: number, lng: number) => {
+    try {
+      const response = await apiClient.post(
+        ApiConstantRoutes.paths.location.getLocation,
+        {
+          lat: lat,
+          lng: lng,
+        },
+      )
+      const data = await response.data
+      return {
+        city: data.city || 'Location Selected',
+        country: data.country || 'United Kingdom',
+      }
+    } catch (error) {
+      console.error('Error fetching location:', error)
+      return {
+        city: 'Location Selected',
+        country: 'United Kingdom',
+      }
+    }
+  }
+
   if (!isOpen) return null
 
   return ReactDOM.createPortal(
@@ -359,13 +384,14 @@ const ActivityPostModal: React.FC<Props> = ({
                     <DraggableMarker
                       position={formData.coordinates}
                       onPositionChange={(pos) => {
-                        setFormData((prev) => ({
-                          ...prev,
-                          coordinates: pos,
-                          // These will be automatically determined from coordinates later
-                          city: 'Location Selected',
-                          country: 'United Kingdom',
-                        }))
+                        getLocation(pos[0], pos[1]).then((location) => {
+                          setFormData((prev) => ({
+                            ...prev,
+                            coordinates: pos,
+                            city: location.city,
+                            country: location.country,
+                          }))
+                        })
                       }}
                     />
                   </MapContainer>
