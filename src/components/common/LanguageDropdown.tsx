@@ -34,7 +34,7 @@ const LanguageDropdown = () => {
   }, [])
   const location = useLocation()
   const isMapPage = location.pathname === '/map'
-  const displayText = currentLang === 'en' ? 'English' : 'Burmese'
+  const displayText = currentLang === 'en' ? 'English' : 'မြန်မာ'
 
   return (
     <div className='relative' ref={dropdownRef}>
@@ -49,7 +49,7 @@ const LanguageDropdown = () => {
 
       {/* Dropdown */}
       {open && (
-        <div className='animate-fade-in absolute bottom-full mb-2 w-35 rounded-[10px] border border-gray-300 bg-white shadow-lg transition-all'>
+        <div className='animate-fade-in absolute bottom-full mb-2  rounded-[10px] border border-gray-300 bg-white  transition-all'>
           <ul className='text-[16px]'>
             <li
               onClick={() => changeLanguage('en')}
@@ -61,7 +61,7 @@ const LanguageDropdown = () => {
               onClick={() => changeLanguage('mm')}
               className='cursor-pointer rounded-b-[10px] px-4 py-2 hover:bg-gray-100'
             >
-              Burmese
+              မြန်မာ
             </li>
           </ul>
         </div>

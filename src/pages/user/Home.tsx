@@ -106,7 +106,7 @@ const Home = () => {
 
   const reports =
     data?.pages?.flatMap((page) => page.data.reports.data ?? []) ?? []
-  // console.log('length: ', reports.length)
+  console.log('reports: ', reports)
 
   if (isLoading) return <p>Loading...</p>
   if (error) return <p>Error loading reports</p>
@@ -114,18 +114,7 @@ const Home = () => {
   return (
     <div className='fade-in'>
       <div className='w-3/4'>
-        <div className='mb-5 flex items-center gap-x-3'>
-          <Button className='px-10' primary>
-            Home Page
-          </Button>
-          <Button
-            className='px-10'
-            primary
-            onClick={() => navigate(AppConstantRoutes.paths.resources)}
-          >
-            Resource Page
-          </Button>
-        </div>
+
         {/* Post Cards */}
         {reports.length === 0 ? (
           <p>No reports found.</p>
