@@ -106,15 +106,6 @@ export const ApiConstantRoutes = {
         },
       }
     },
-    get location() {
-      return {
-        get default() {
-          return '/location'
-        },
-        get getLocation() {
-          return `${this.default}/reverse-geocode`
-        },
-      }
-    },
+    
   },
 }
