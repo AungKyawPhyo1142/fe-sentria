@@ -77,6 +77,14 @@
   @apply bg-primary rounded-full;
 }
 
+.scrollbar-hide {
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox */
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}
+
 /* Navbar  */
 .icon-svg {
   transition: all 0.2s ease;

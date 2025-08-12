@@ -19,7 +19,7 @@ const Container = () => {
           {/* Login form */}
           <div className='relative flex w-1/2 flex-col items-center justify-center rounded-r-[10px] border border-l-0 border-[#333334]/30 bg-[#F5FEFD] p-5'>
             {route.pathname === '/auth/login' ? <Login /> : <Register />}
-            <div className='absolute bottom-5 right-10 text-primary'>
+            <div className='text-primary absolute right-10 bottom-5'>
               <LanguageDropdown />
             </div>
           </div>

@@ -14,7 +14,7 @@ import Confirmed from '@/pages/auth/VerifyEmail'
 import Profile from '@/pages/user/Profile'
 import MapPage from '@/pages/user/MapPage'
 import SocketExample from '@/pages/example/SocketExample'
-import ResourcePage from '@/pages/user/ResourcePage'
+import ResourcePage from '@/components/resources/ResourcePage'
 
 /*
   This file is where you define the routes

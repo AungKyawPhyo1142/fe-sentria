@@ -1,9 +1,6 @@
 import { useSocketStore } from '@/zustand/socketStore'
 // import { useTranslation } from 'react-i18next'
 import { useEffect } from 'react'
-import { AppConstantRoutes } from '@/services/routes/path'
-import { useNavigate } from 'react-router'
-import Button from '@/components/common/Button'
 import NotificationSidebar from '@/components/common/NotificationSidebar'
 import {
   ReportData,
@@ -69,8 +66,6 @@ const PostList: React.FC<ReportPostProps> = ({ postLists }) => {
 const Home = () => {
   // const { t } = useTranslation()
 
-  const navigate = useNavigate()
-
   const connect = useSocketStore((state) => state.connect)
   const earthquakeAlertListener = useSocketStore(
     (state) => state.earthquakeAlertListener,
@@ -114,7 +109,6 @@ const Home = () => {
   return (
     <div className='fade-in'>
       <div className='w-3/4'>
-
         {/* Post Cards */}
         {reports.length === 0 ? (
           <p>No reports found.</p>

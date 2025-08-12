@@ -49,7 +49,7 @@ const LanguageDropdown = () => {
 
       {/* Dropdown */}
       {open && (
-        <div className='animate-fade-in absolute bottom-full mb-2  rounded-[10px] border border-gray-300 bg-white  transition-all'>
+        <div className='animate-fade-in absolute bottom-full mb-2 rounded-[10px] border border-gray-300 bg-white transition-all'>
           <ul className='text-[16px]'>
             <li
               onClick={() => changeLanguage('en')}
