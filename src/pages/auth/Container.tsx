@@ -1,8 +1,9 @@
-import LanguageToggle from '@/components/common/LanguageToggle'
+// import LanguageToggle from '@/components/common/LanguageToggle'
 import ImageSlider from '@/components/imageSlider'
 import { useLocation } from 'react-router'
 import Login from './Login'
 import Register from './Register'
+import LanguageDropdown from '@/components/common/LanguageDropdown'
 
 const Container = () => {
   const route = useLocation()
@@ -17,11 +18,10 @@ const Container = () => {
           </div>
           {/* Login form */}
           <div className='relative flex w-1/2 flex-col items-center justify-center rounded-r-[10px] border border-l-0 border-[#333334]/30 bg-[#F5FEFD] p-5'>
-            <div className='flex w-full justify-end'>
-              <LanguageToggle />
-            </div>
-
             {route.pathname === '/auth/login' ? <Login /> : <Register />}
+            <div className='text-primary absolute right-10 bottom-5'>
+              <LanguageDropdown />
+            </div>
           </div>
         </div>
       </div>

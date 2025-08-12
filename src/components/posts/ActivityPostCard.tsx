@@ -7,6 +7,7 @@ import Food from '@/assets/icons/Food.svg?react'
 import Shelter from '@/assets/icons/Shelter.svg?react'
 import DropdownMenu from '@/components/common/DropdownMenu'
 import '@/components/RichTextStyles.css'
+import { formatDistanceToNow } from 'date-fns'
 
 interface User {
   name: string
@@ -32,6 +33,7 @@ const ActivityPostCard = ({
   content,
   helpType,
   offeredHelp,
+  createdAt,
   onReadMore,
   onEdit,
   onDelete,
@@ -111,7 +113,7 @@ const ActivityPostCard = ({
               )}
             </div>
 
-            <div>
+            <div className='flex flex-col'>
               <div className='flex items-center space-x-2'>
                 <h3 className='text-[16px] font-medium text-black'>
                   {user.name}
@@ -119,6 +121,12 @@ const ActivityPostCard = ({
                 {user.isVerified && (
                   <VerifyBadge className='h-4 w-4 text-[#1560BD]' />
                 )}
+              </div>
+
+              <div className='text-xs font-light text-zinc-500'>
+                {createdAt
+                  ? `${formatDistanceToNow(createdAt, { addSuffix: true })}`
+                  : ''}
               </div>
             </div>
           </div>

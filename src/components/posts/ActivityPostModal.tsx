@@ -206,13 +206,13 @@ const ActivityPostModal: React.FC<Props> = ({
   const getLocation = async (lat: number, lng: number) => {
     try {
       const response = await apiClient.post(
-        ApiConstantRoutes.paths.location.getLocation,
+        ApiConstantRoutes.paths.location.reverseGeocode,
         {
           lat: lat,
           lng: lng,
         },
       )
-      const data = await response.data;
+      const data = await response.data
       return {
         city: data.city || 'Location Selected',
         country: data.country || 'United Kingdom',
@@ -416,4 +416,3 @@ const ActivityPostModal: React.FC<Props> = ({
 
 export default ActivityPostModal
 export type { CreateActivityFormValues }
-

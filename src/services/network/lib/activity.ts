@@ -133,7 +133,7 @@ export const useGetActivityById = (id: string) => {
 
 export const useCreateActivity = () => {
   const queryClient = useQueryClient()
-  
+
   return useMutation({
     mutationFn: async (data: CreateActivityRequest) => {
       const response: CreateActivityResponse = await apiClient.post(
@@ -150,7 +150,7 @@ export const useCreateActivity = () => {
           helpItems: data.helpItems,
         },
       )
-      
+
       return response.data as CreateActivityResult
     },
     onSuccess: () => {
