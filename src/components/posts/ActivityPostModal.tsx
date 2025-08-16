@@ -210,7 +210,7 @@ const ActivityPostModal: React.FC<Props> = ({
   const getLocation = async (lat: number, lng: number) => {
     try {
       const response = await apiClient.post(
-        ApiConstantRoutes.paths.location.getLocation,
+        ApiConstantRoutes.paths.location.reverseGeocode,
         {
           lat: lat,
           lng: lng,

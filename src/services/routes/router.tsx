@@ -13,6 +13,7 @@ import VerificationSent from '@/pages/auth/VerificationSent'
 import Confirmed from '@/pages/auth/VerifyEmail'
 import Profile from '@/pages/user/Profile'
 import MapPage from '@/pages/user/MapPage'
+import SocketExample from '@/pages/example/SocketExample'
 import ResourcePage from '@/components/resources/ResourcePage'
 
 /*
@@ -77,6 +78,10 @@ export const router = createBrowserRouter([
       {
         path: AppConstantRoutes.paths.home,
         element: <Home />,
+      },
+      {
+        path: AppConstantRoutes.paths.example.webSocket,
+        element: <SocketExample />,
       },
       {
         path: '',

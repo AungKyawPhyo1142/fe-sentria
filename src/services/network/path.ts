@@ -33,6 +33,35 @@ export const ApiConstantRoutes = {
         },
       }
     },
+    get report() {
+      return {
+        get default() {
+          return '/report'
+        },
+        // get create() {
+        //   return `${this.default}/create`
+        // },
+        getReportById(id: string) {
+          return `${this.default}/${id}`
+        },
+        get createReport() {
+          return `${this.default}/create`
+        },
+        deleteReport(id: string) {
+          return `${this.default}/delete/${id}`
+        },
+        editReport(id: string) {
+          return `${this.default}/update/${id}`
+        },
+      }
+    },
+    get location() {
+      return {
+        get reverseGeocode() {
+          return `/location/reverse-geocode`
+        },
+      }
+    },
     get resources() {
       return {
         get default() {
@@ -74,16 +103,6 @@ export const ApiConstantRoutes = {
         },
         get delete() {
           return `${this.default}/:id`
-        },
-      }
-    },
-    get location() {
-      return {
-        get default() {
-          return '/location'
-        },
-        get getLocation() {
-          return `${this.default}/reverse-geocode`
         },
       }
     },

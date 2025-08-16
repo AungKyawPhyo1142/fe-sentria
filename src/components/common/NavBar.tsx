@@ -1,6 +1,10 @@
-import Profile from '@/assets/default-profile.svg?react'
+// import Profile from '@/assets/default-profile.svg?react'
 import Home from '@/assets/icons/home.svg?react'
 import Hand from '@/assets/icons/OfferHand2.svg?react'
+import { useTranslation } from 'react-i18next'
+import CreatePostModal from './CreatePostModal'
+import ProfileNav from './ProfileNav'
+// import SearchBar from './SearchBar'
 import { CreateActivityFormValues } from '@/components/posts/ActivityPostModal'
 import {
   ActivityType,
@@ -14,6 +18,42 @@ import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router'
 import ActivityPostModal from '../posts/ActivityPostModal'
 import SearchInput from './SearchInput'
+
+//Skeleton
+export const NavbarSkeleton = ({
+  isMapPage = false,
+}: {
+  isMapPage?: boolean
+}) => {
+  return (
+    <div
+      className={`fixed top-0 right-0 ${isMapPage ? 'left-30' : 'left-68'} z-[99] flex items-end justify-between bg-white py-4 pr-8 pl-4`}
+    >
+      <div className='flex space-x-5'>
+        {/* Navbar Icons Skeleton */}
+        <div className='flex h-12.5 items-center gap-x-10 rounded-xl border border-black/10 p-4'>
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div
+              key={i}
+              className='h-7 w-7 animate-pulse rounded-md bg-gray-300'
+            />
+          ))}
+        </div>
+
+        {/* Search Input Skeleton */}
+        <div className='h-12.5 w-75 animate-pulse rounded-xl bg-gray-300' />
+
+        {/* Report Post Button Skeleton */}
+        <div className='flex h-12.5 w-50 animate-pulse items-center justify-center rounded-xl bg-gray-300' />
+      </div>
+
+      {/* Profile Skeleton */}
+      <div className='h-12.5 w-12.5 animate-pulse rounded-full bg-gray-300' />
+    </div>
+  )
+}
+
+//NavItems
 
 const NavbarItems = [
   {
@@ -73,6 +113,10 @@ const Navbar = () => {
   const [activeIcon, setActiveIcon] = useState<string>('home')
   const [isActivityModalOpen, setIsActivityModalOpen] = useState(false)
   const navigate = useNavigate()
+  const { t } = useTranslation()
+
+  //open create post
+  const [createPost, setCreatePost] = useState(false)
 
   const createActivityMutation = useCreateActivity()
 
@@ -155,14 +199,25 @@ const Navbar = () => {
     }
   }, [location.pathname])
 
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setLoading(false)
+    }, 1000)
+    return () => clearTimeout(timeout)
+  }, [])
+
+  if (loading) return <NavbarSkeleton isMapPage={isMapPage} />
+
   return (
     <div
-      className={`fixed top-0 right-0 ${isMapPage ? 'left-30' : 'left-68'} z-[999] flex items-end justify-between bg-white py-4 pr-8 pl-4 text-black transition-all duration-300 ease-in-out`}
+      // className={`fixed top-0 right-0 z-20 ${isMapPage ? 'left-30' : 'left-68'} mr-6 flex items-center justify-between bg-white py-4 text-black transition-all duration-300 ease-in-out`}
+      className={`fixed top-0 right-0 ${isMapPage ? 'left-30' : 'left-68'} z-50 flex items-end justify-between bg-white py-4 pr-8 pl-4 text-black transition-all duration-300 ease-in-out`}
     >
       <div className={`flex ${isMapPage ? 'space-x-5' : 'space-x-8'}`}>
-        <SearchInput />
-
         {/* Navbar Icons */}
+
         <div className='flex h-12.5 items-center justify-between gap-x-10 rounded-xl border border-black/30 p-4'>
           {NavbarItems.map((item) => (
             <button
@@ -175,6 +230,8 @@ const Navbar = () => {
           ))}
         </div>
 
+        <SearchInput />
+
         {/* Create Post / Help Buttons */}
         {isMapPage ? (
           <button
@@ -185,21 +242,32 @@ const Navbar = () => {
             <span className='ml-3 text-[16px]'>I need / I can help</span>
           </button>
         ) : (
-          <button className='bg-primary flex h-12.5 items-center justify-center rounded-xl px-4 py-1 font-light text-white hover:cursor-pointer'>
-            <CirclePlus size={26} strokeWidth={1} />
-            <span className='ml-3 text-[16px]'>Report a disaster</span>
-          </button>
+          <>
+            <button
+              onClick={() => setCreatePost(true)}
+              className='bg-primary flex h-12.5 items-center justify-center rounded-xl px-4 py-1 font-light text-white hover:cursor-pointer'
+            >
+              <CirclePlus size={26} strokeWidth={1} />
+              <span className='ml-3 text-[16px]'>
+                {t('sidebar.ReportPost')}
+              </span>
+            </button>
+            {createPost && (
+              <CreatePostModal isOpen={createPost} setIsOpen={setCreatePost} />
+            )}
+          </>
         )}
       </div>
 
       {/* Profile */}
-      <div
+      <ProfileNav />
+      {/* <div
         onClick={() => navigate(AppConstantRoutes.paths.profile)}
         className='flex h-12.5 cursor-pointer items-center justify-center gap-x-2 rounded-xl border border-black/30 px-4 py-1'
       >
         <Profile className='size-8 rounded-full object-cover' />
         <span className='text-sm'>Sweeny Sydney</span>
-      </div>
+      </div> */}
 
       <ActivityPostModal
         isOpen={isActivityModalOpen}

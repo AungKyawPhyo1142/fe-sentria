@@ -5,6 +5,7 @@ import Hotline from '@/assets/icons/Hotline.svg?react'
 import FirstAid from '@/assets/icons/FirstAid.svg?react'
 import PostImages from '../posts/PostImages'
 import '../RichTextStyles.css'
+import { formatDistanceToNow } from 'date-fns'
 
 interface User {
   name: string
@@ -27,6 +28,7 @@ const ResourceCard = ({
   location,
   description,
   resourceTypes,
+  createdAt,
   images,
   onReadMore,
 }: ResourceCardProps) => {
@@ -84,7 +86,7 @@ const ResourceCard = ({
               )}
             </div>
 
-            <div>
+            <div className='flex flex-col'>
               <div className='flex items-center space-x-2'>
                 <h3 className='text-[16px] font-medium text-black'>
                   {user.name}
@@ -95,6 +97,11 @@ const ResourceCard = ({
                     aria-label='Verified user'
                   />
                 )}
+              </div>
+              <div className='text-xs font-light text-zinc-500'>
+                {createdAt
+                  ? `${formatDistanceToNow(createdAt, { addSuffix: true })}`
+                  : ''}
               </div>
             </div>
           </div>

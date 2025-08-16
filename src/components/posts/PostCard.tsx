@@ -8,19 +8,33 @@ import {
   Waves,
   Tornado,
   Dot,
+  Ellipsis,
+  EditIcon,
+  Trash,
 } from 'lucide-react'
+import { formatDistanceToNow } from 'date-fns'
 
 import VerifyBadge from '@/assets/VerifiedBadge.svg?react'
 
 import { formatNumber } from '@/helpers/helpers'
 import PostImages from './PostImages'
 import TrustScoreBadge from './TrustScoreBadge'
+import { useTranslation } from 'react-i18next'
+import { useState } from 'react'
+import ReportDetailModal from './ReportDetailModal'
+import { useGetDisasterReportDetail } from '@/services/network/lib/disasterReport'
+import { selectAuth, useAuthStore } from '@/zustand/authStore'
+import DeleteReportModal from './DeleteReportModal'
+import EditReportModal from './EditReportModal'
 
-interface User {
+// fake data for report detail
+
+export interface User {
   name: string
   avatar: string | null
   isVerified: boolean
 }
+type DisasterType = 'earthquake' | 'flood' | 'fire' | 'storm' | 'other'
 
 interface PostCardProps {
   id: string
@@ -28,9 +42,11 @@ interface PostCardProps {
   trustScore: number
   isDebunked: boolean
   location: string
+  title: string
   content: string
   images?: string[]
-  disasterType: 'earthquake' | 'flood' | 'fire' | 'storm' | 'other'
+  // disasterType: 'earthquake' | 'flood' | 'fire' | 'storm' | 'other'
+  disasterType: string
   upvotes?: number
   downvotes?: number
   comments?: number
@@ -38,35 +54,52 @@ interface PostCardProps {
   onUpvote?: () => void
   onDownvote?: () => void
   onComment?: () => void
+  reporterId?: string
+  loginUser?: string
 }
 
 const PostCard = ({
+  id,
   user,
   trustScore,
   isDebunked = false,
   location,
+  title,
   content,
   images,
   disasterType,
   upvotes = 0,
   downvotes = 0,
   comments = 0,
+  createdAt,
   onUpvote,
   onDownvote,
   onComment,
+  reporterId,
+  loginUser,
 }: PostCardProps) => {
+  const { t } = useTranslation()
+  const { userId } = useAuthStore(selectAuth)
+  const isOwner = String(reporterId) === String(loginUser)
+
+  const [showMenu, setShowMenu] = useState(false)
+  const [showDetail, setShowDetail] = useState(false)
+  // const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [isDelete, setIsDelete] = useState(false)
+  const [isEdit, setIsEdit] = useState(false)
+
   const getTrustWarning = (score: number, isDebunked: boolean) => {
     if (isDebunked) {
       return {
         show: true,
-        message: 'Content debunked - Will be removed soon',
+        message: t('common.contentDebunked'),
         bgColor: 'bg-[#B22222]',
       }
     }
     if (score <= 20) {
       return {
         show: true,
-        message: 'Very low trust rate - Be cautious!',
+        message: t('common.lowTrust'),
         bgColor: 'bg-[#B22222]',
       }
     }
@@ -92,6 +125,36 @@ const PostCard = ({
 
   const trustWarning = getTrustWarning(trustScore, isDebunked)
 
+  // data fetch
+  const { data, isLoading, isError } = useGetDisasterReportDetail(id)
+  if (isLoading) return <p>Loading...</p>
+  if (isError) return <p>Error fetching detail</p>
+
+  const reportDetail = data?.data?.report?.data
+  const imgUrl =
+    reportDetail?.media
+      ?.filter(
+        (m) =>
+          typeof m?.type === 'string' &&
+          m.type.toLowerCase() === 'image' &&
+          typeof m.url === 'string' &&
+          m.url.trim() !== '',
+      )
+      .map((m) => m.url) ?? []
+
+  // delete
+  const handleDelete = () => {
+    console.log('delete button clicked!')
+    setShowMenu(false)
+    setIsDelete(true)
+  }
+  // edit
+  const handleEdit = () => {
+    console.log('edit button clicked!')
+    setShowMenu(false)
+    setIsEdit(true)
+  }
+
   return (
     <div className='mb-4 max-w-full bg-white'>
       {/* bg-white */}
@@ -105,7 +168,7 @@ const PostCard = ({
           </span>
         </div>
       )}
-      <div className='rounded-lg border border-[#33333430] px-8 py-7'>
+      <div className='rounded-lg border border-[#33333430] px-8 pt-7'>
         {/* header */}
         <div className='mb-2'>
           <div className='mb-4 flex items-center justify-between'>
@@ -116,10 +179,10 @@ const PostCard = ({
                   <img
                     src={user.avatar}
                     alt={user.name}
-                    className='h-9 w-9 rounded-full object-cover'
+                    className='h-10 w-10 rounded-full object-cover'
                   />
                 ) : (
-                  <div className='flex h-9 w-9 items-center justify-center rounded-full bg-blue-100'>
+                  <div className='flex h-10 w-10 items-center justify-center rounded-full bg-blue-100'>
                     <span className='text-lg font-semibold text-blue-600'>
                       {user.name.charAt(0).toUpperCase()}
                     </span>
@@ -127,14 +190,22 @@ const PostCard = ({
                 )}
               </div>
 
-              {/* username and Badge */}
-              <div className='flex items-center space-x-2'>
-                <h3 className='text-[16px] font-medium text-black'>
-                  {user.name}
-                </h3>
-                {user.isVerified && (
-                  <VerifyBadge className='h-4 w-4 text-[#1560BD]' />
-                )}
+              <div className='flex flex-col'>
+                {/* username and Badge */}
+                <div className='flex items-center space-x-2'>
+                  <h3 className='text-[16px] font-medium text-black'>
+                    {user.name}
+                  </h3>
+                  {user.isVerified && (
+                    <VerifyBadge className='h-4 w-4 text-[#1560BD]' />
+                  )}
+                </div>
+                {/* Created At */}
+                <div className='text-xs font-light text-zinc-500'>
+                  {createdAt
+                    ? `${formatDistanceToNow(createdAt, { addSuffix: true })}`
+                    : ''}
+                </div>
               </div>
             </div>
 
@@ -143,14 +214,17 @@ const PostCard = ({
               <TrustScoreBadge score={trustScore} />
               {isDebunked && (
                 <div className='flex h-7 items-center space-x-1 rounded-sm bg-[#B22222] px-2 py-1 text-xs font-medium text-white'>
-                  <span>Debunked</span>
+                  <span>{t('common.debunked')}</span>
                 </div>
               )}
               <div
                 className={`flex h-7 items-center space-x-1 rounded-sm px-2 py-1 text-xs font-medium text-white ${isDebunked ? 'bg-[#33333430]' : 'bg-[#B22222]'}`}
               >
                 {getDisasterIcon(disasterType)}
-                <span className='capitalize'>{disasterType}</span>
+                <span className='capitalize'>
+                  {/* {t(`disasters.${disasterType}`)} */}
+                  {disasterType}
+                </span>
               </div>
             </div>
           </div>
@@ -159,6 +233,16 @@ const PostCard = ({
           <div className='mt-2 flex items-center text-sm text-black'>
             <MapPinned className='mr-1 h-6 w-6 stroke-1' />
             <span className='ml-2 text-[16px] font-semibold'>{location}</span>
+          </div>
+          {/* post title */}
+          <div
+            onClick={() => {
+              // setSelectedId(id)
+              setShowDetail(true)
+            }}
+            className='mt-2 text-[14px] hover:cursor-pointer'
+          >
+            {title}
           </div>
         </div>
 
@@ -169,10 +253,11 @@ const PostCard = ({
               <>
                 {content.slice(0, 300)}...
                 <button
-                  className='text-primary hover:text-primary/80 ml-1 text-[13px] font-medium'
-                  onClick={() => {
+                  className='text-primary hover:text-primary/80 ml-1 text-[13px] font-medium hover:cursor-pointer'
+                  onClick={() =>
                     // show post modal
-                  }}
+                    setShowDetail(true)
+                  }
                 >
                   Read More
                 </button>
@@ -185,6 +270,38 @@ const PostCard = ({
             <PostImages images={images} />
           </div>
         </div>
+        {/* show post detail */}
+        {showDetail && (
+          <ReportDetailModal
+            _id={id}
+            isOpen={showDetail}
+            setIsOpen={setShowDetail}
+            user={{
+              name: `${reportDetail?.generatedBy.firstName} ${reportDetail?.generatedBy.lastName}`,
+              avatar: reportDetail?.generatedBy.profile_image ?? null,
+              isVerified: true,
+            }}
+            trustScore={reportDetail?.factCheck?.overallPercentage ?? 0}
+            isDebunked={reportDetail?.factCheck.goService.status === 'debunked'}
+            location={`${reportDetail?.location.city}, ${reportDetail?.location.country}`}
+            title={reportDetail?.reportName ?? ''}
+            content={reportDetail?.description ?? ''}
+            images={imgUrl}
+            // disasterType={reportDetail?.incidentType as any}
+            disasterType={
+              (reportDetail?.incidentType as DisasterType) ?? 'other'
+            }
+            upvotes={reportDetail?.factCheck.communityScore?.upvotes ?? 0}
+            downvotes={reportDetail?.factCheck.communityScore?.downvotes ?? 0}
+            comments={12}
+            createdAt={new Date(reportDetail?.createdAt ?? Date.now())}
+            onUpvote={() => alert('Upvoted')}
+            onDownvote={() => alert('Downvoted')}
+            onComment={() => alert('Commented')}
+            reporterId={reportDetail?.generatedBy.id}
+            loginUser={userId}
+          />
+        )}
 
         {/* actions */}
         <div className='pt-3'>
@@ -202,27 +319,68 @@ const PostCard = ({
             <Dot className='h-5 w-5 text-[#33333430]' />
             <span>{formatNumber(comments)} comments</span>
           </div>
-          <div className='mt-2 flex w-full items-center space-x-4 border-t border-[#33333430] pt-2'>
-            <button
-              onClick={onUpvote}
-              className={`flex min-h-0 items-center space-x-1 border-none bg-transparent p-0 ${upvotes > downvotes ? 'text-primary hover:text-primary/80' : 'text-[#33333430] hover:text-[3333430]/80'}`}
-            >
-              <CircleArrowUp className='h-6 w-6 stroke-1' />
-            </button>
+          {/* up/dowwn/cmt -> menu */}
+          <div className='my-2 flex items-center justify-between border-t border-[#33333430] pt-2'>
+            {/* up/down/cmt */}
+            <div className='flex w-full items-center space-x-4'>
+              <button
+                onClick={onUpvote}
+                className={`flex min-h-0 items-center space-x-1 border-none bg-transparent p-0 ${upvotes > downvotes ? 'text-primary hover:text-primary/80' : 'text-[#33333430] hover:text-[3333430]/80'}`}
+              >
+                <CircleArrowUp className='h-6 w-6 stroke-1' />
+              </button>
 
-            <button
-              onClick={onDownvote}
-              className={`flex items-center space-x-1 ${downvotes > upvotes ? 'text-[#B22222] hover:text-[#B22222]/80' : 'text-[#33333430] hover:text-[#33333430]/80'}`}
-            >
-              <CircleArrowDown className='h-6 w-6 stroke-1' />
-            </button>
+              <button
+                onClick={onDownvote}
+                className={`flex items-center space-x-1 ${downvotes > upvotes ? 'text-[#B22222] hover:text-[#B22222]/80' : 'text-[#33333430] hover:text-[#33333430]/80'}`}
+              >
+                <CircleArrowDown className='h-6 w-6 stroke-1' />
+              </button>
 
-            <button
-              onClick={onComment}
-              className='flex items-center space-x-1 text-[#33333430] hover:text-[#33333430]/80'
-            >
-              <MessageSquare className='h-6 w-6 stroke-1' />
-            </button>
+              <button
+                onClick={onComment}
+                className='flex items-center space-x-1 text-[#33333430] hover:text-[#33333430]/80'
+              >
+                <MessageSquare className='h-6 w-6 stroke-1' />
+              </button>
+            </div>
+            {/* menu */}
+            {isOwner && (
+              <div className='relative'>
+                <button
+                  onClick={() => setShowMenu((prev) => !prev)}
+                  className='text-[#33333430] focus-within:ring-0 hover:cursor-pointer hover:text-[#33333430]/80 focus:ring-0 focus:outline-none focus-visible:ring-0'
+                >
+                  <Ellipsis className='h-6 w-6 stroke-1' />
+                </button>
+                {showMenu && (
+                  <div className='absolute right-0 bottom-full z-50 mb-1 w-28 rounded-md border border-[#333334]/30 bg-white'>
+                    <button
+                      onClick={handleEdit}
+                      className='flex w-full cursor-pointer items-center gap-2 px-4 py-2 text-xs text-[#333334]/80 hover:text-[#333334]/30 focus:ring-0 focus:outline-none focus-visible:ring-0'
+                    >
+                      <EditIcon className='h-4 w-4' /> Edit
+                    </button>
+                    <button
+                      onClick={handleDelete}
+                      className='flex w-full items-center gap-2 px-4 py-2 text-xs text-[#B22222] hover:cursor-pointer hover:text-[#B22222]/50 focus:ring-0 focus:outline-none focus-visible:ring-0'
+                    >
+                      <Trash className='h-4 w-4' /> Delete
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+            {isDelete && (
+              <DeleteReportModal
+                isOpen={isDelete}
+                setIsOpen={setIsDelete}
+                id={id}
+              />
+            )}
+            {isEdit && (
+              <EditReportModal isOpen={isEdit} setIsOpen={setIsEdit} id={id} />
+            )}
           </div>
         </div>
       </div>
