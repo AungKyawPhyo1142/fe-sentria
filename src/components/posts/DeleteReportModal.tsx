@@ -2,10 +2,11 @@ import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { backdropVariants } from './constants/constants'
+import { backdropVariants, modalVariants } from './constants/constants'
 import Button from '../common/Button'
 import { toast } from 'react-toastify'
 import { useDeleteReport } from '@/services/network/lib/disasterReport'
+import { X } from 'lucide-react'
 
 // Props
 interface DeleteReportModalProps {
@@ -21,6 +22,7 @@ const DeleteReportModal: React.FC<DeleteReportModalProps> = ({
   className,
   id,
 }) => {
+  const [isDeleting, setIsDeleting] = React.useState(false)
   const { deleteReportById } = useDeleteReport()
   const handleDelete = async () => {
     // console.log('deleted post!', id)
@@ -37,36 +39,40 @@ const DeleteReportModal: React.FC<DeleteReportModalProps> = ({
     //   setIsOpen(false)
     // }
     try {
-      await deleteReportById(id)
+      setIsDeleting(true)
+      const res = await deleteReportById(id)
+      if (res.status === 'SUCCESS') {
+        toast.success('Report deleted successfully!')
+
+      }
       setIsOpen(false)
+      setIsDeleting(false)
     } catch (error) {
       // error already handled in the hook
       console.error(error)
       toast.error('Something went wrong. Please try again.')
       setIsOpen(false)
+      setIsDeleting(false)
     }
   }
 
   const cancelButton = () => {
-    console.log('cancel clicked!')
-    // alert('cancel delete!')
     setIsOpen(false)
-    toast.info('Cancel delete post!')
   }
   return ReactDOM.createPortal(
     <AnimatePresence>
       {isOpen && (
         <motion.div
           className={clsx(
-            'fixed inset-0 z-[100] flex items-center justify-center bg-black/30',
-            className,
+            'fixed inset-0 z-[9999] flex items-center justify-center bg-black/30',
+            className
           )}
           initial='hidden'
           animate='visible'
           exit='exit'
           variants={backdropVariants}
         >
-          <motion.div className='relative rounded-lg bg-white p-8 shadow-xl'>
+          {/* <motion.div className='relative rounded-lg bg-white p-8 shadow-xl'>
             <div className='flex flex-col space-y-5'>
               <h1 className='text-2xl font-semibold'>
                 Are you sure you want to delete this post?
@@ -91,6 +97,50 @@ const DeleteReportModal: React.FC<DeleteReportModalProps> = ({
                   Delete
                 </Button>
               </div>
+            </div>
+          </motion.div> */}
+          <motion.div
+            className='relative w-[400px] rounded-lg bg-white p-6 shadow-xl'
+            variants={modalVariants}
+            initial='hidden'
+            animate='visible'
+            exit='exit'
+          >
+            <div className='mb-4 flex items-center justify-between'>
+              <h2 className='text-xl font-semibold text-gray-900'>Delete Report</h2>
+              <button
+                onClick={() => setIsOpen(false)}
+                className='cursor-pointer text-gray-400 hover:text-gray-600'
+                disabled={isDeleting}
+              >
+                <X className='h-6 w-6' />
+              </button>
+            </div>
+
+            <div className='mb-6'>
+              <p className='text-gray-600'>
+                Are you sure you want to delete this report? This action cannot be undone.
+              </p>
+            </div>
+
+            <div className='flex justify-end space-x-3'>
+              <Button
+                className='w-full bg-black/25 text-gray-800 hover:bg-gray-300'
+                onClick={cancelButton}
+                disabled={isDeleting}
+                type='button'
+              >
+                Cancel
+              </Button>
+              <Button
+                destructive
+                onClick={handleDelete}
+                disabled={isDeleting}
+                className='w-full'
+                type='button'
+              >
+                {isDeleting ? 'Deleting...' : 'Delete'}
+              </Button>
             </div>
           </motion.div>
         </motion.div>

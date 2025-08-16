@@ -168,106 +168,104 @@ const PostCard = ({
           </span>
         </div>
       )}
-      <div className='rounded-lg border border-[#33333430] px-8 pt-7'>
-        {/* header */}
-        <div className='mb-2'>
-          <div className='mb-4 flex items-center justify-between'>
-            <div className='flex items-center space-x-3'>
-              {/* avatar */}
-              <div className='relative'>
-                {user.avatar ? (
-                  <img
-                    src={user.avatar}
-                    alt={user.name}
-                    className='h-10 w-10 rounded-full object-cover'
-                  />
-                ) : (
-                  <div className='flex h-10 w-10 items-center justify-center rounded-full bg-blue-100'>
-                    <span className='text-lg font-semibold text-blue-600'>
-                      {user.name.charAt(0).toUpperCase()}
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              <div className='flex flex-col'>
-                {/* username and Badge */}
-                <div className='flex items-center space-x-2'>
-                  <h3 className='text-[16px] font-medium text-black'>
-                    {user.name}
-                  </h3>
-                  {user.isVerified && (
-                    <VerifyBadge className='h-4 w-4 text-[#1560BD]' />
+      <div className='rounded-lg border border-[#33333430] px-8 pt-7 cursor-pointer hover:bg-gray-100/50 transition-all duration-300 ease-in-out'>
+        <div onClick={() => setShowDetail(true)}>
+          {/* header */}
+          <div className='mb-2 '>
+            <div className='mb-4 flex items-center justify-between'>
+              <div className='flex items-center space-x-3'>
+                {/* avatar */}
+                <div className='relative'>
+                  {user.avatar ? (
+                    <img
+                      src={user.avatar}
+                      alt={user.name}
+                      className='h-10 w-10 rounded-full object-cover'
+                    />
+                  ) : (
+                    <div className='flex h-10 w-10 items-center justify-center rounded-full bg-blue-100'>
+                      <span className='text-lg font-semibold text-blue-600'>
+                        {user.name.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
                   )}
                 </div>
-                {/* Created At */}
-                <div className='text-xs font-light text-zinc-500'>
-                  {createdAt
-                    ? `${formatDistanceToNow(createdAt, { addSuffix: true })}`
-                    : ''}
+
+                <div className='flex flex-col'>
+                  {/* username and Badge */}
+                  <div className='flex items-center space-x-2'>
+                    <h3 className='text-[16px] font-medium text-black'>
+                      {user.name}
+                    </h3>
+                    {user.isVerified && (
+                      <VerifyBadge className='h-4 w-4 text-[#1560BD]' />
+                    )}
+                  </div>
+                  {/* Created At */}
+                  <div className='text-xs font-light text-zinc-500'>
+                    {createdAt
+                      ? `${formatDistanceToNow(createdAt, { addSuffix: true })}`
+                      : ''}
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Trust Score and Disaster Badge */}
-            <div className='flex items-center space-x-3'>
-              <TrustScoreBadge score={trustScore} />
-              {isDebunked && (
-                <div className='flex h-7 items-center space-x-1 rounded-sm bg-[#B22222] px-2 py-1 text-xs font-medium text-white'>
-                  <span>{t('common.debunked')}</span>
-                </div>
-              )}
-              <div
-                className={`flex h-7 items-center space-x-1 rounded-sm px-2 py-1 text-xs font-medium text-white ${isDebunked ? 'bg-[#33333430]' : 'bg-[#B22222]'}`}
-              >
-                {getDisasterIcon(disasterType)}
-                <span className='capitalize'>
-                  {/* {t(`disasters.${disasterType}`)} */}
-                  {disasterType}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* location */}
-          <div className='mt-2 flex items-center text-sm text-black'>
-            <MapPinned className='mr-1 h-6 w-6 stroke-1' />
-            <span className='ml-2 text-[16px] font-semibold'>{location}</span>
-          </div>
-          {/* post title */}
-          <div
-            onClick={() => {
-              // setSelectedId(id)
-              setShowDetail(true)
-            }}
-            className='mt-2 text-[14px] hover:cursor-pointer'
-          >
-            {title}
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className='mb-8'>
-          <p className='mb-6 text-[12px] leading-relaxed font-extralight text-[#333334]'>
-            {content && content.length > 300 ? (
-              <>
-                {content.slice(0, 300)}...
-                <button
-                  className='text-primary hover:text-primary/80 ml-1 text-[13px] font-medium hover:cursor-pointer'
-                  onClick={() =>
-                    // show post modal
-                    setShowDetail(true)
-                  }
+              {/* Trust Score and Disaster Badge */}
+              <div className='flex items-center space-x-3'>
+                <TrustScoreBadge score={trustScore} />
+                {isDebunked && (
+                  <div className='flex h-7 items-center space-x-1 rounded-sm bg-[#B22222] px-2 py-1 text-xs font-medium text-white'>
+                    <span>{t('common.debunked')}</span>
+                  </div>
+                )}
+                <div
+                  className={`flex h-7 items-center space-x-1 rounded-sm px-2 py-1 text-xs font-medium text-white ${isDebunked ? 'bg-[#33333430]' : 'bg-[#B22222]'}`}
                 >
-                  Read More
-                </button>
-              </>
-            ) : (
-              content
-            )}
-          </p>
-          <div className='flex items-center space-x-2 text-xs text-gray-500'>
-            <PostImages images={images} />
+                  {getDisasterIcon(disasterType)}
+                  <span className='capitalize'>
+                    {/* {t(`disasters.${disasterType}`)} */}
+                    {disasterType}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* location */}
+            <div className='mt-2 flex items-center text-sm text-black'>
+              <MapPinned className='mr-1 h-6 w-6 stroke-1' />
+              <span className='ml-2 text-[16px] font-semibold'>{location}</span>
+            </div>
+            {/* post title */}
+            <div
+              className='mt-2 text-[14px] hover:cursor-pointer'
+            >
+              {title}
+            </div>
+          </div>
+
+          {/* Content */}
+          <div className='mb-8 '>
+            <p className='mb-6 text-[12px] leading-relaxed font-extralight text-[#333334]'>
+              {content && content.length > 300 ? (
+                <>
+                  {content.slice(0, 300)}...
+                  <button
+                    className='text-primary hover:text-primary/80 ml-1 text-[13px] font-medium hover:cursor-pointer'
+                    onClick={() =>
+                      // show post modal
+                      setShowDetail(true)
+                    }
+                  >
+                    Read More
+                  </button>
+                </>
+              ) : (
+                content
+              )}
+            </p>
+            <div className='flex items-center space-x-2 text-xs text-gray-500'>
+              <PostImages images={images} />
+            </div>
           </div>
         </div>
         {/* show post detail */}
@@ -305,16 +303,25 @@ const PostCard = ({
 
         {/* actions */}
         <div className='pt-3'>
-          <div className='flex items-center text-[9px] font-semibold text-[#33333430]'>
-            {upvotes > downvotes ? (
-              <span className='text-primary'>
-                {formatNumber(upvotes)} upvotes
-              </span>
-            ) : (
-              <span className='text-[#B22222]'>
-                {formatNumber(downvotes)} downvotes
-              </span>
-            )}
+          <div className='flex items-center text-[10px] font-semibold text-[#33333430]'>
+            {
+              upvotes === 0 || downvotes === 0 ? (<span className='text-[#33333430]'>No votes yet</span>) : (
+                <>
+                  {
+                    upvotes > downvotes ? (
+                      <span className='text-primary'>
+                        {formatNumber(upvotes)} upvotes
+                      </span>
+                    ) : (
+                      <span className='text-[#B22222]'>
+                        {formatNumber(downvotes)} downvotes
+                      </span>
+                    )
+                  }
+                </>
+              )
+
+            }
 
             <Dot className='h-5 w-5 text-[#33333430]' />
             <span>{formatNumber(comments)} comments</span>

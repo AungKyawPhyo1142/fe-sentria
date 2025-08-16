@@ -144,25 +144,26 @@ const ReportDetailModal: React.FC<reportDetailProps> = ({
                 </div>
               )}
             </div>
-            {/* Close */}
-            <button
-              onClick={() => setIsOpen(false)}
-              className='cursor-pointe z-50 text-gray-400 hover:cursor-pointer hover:text-gray-700'
-            >
-              <X
-                className='h-7 w-7 rounded-full bg-black/80 p-1'
-                strokeWidth={2}
-              />
-            </button>
+
           </div>
           <motion.div
-            className='custom-scroll relative flex max-h-[90vh] w-189 flex-col rounded-lg bg-white shadow-xl'
+            className='custom-scroll relative flex max-h-[90vh] w-[800px] flex-col rounded-lg bg-white shadow-xl'
             variants={modalVariants}
             initial='hidden'
             animate='visible'
             exit='exit'
           >
-            <div className='px-8 pt-3'>
+            <div className='px-10 pt-10  relative'>
+              {/* Close */}
+              <button
+                onClick={() => setIsOpen(false)}
+                className='cursor-pointer absolute top-3 right-3 z-50 text-white hover:text-white/80'
+              >
+                <X
+                  className='h-7 w-7 rounded-full bg-black/80 p-1'
+                  strokeWidth={2}
+                />
+              </button>
               {/* header  with justify between*/}
               <div className='sticky top-0 z-[9990] flex items-center justify-between bg-white pb-2 align-middle'>
                 {/* user verified */}
@@ -253,15 +254,24 @@ const ReportDetailModal: React.FC<reportDetailProps> = ({
                 {/* footer with up/down/cmt and menu */}
                 <div className='sticky bottom-0 bg-white pt-3'>
                   <div className='flex items-center text-[9px] font-semibold text-[#33333430]'>
-                    {upvotes > downvotes ? (
-                      <span className='text-primary'>
-                        {formatNumber(upvotes)} upvotes
-                      </span>
-                    ) : (
-                      <span className='text-[#B22222]'>
-                        {formatNumber(downvotes)} downvotes
-                      </span>
-                    )}
+                    {
+                      upvotes === 0 || downvotes === 0 ? (<span className='text-[#33333430]'>No votes yet</span>) : (
+                        <>
+                          {
+                            upvotes > downvotes ? (
+                              <span className='text-primary'>
+                                {formatNumber(upvotes)} upvotes
+                              </span>
+                            ) : (
+                              <span className='text-[#B22222]'>
+                                {formatNumber(downvotes)} downvotes
+                              </span>
+                            )
+                          }
+                        </>
+                      )
+
+                    }
 
                     <Dot className='h-5 w-5 text-[#33333430]' />
                     <span>{formatNumber(comments)} comments</span>

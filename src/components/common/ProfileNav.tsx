@@ -2,7 +2,15 @@ import { useUserProfile } from '@/services/network/lib/user'
 import { AppConstantRoutes } from '@/services/routes/path'
 import { selectAuth, useAuthStore } from '@/zustand/authStore'
 import { useNavigate } from 'react-router'
-import Profile from '@/assets/Profile.svg?react'
+import { generateDefaultProfileImage } from '@/helpers/helpers'
+
+const ProfileIcon: React.FC<{ firstChar: string | undefined }> = ({ firstChar }) => {
+  return (
+    <div className='size-12 rounded-full border flex items-center justify-center bg-primary text-white font-bold'>
+      {firstChar}
+    </div>
+  )
+}
 
 const ProfileNav = () => {
   const navigate = useNavigate()
@@ -14,14 +22,16 @@ const ProfileNav = () => {
   } = useUserProfile(userId)
   const userProfile = data
 
-  if (profileLoading)
-    return <p className='text-primary p-4'>Loading Profile...</p>
 
-  if (profileError)
+
+  if (profileLoading)
+    return <div className='size-12 rounded-full border border-black/30 object-cover bg-gray-300/30 animate-pulse' />
+
+  if (profileError || !userProfile)
     return (
-      <p className='text-red'>Error loading profile: {profileError.message}</p>
+      // <Profile className='size-12 rounded-full border border-black/30 object-cover' /> // Render Profile SVG
+      <ProfileIcon firstChar={generateDefaultProfileImage(userProfile?.firstName)} />
     )
-  if (!userProfile) return <p className='text-primary'>No user profile found</p>
 
   return (
     <div
@@ -36,7 +46,7 @@ const ProfileNav = () => {
           className='size-12 rounded-full border border-black/30 object-cover'
         />
       ) : (
-        <Profile className='size-12 rounded-full border border-black/30 object-cover' /> // Render Profile SVG
+        <ProfileIcon firstChar={generateDefaultProfileImage(userProfile?.firstName)} />
       )}
       {/* <span className='text-sm'> {userProfile.firstName + ' ' + userProfile.lastName}</span> */}
     </div>
