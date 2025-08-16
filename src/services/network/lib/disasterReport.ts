@@ -257,10 +257,6 @@ export const useDeleteReport = () => {
       const res = await apiClient.delete<DeleteReportResponse>(
         ApiConstantRoutes.paths.report.deleteReport(id),
       )
-      console.log('res.data:', res.data) // => { report: {...} }
-      console.log('res.data.status:', res.data.status) // => 'SUCCESS' ✅
-      console.log('FULL RES:', JSON.stringify(res, null, 2))
-      console.log('FULL RES:', res)
       if (String(res.status) === 'SUCCESS') {
         toast.success('Report deleted successfully!')
         // Refetch or invalidate queries related to reports here:

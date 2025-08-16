@@ -25,7 +25,7 @@ const Sidebar = () => {
   const { t } = useTranslation()
   return (
     <aside
-      className={`fixed left-0 z-40 hidden h-full ${isMapPage ? 'w-22' : 'w-64'} rounded-2xl border-r-1 border-black/30 bg-white pt-3 transition-all duration-300 ease-in-out md:block`}
+      className={`fixed left-0 z-40 hidden h-full ${isMapPage ? 'w-22' : 'w-64'} rounded-tr-2xl rounded-br-2xl border-r-1 border-black/30 bg-white pt-3 transition-[width] duration-300 ease-in-out md:block`}
     >
       {isMapPage ? (
         <CircleLogo

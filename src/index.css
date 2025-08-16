@@ -7,7 +7,6 @@
   --color-black: #333334;
   --color-white: #f5fefd;
   --color-red: #b22222;
-
   --font-poppins: 'Poppins', sans-serif;
 }
 
@@ -139,4 +138,13 @@
 }
 .custom-scroll::-webkit-scrollbar {
   display: none;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }

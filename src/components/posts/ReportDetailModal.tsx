@@ -6,7 +6,6 @@ import ReactDOM from 'react-dom'
 import { User } from './PostCard'
 import { useTranslation } from 'react-i18next'
 import {
-  MapPinned,
   MessageSquare,
   CircleArrowUp,
   CircleArrowDown,
@@ -28,6 +27,7 @@ import CommentCard from './CommentCard'
 import CommentInputBox from './CommentInputBox'
 import { fakeComments } from './constants/fakeComments'
 import { backdropVariants, modalVariants } from './constants/constants'
+import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet'
 
 interface reportDetailProps {
   className?: string
@@ -38,6 +38,7 @@ interface reportDetailProps {
   trustScore: number
   isDebunked: boolean
   location: string
+  coords: { lat: number; lng: number }
   title: string
   content: string
   images?: string[]
@@ -74,9 +75,13 @@ const ReportDetailModal: React.FC<reportDetailProps> = ({
   onComment,
   reporterId,
   loginUser,
+  coords,
   // _id,
 }) => {
   const { t } = useTranslation()
+  const [activeTab, setActiveTab] = useState<'description' | 'location'>(
+    'description',
+  )
 
   const getTrustWarning = (score: number, isDebunked: boolean) => {
     if (isDebunked) {
@@ -144,25 +149,25 @@ const ReportDetailModal: React.FC<reportDetailProps> = ({
                 </div>
               )}
             </div>
-            {/* Close */}
-            <button
-              onClick={() => setIsOpen(false)}
-              className='cursor-pointe z-50 text-gray-400 hover:cursor-pointer hover:text-gray-700'
-            >
-              <X
-                className='h-7 w-7 rounded-full bg-black/80 p-1'
-                strokeWidth={2}
-              />
-            </button>
           </div>
           <motion.div
-            className='custom-scroll relative flex max-h-[90vh] w-189 flex-col rounded-lg bg-white shadow-xl'
+            className='custom-scroll relative flex max-h-[90vh] w-[800px] flex-col rounded-lg bg-white shadow-xl'
             variants={modalVariants}
             initial='hidden'
             animate='visible'
             exit='exit'
           >
-            <div className='px-8 pt-3'>
+            <div className='relative px-10 pt-10'>
+              {/* Close */}
+              <button
+                onClick={() => setIsOpen(false)}
+                className='absolute top-3 right-3 z-50 cursor-pointer text-white hover:text-white/80'
+              >
+                <X
+                  className='h-7 w-7 rounded-full bg-black/80 p-1'
+                  strokeWidth={2}
+                />
+              </button>
               {/* header  with justify between*/}
               <div className='sticky top-0 z-[9990] flex items-center justify-between bg-white pb-2 align-middle'>
                 {/* user verified */}
@@ -231,36 +236,112 @@ const ReportDetailModal: React.FC<reportDetailProps> = ({
                 </div>
 
                 {/* Location */}
-                <div className='mt-2 flex items-center text-sm text-black'>
+                {/* <div className='mt-2 flex items-center text-sm text-black'>
                   <MapPinned className='mr-1 h-6 w-6 stroke-1' />
                   <span className='ml-2 text-[16px] font-semibold'>
                     {location}
                   </span>
+                </div> */}
+                <div className='flex items-center gap-x-3 border-b-1 border-[#33333430]'>
+                  <button
+                    onClick={() => setActiveTab('description')}
+                    className={clsx(
+                      'h-[30px] w-[100px] cursor-pointer rounded-tl-lg rounded-tr-lg bg-gray-300 text-center text-sm text-white transition-colors duration-100 ease-in-out hover:opacity-80',
+                      activeTab === 'description' && 'bg-secondary',
+                    )}
+                  >
+                    Description
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('location')}
+                    className={clsx(
+                      'h-[30px] w-[100px] cursor-pointer rounded-tl-lg rounded-tr-lg bg-gray-300 text-center text-sm text-white transition-colors duration-100 ease-in-out hover:opacity-80',
+                      activeTab === 'location' && 'bg-secondary',
+                    )}
+                  >
+                    Location
+                  </button>
                 </div>
-                {/* post title */}
-                <div className='my-3 text-[14px]'>{title}</div>
 
-                {/* Content */}
-                <div className=''>
-                  <p className='mb-6 text-[12px] leading-relaxed font-extralight text-[#333334]'>
-                    {content}
-                  </p>
-                </div>
+                <AnimatePresence mode='wait'>
+                  {activeTab === 'description' && (
+                    <motion.div
+                      key='description'
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 20 }}
+                      transition={{ duration: 0.2 }}
+                      className='p-6'
+                    >
+                      {/* post title */}
+                      <div className='my-3 font-semibold'>
+                        {title} - {location}
+                      </div>
 
-                {/* Images */}
-                <PostImageSlider images={images} />
+                      {/* Content */}
+                      <div className=''>
+                        <p className='mb-6 text-[12px] leading-relaxed font-extralight text-[#333334]'>
+                          {content}
+                        </p>
+                      </div>
+
+                      {/* Images */}
+                      <PostImageSlider images={images} />
+                    </motion.div>
+                  )}
+                  {activeTab === 'location' && (
+                    <motion.div
+                      key='location'
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 20 }}
+                      transition={{ duration: 0.2 }}
+                      className='py-6'
+                    >
+                      <MapContainer
+                        center={[coords.lat ?? 16.0544, coords.lng ?? 108.2022]}
+                        zoom={13}
+                        style={{ height: '400px', width: '100%' }}
+                        scrollWheelZoom={false}
+                      >
+                        <TileLayer
+                          attribution='&copy; <a href="https://www.openstreetmap.org/">OSM</a>'
+                          url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+                        />
+                        <Marker
+                          position={[
+                            coords.lat ?? 16.0544,
+                            coords.lng ?? 108.2022,
+                          ]}
+                          draggable
+                        >
+                          <Popup>Happens here!</Popup>
+                        </Marker>
+                        {/* <Set
+                            position={[position.lat ?? 16.0544, position.lng ?? 108.2022]}
+                          /> */}
+                      </MapContainer>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
                 {/* footer with up/down/cmt and menu */}
                 <div className='sticky bottom-0 bg-white pt-3'>
                   <div className='flex items-center text-[9px] font-semibold text-[#33333430]'>
-                    {upvotes > downvotes ? (
-                      <span className='text-primary'>
-                        {formatNumber(upvotes)} upvotes
-                      </span>
+                    {upvotes === 0 || downvotes === 0 ? (
+                      <span className='text-[#33333430]'>No votes yet</span>
                     ) : (
-                      <span className='text-[#B22222]'>
-                        {formatNumber(downvotes)} downvotes
-                      </span>
+                      <>
+                        {upvotes > downvotes ? (
+                          <span className='text-primary'>
+                            {formatNumber(upvotes)} upvotes
+                          </span>
+                        ) : (
+                          <span className='text-[#B22222]'>
+                            {formatNumber(downvotes)} downvotes
+                          </span>
+                        )}
+                      </>
                     )}
 
                     <Dot className='h-5 w-5 text-[#33333430]' />

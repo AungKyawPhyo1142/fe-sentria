@@ -50,6 +50,7 @@ const PostImages = ({ images }: { images?: string[] }) => {
           {/* SHOW POST DETAIL */}
           {showDetail && (
             <ReportDetailModal
+              coords={{ lat: 51.5074, lng: -0.1278 }}
               _id='fake-id'
               isOpen={showDetail}
               setIsOpen={setShowDetail}

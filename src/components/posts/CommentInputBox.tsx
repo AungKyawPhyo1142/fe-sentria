@@ -52,7 +52,7 @@ const CommentInputBox: React.FC<CommentInputBoxProps> = ({ VerifyBadge }) => {
   const avatar = userProfile.profile_image
 
   return (
-    <div className='sticky bottom-0 z-[999] rounded-lg rounded-t-[10px] bg-[#bbbbc5] px-8 py-5'>
+    <div className='sticky bottom-0 z-[999] rounded-lg rounded-t-[10px] bg-gray-300 px-8 py-5'>
       {/* user comment */}
       <div className='flex items-center space-x-3'>
         <div className='relative'>

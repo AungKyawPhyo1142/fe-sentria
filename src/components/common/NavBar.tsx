@@ -19,39 +19,39 @@ import { useLocation, useNavigate } from 'react-router'
 import ActivityPostModal from '../posts/ActivityPostModal'
 import SearchInput from './SearchInput'
 
-//Skeleton
-export const NavbarSkeleton = ({
-  isMapPage = false,
-}: {
-  isMapPage?: boolean
-}) => {
-  return (
-    <div
-      className={`fixed top-0 right-0 ${isMapPage ? 'left-30' : 'left-68'} z-[99] flex items-end justify-between bg-white py-4 pr-8 pl-4`}
-    >
-      <div className='flex space-x-5'>
-        {/* Navbar Icons Skeleton */}
-        <div className='flex h-12.5 items-center gap-x-10 rounded-xl border border-black/10 p-4'>
-          {Array.from({ length: 5 }).map((_, i) => (
-            <div
-              key={i}
-              className='h-7 w-7 animate-pulse rounded-md bg-gray-300'
-            />
-          ))}
-        </div>
+// //Skeleton
+// export const NavbarSkeleton = ({
+//   isMapPage = false,
+// }: {
+//   isMapPage?: boolean
+// }) => {
+//   return (
+//     <div
+//       className={`fixed top-0 right-0 ${isMapPage ? 'left-30' : 'left-68'} z-[99] flex items-end justify-between bg-white py-4 pr-8 pl-4`}
+//     >
+//       <div className='flex space-x-5'>
+//         {/* Navbar Icons Skeleton */}
+//         <div className='flex h-12.5 items-center gap-x-10 rounded-xl border border-black/10 p-4'>
+//           {Array.from({ length: 5 }).map((_, i) => (
+//             <div
+//               key={i}
+//               className='h-7 w-7 animate-pulse rounded-md bg-gray-300'
+//             />
+//           ))}
+//         </div>
 
-        {/* Search Input Skeleton */}
-        <div className='h-12.5 w-75 animate-pulse rounded-xl bg-gray-300' />
+//         {/* Search Input Skeleton */}
+//         <div className='h-12.5 w-75 animate-pulse rounded-xl bg-gray-300' />
 
-        {/* Report Post Button Skeleton */}
-        <div className='flex h-12.5 w-50 animate-pulse items-center justify-center rounded-xl bg-gray-300' />
-      </div>
+//         {/* Report Post Button Skeleton */}
+//         <div className='flex h-12.5 w-50 animate-pulse items-center justify-center rounded-xl bg-gray-300' />
+//       </div>
 
-      {/* Profile Skeleton */}
-      <div className='h-12.5 w-12.5 animate-pulse rounded-full bg-gray-300' />
-    </div>
-  )
-}
+//       {/* Profile Skeleton */}
+//       <div className='h-12.5 w-12.5 animate-pulse rounded-full bg-gray-300' />
+//     </div>
+//   )
+// }
 
 //NavItems
 
@@ -199,16 +199,16 @@ const Navbar = () => {
     }
   }, [location.pathname])
 
-  const [loading, setLoading] = useState(true)
+  // const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      setLoading(false)
-    }, 1000)
-    return () => clearTimeout(timeout)
-  }, [])
+  // useEffect(() => {
+  //   const timeout = setTimeout(() => {
+  //     setLoading(false)
+  //   }, 1000)
+  //   return () => clearTimeout(timeout)
+  // }, [])
 
-  if (loading) return <NavbarSkeleton isMapPage={isMapPage} />
+  // if (loading) return <NavbarSkeleton isMapPage={isMapPage} />
 
   return (
     <div
