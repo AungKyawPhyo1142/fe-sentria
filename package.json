@@ -26,6 +26,7 @@
     "i18next": "^25.0.0",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.488.0",
+    "motion": "^12.23.12",
     "react": "^19.0.0-rc.1",
     "react-dom": "^19.0.0-rc.1",
     "react-dropzone": "^14.3.8",

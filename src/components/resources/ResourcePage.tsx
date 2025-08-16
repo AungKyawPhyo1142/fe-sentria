@@ -1,4 +1,5 @@
 import DropDown from '@/components/common/DropDown'
+import Input from '@/components/common/Input'
 import CreateResourceModal from '@/components/resources/CreateResourceModal'
 import ResourceCard from '@/components/resources/ResourceCard'
 import {
@@ -14,6 +15,7 @@ import {
 import { selectAuth, useAuthStore } from '@/zustand/authStore'
 import {
   BriefcaseMedical,
+  ChevronDown,
   CirclePlus,
   FlameKindling,
   PhoneCall,
@@ -24,6 +26,7 @@ export default function ResourcePage() {
   const [resources, setResources] = useState<Resource[] | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [userProfiles, setUserProfiles] = useState<UserProfileMap>({})
+  const [locationSearch, setLocationSearch] = useState('')
 
   const [sortOrder, setSortOrder] = useState<'latest' | 'oldest'>('latest')
 
@@ -125,8 +128,24 @@ export default function ResourcePage() {
 
   const filteredResources = resources
     ?.filter((resource) => {
+      // Filter by resource type
       if (selectedTypes.size === 0) return true
-      return selectedTypes.has(resource.resourceType || '')
+      const typeMatch = selectedTypes.has(resource.resourceType || '')
+
+      // Filter by location search if provided
+      if (locationSearch.trim()) {
+        const location =
+          resource.address?.city ||
+          (resource.location?.coordinates
+            ? resource.location.coordinates.join(', ')
+            : '')
+        const locationMatch = location
+          .toLowerCase()
+          .includes(locationSearch.toLowerCase())
+        return typeMatch && locationMatch
+      }
+
+      return typeMatch
     })
     ?.sort((a, b) => {
       const timeA = new Date(a.resourceTimestamp).getTime()
@@ -135,32 +154,56 @@ export default function ResourcePage() {
       return sortOrder === 'latest' ? timeB - timeA : timeA - timeB
     })
 
-  const sortOptions = new Map<string, string>([
-    ['latest', 'Latest'],
-    ['oldest', 'Oldest'],
-  ])
+  const sortOptions = ['latest', 'oldest']
 
   return (
     <div className='flex w-full items-start gap-6 p-6'>
       {/* resources */}
-      <div className='flex w-full flex-col items-center justify-center'>
-        <div className='mb-4 flex w-full items-center justify-between'>
-          <div className='flex w-fit items-center'>
-            <span className='w-full'>Sort by:</span>
-            <DropDown
-              className='ml-10 !w-[150px]'
-              id='sort'
-              name='sort'
-              itemList={sortOptions}
-              onChange={(e) =>
-                setSortOrder(e.target.value as 'latest' | 'oldest')
-              }
-              value={sortOrder}
+      <div className='flex w-full flex-col items-center justify-between'>
+        <div className='mt-2 flex w-full items-center justify-between gap-4 py-4'>
+          <div className='flex flex-shrink-0 items-center gap-4'>
+            <span className='text-[16px] font-extralight whitespace-nowrap text-black'>
+              Sort by:
+            </span>
+            <div className='relative w-75 flex-shrink-0'>
+              <DropDown
+                className='min-h-[50px] w-full appearance-none text-sm'
+                itemList={sortOptions.map(
+                  (option) => option[0].toUpperCase() + option.slice(1),
+                )}
+                value={sortOrder[0].toUpperCase() + sortOrder.slice(1)}
+                onChange={(e) =>
+                  setSortOrder(
+                    e.target.value.toLowerCase() as 'latest' | 'oldest',
+                  )
+                }
+                placeholder='Sort by'
+              />
+              <ChevronDown className='pointer-events-none absolute top-1/2 right-4 h-6 w-6 -translate-y-1/2 text-black' />
+            </div>
+          </div>
+          <div className='max-w-md flex-1'>
+            <Input
+              showSearchIcon
+              type='text'
+              className={`min-h-[50px] w-full border-r ps-11 text-[16px] ${
+                locationSearch.trim()
+                  ? 'border-blue-300 ring-2 ring-blue-200'
+                  : ''
+              }`}
+              value={locationSearch}
+              onChange={(e) => setLocationSearch(e.target.value)}
+              placeholder='Location'
             />
+            {locationSearch.trim() && (
+              <p className='mt-1 text-xs text-blue-600'>
+                Searching: "{locationSearch}"
+              </p>
+            )}
           </div>
           <button
             onClick={() => setIsModalOpen(true)}
-            className='bg-primary flex h-12.5 items-center justify-center rounded-xl px-4 py-1 font-light text-white hover:cursor-pointer'
+            className='bg-primary flex h-12.5 flex-shrink-0 items-center justify-center rounded-xl px-4 py-1 font-light text-white hover:cursor-pointer'
           >
             <CirclePlus size={26} strokeWidth={1} />
             <span className='ml-3 text-[16px]'>Create a resource</span>
@@ -214,7 +257,7 @@ export default function ResourcePage() {
       </div>
 
       {/* Resource Filter */}
-      <div className='flex w-2/6 flex-col items-center justify-center gap-y-5'>
+      <div className='flex w-2/6 flex-col items-center justify-center gap-y-5 pt-6'>
         <div className='flex w-full flex-col gap-y-4 rounded-lg border border-[#33333430] p-4'>
           <h2 className='text-lg font-light text-[#3333344d]'>Filter by</h2>
           <hr className='mb-1 border-t border-[#33333430]' />

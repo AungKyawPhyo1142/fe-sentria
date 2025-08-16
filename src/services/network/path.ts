@@ -106,6 +106,5 @@ export const ApiConstantRoutes = {
         },
       }
     },
-    
   },
 }
