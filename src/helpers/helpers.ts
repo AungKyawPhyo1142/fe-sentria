@@ -9,7 +9,9 @@ export const formatNumber = (num: number) => {
 }
 
 // helper function to generate a first character of the input string and uppercase
-export const generateDefaultProfileImage = (name: string | undefined): string | undefined => {
+export const generateDefaultProfileImage = (
+  name: string | undefined,
+): string | undefined => {
   if (!name) return undefined
   const firstChar = name.charAt(0).toUpperCase()
   return firstChar

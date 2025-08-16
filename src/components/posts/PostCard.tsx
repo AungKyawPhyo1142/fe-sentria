@@ -27,7 +27,95 @@ import { selectAuth, useAuthStore } from '@/zustand/authStore'
 import DeleteReportModal from './DeleteReportModal'
 import EditReportModal from './EditReportModal'
 
-// fake data for report detail
+export const PostCardSkeleton = () => {
+  return (
+    <div className='mb-4 max-w-full bg-white'>
+      {/* Trust Score Warning Skeleton with Shimmer */}
+      <div className='mb-0 ml-6 w-32 animate-[shimmer_2s_infinite] rounded-t-xl bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 bg-[length:200%_100%] px-4 py-1'>
+        <div className='h-3 rounded bg-transparent'></div>
+      </div>
+
+      <div className='rounded-lg border border-[#33333430] px-8 pt-7 transition-all duration-300 ease-in-out hover:bg-gray-100/50'>
+        {/* Header Skeleton */}
+        <div className='mb-2'>
+          <div className='mb-4 flex items-center justify-between'>
+            <div className='flex items-center space-x-3'>
+              {/* Avatar Skeleton with Shimmer */}
+              <div className='relative'>
+                <div className='h-10 w-10 animate-[shimmer_2s_infinite] rounded-full bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 bg-[length:200%_100%]'></div>
+              </div>
+
+              <div className='flex flex-col space-y-2'>
+                {/* Username and Badge Skeleton */}
+                <div className='flex items-center space-x-2'>
+                  <div className='h-4 w-24 animate-[shimmer_2s_infinite] rounded bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 bg-[length:200%_100%]'></div>
+                  <div className='h-4 w-4 animate-[shimmer_2s_infinite] rounded bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 bg-[length:200%_100%]'></div>
+                </div>
+                {/* Created At Skeleton */}
+                <div className='h-3 w-16 animate-[shimmer_2s_infinite] rounded bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 bg-[length:200%_100%]'></div>
+              </div>
+            </div>
+
+            {/* Trust Score and Disaster Badge Skeleton */}
+            <div className='flex items-center space-x-3'>
+              <div className='h-7 w-12 animate-[shimmer_2s_infinite] rounded-sm bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 bg-[length:200%_100%]'></div>
+              <div className='h-7 w-20 animate-[shimmer_2s_infinite] rounded-sm bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 bg-[length:200%_100%]'></div>
+              <div className='h-7 w-16 animate-[shimmer_2s_infinite] rounded-sm bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 bg-[length:200%_100%]'></div>
+            </div>
+          </div>
+
+          {/* Location Skeleton */}
+          <div className='mt-2 flex items-center'>
+            <div className='mr-3 h-6 w-6 animate-[shimmer_2s_infinite] rounded bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 bg-[length:200%_100%]'></div>
+            <div className='h-4 w-32 animate-[shimmer_2s_infinite] rounded bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 bg-[length:200%_100%]'></div>
+          </div>
+
+          {/* Post Title Skeleton */}
+          <div className='mt-2 space-y-2'>
+            <div className='h-4 w-full animate-[shimmer_2s_infinite] rounded bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 bg-[length:200%_100%]'></div>
+            <div className='h-4 w-3/4 animate-[shimmer_2s_infinite] rounded bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 bg-[length:200%_100%]'></div>
+          </div>
+        </div>
+
+        {/* Content Skeleton */}
+        <div className='mb-8'>
+          <div className='mb-6 space-y-2'>
+            <div className='h-3 w-full animate-[shimmer_2s_infinite] rounded bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 bg-[length:200%_100%]'></div>
+            <div className='h-3 w-full animate-[shimmer_2s_infinite] rounded bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 bg-[length:200%_100%]'></div>
+            <div className='h-3 w-full animate-[shimmer_2s_infinite] rounded bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 bg-[length:200%_100%]'></div>
+            <div className='h-3 w-2/3 animate-[shimmer_2s_infinite] rounded bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 bg-[length:200%_100%]'></div>
+          </div>
+
+          {/* Images Skeleton */}
+          <div className='flex items-center space-x-2'>
+            <div className='h-20 w-20 animate-[shimmer_2s_infinite] rounded bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 bg-[length:200%_100%]'></div>
+            <div className='h-20 w-20 animate-[shimmer_2s_infinite] rounded bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 bg-[length:200%_100%]'></div>
+            <div className='h-20 w-20 animate-[shimmer_2s_infinite] rounded bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 bg-[length:200%_100%]'></div>
+          </div>
+        </div>
+
+        {/* Actions Skeleton */}
+        <div className='pt-3'>
+          <div className='mb-2 flex items-center space-x-2'>
+            <div className='h-3 w-16 animate-[shimmer_2s_infinite] rounded bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 bg-[length:200%_100%]'></div>
+            <div className='h-3 w-1 animate-[shimmer_2s_infinite] rounded bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 bg-[length:200%_100%]'></div>
+            <div className='h-3 w-20 animate-[shimmer_2s_infinite] rounded bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 bg-[length:200%_100%]'></div>
+          </div>
+
+          {/* Action Buttons Skeleton */}
+          <div className='my-2 flex items-center justify-between border-t border-[#33333430] pt-2'>
+            <div className='flex w-full items-center space-x-4'>
+              <div className='h-6 w-6 animate-[shimmer_2s_infinite] rounded-full bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 bg-[length:200%_100%]'></div>
+              <div className='h-6 w-6 animate-[shimmer_2s_infinite] rounded-full bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 bg-[length:200%_100%]'></div>
+              <div className='h-6 w-6 animate-[shimmer_2s_infinite] rounded-full bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 bg-[length:200%_100%]'></div>
+            </div>
+            <div className='h-6 w-6 animate-[shimmer_2s_infinite] rounded bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 bg-[length:200%_100%]'></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
 
 export interface User {
   name: string
@@ -168,10 +256,10 @@ const PostCard = ({
           </span>
         </div>
       )}
-      <div className='rounded-lg border border-[#33333430] px-8 pt-7 cursor-pointer hover:bg-gray-100/50 transition-all duration-300 ease-in-out'>
+      <div className='cursor-pointer rounded-lg border border-[#33333430] px-8 pt-7 transition-all duration-300 ease-in-out hover:bg-gray-100/50'>
         <div onClick={() => setShowDetail(true)}>
           {/* header */}
-          <div className='mb-2 '>
+          <div className='mb-2'>
             <div className='mb-4 flex items-center justify-between'>
               <div className='flex items-center space-x-3'>
                 {/* avatar */}
@@ -236,15 +324,11 @@ const PostCard = ({
               <span className='ml-2 text-[16px] font-semibold'>{location}</span>
             </div>
             {/* post title */}
-            <div
-              className='mt-2 text-[14px] hover:cursor-pointer'
-            >
-              {title}
-            </div>
+            <div className='mt-2 text-[14px] hover:cursor-pointer'>{title}</div>
           </div>
 
           {/* Content */}
-          <div className='mb-8 '>
+          <div className='mb-8'>
             <p className='mb-6 text-[12px] leading-relaxed font-extralight text-[#333334]'>
               {content && content.length > 300 ? (
                 <>
@@ -282,6 +366,10 @@ const PostCard = ({
             trustScore={reportDetail?.factCheck?.overallPercentage ?? 0}
             isDebunked={reportDetail?.factCheck.goService.status === 'debunked'}
             location={`${reportDetail?.location.city}, ${reportDetail?.location.country}`}
+            coords={{
+              lat: reportDetail?.location.latitude ?? 0,
+              lng: reportDetail?.location.longitude ?? 0,
+            }}
             title={reportDetail?.reportName ?? ''}
             content={reportDetail?.description ?? ''}
             images={imgUrl}
@@ -304,24 +392,21 @@ const PostCard = ({
         {/* actions */}
         <div className='pt-3'>
           <div className='flex items-center text-[10px] font-semibold text-[#33333430]'>
-            {
-              upvotes === 0 || downvotes === 0 ? (<span className='text-[#33333430]'>No votes yet</span>) : (
-                <>
-                  {
-                    upvotes > downvotes ? (
-                      <span className='text-primary'>
-                        {formatNumber(upvotes)} upvotes
-                      </span>
-                    ) : (
-                      <span className='text-[#B22222]'>
-                        {formatNumber(downvotes)} downvotes
-                      </span>
-                    )
-                  }
-                </>
-              )
-
-            }
+            {upvotes === 0 || downvotes === 0 ? (
+              <span className='text-[#33333430]'>No votes yet</span>
+            ) : (
+              <>
+                {upvotes > downvotes ? (
+                  <span className='text-primary'>
+                    {formatNumber(upvotes)} upvotes
+                  </span>
+                ) : (
+                  <span className='text-[#B22222]'>
+                    {formatNumber(downvotes)} downvotes
+                  </span>
+                )}
+              </>
+            )}
 
             <Dot className='h-5 w-5 text-[#33333430]' />
             <span>{formatNumber(comments)} comments</span>

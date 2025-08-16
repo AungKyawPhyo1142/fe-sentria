@@ -4,9 +4,11 @@ import { selectAuth, useAuthStore } from '@/zustand/authStore'
 import { useNavigate } from 'react-router'
 import { generateDefaultProfileImage } from '@/helpers/helpers'
 
-const ProfileIcon: React.FC<{ firstChar: string | undefined }> = ({ firstChar }) => {
+const ProfileIcon: React.FC<{ firstChar: string | undefined }> = ({
+  firstChar,
+}) => {
   return (
-    <div className='size-12 rounded-full border flex items-center justify-center bg-primary text-white font-bold'>
+    <div className='bg-primary flex size-12 items-center justify-center rounded-full border font-bold text-white'>
       {firstChar}
     </div>
   )
@@ -22,15 +24,17 @@ const ProfileNav = () => {
   } = useUserProfile(userId)
   const userProfile = data
 
-
-
   if (profileLoading)
-    return <div className='size-12 rounded-full border border-black/30 object-cover bg-gray-300/30 animate-pulse' />
+    return (
+      <div className='size-12 animate-pulse rounded-full border border-black/30 bg-gray-300/30 object-cover' />
+    )
 
   if (profileError || !userProfile)
     return (
       // <Profile className='size-12 rounded-full border border-black/30 object-cover' /> // Render Profile SVG
-      <ProfileIcon firstChar={generateDefaultProfileImage(userProfile?.firstName)} />
+      <ProfileIcon
+        firstChar={generateDefaultProfileImage(userProfile?.firstName)}
+      />
     )
 
   return (
@@ -46,7 +50,9 @@ const ProfileNav = () => {
           className='size-12 rounded-full border border-black/30 object-cover'
         />
       ) : (
-        <ProfileIcon firstChar={generateDefaultProfileImage(userProfile?.firstName)} />
+        <ProfileIcon
+          firstChar={generateDefaultProfileImage(userProfile?.firstName)}
+        />
       )}
       {/* <span className='text-sm'> {userProfile.firstName + ' ' + userProfile.lastName}</span> */}
     </div>

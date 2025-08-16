@@ -6,20 +6,29 @@ import {
   ReportData,
   useGetAllDisasterReports,
 } from '@/services/network/lib/disasterReport'
-import PostCard from '@/components/posts/PostCard'
+import PostCard, { PostCardSkeleton } from '@/components/posts/PostCard'
 import { selectAuth, useAuthStore } from '@/zustand/authStore'
 import { setUserCurrentLocation } from '@/zustand/userCurrentLocationStore'
 
 // component for Post Lists
 interface ReportPostProps {
   postLists: ReportData[]
+  isLoading?: boolean
 }
-const PostList: React.FC<ReportPostProps> = ({ postLists }) => {
+const PostList: React.FC<ReportPostProps> = ({ postLists, isLoading }) => {
   const { userId } = useAuthStore(selectAuth)
-  console.log('user id: ', userId)
+
   return (
     // * rendering get all reports
     <div className=''>
+      {isLoading && (
+        <div className='flex flex-col gap-4'>
+          {/* Skeleton loading for post cards */}
+          {[...Array(5)].map((_, index) => (
+            <PostCardSkeleton key={index} />
+          ))}
+        </div>
+      )}
       {postLists.map((postList, index) => {
         // imag url
         const imageUrls =
@@ -103,7 +112,6 @@ const Home = () => {
     data?.pages?.flatMap((page) => page.data.reports.data ?? []) ?? []
   console.log('reports: ', reports)
 
-  if (isLoading) return <p>Loading...</p>
   if (error) return <p>Error loading reports</p>
 
   return (
@@ -113,7 +121,7 @@ const Home = () => {
         {reports.length === 0 ? (
           <p>No reports found.</p>
         ) : (
-          <PostList postLists={reports} />
+          <PostList postLists={reports} isLoading={isLoading} />
         )}
       </div>
       <NotificationSidebar />

@@ -110,6 +110,7 @@ const Profile = () => {
     <div className='fade-in -mt-16 bg-white py-2'>
       <div className='mb-8 flex items-start justify-items-start space-x-10 border-b border-[#33333430] pb-12'>
         <ImgSelection
+          userProfile={userProfile}
           imageUrl={
             userProfile.profile_image !== null
               ? userProfile.profile_image

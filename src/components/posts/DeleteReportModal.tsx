@@ -43,7 +43,6 @@ const DeleteReportModal: React.FC<DeleteReportModalProps> = ({
       const res = await deleteReportById(id)
       if (res.status === 'SUCCESS') {
         toast.success('Report deleted successfully!')
-
       }
       setIsOpen(false)
       setIsDeleting(false)
@@ -65,7 +64,7 @@ const DeleteReportModal: React.FC<DeleteReportModalProps> = ({
         <motion.div
           className={clsx(
             'fixed inset-0 z-[9999] flex items-center justify-center bg-black/30',
-            className
+            className,
           )}
           initial='hidden'
           animate='visible'
@@ -107,7 +106,9 @@ const DeleteReportModal: React.FC<DeleteReportModalProps> = ({
             exit='exit'
           >
             <div className='mb-4 flex items-center justify-between'>
-              <h2 className='text-xl font-semibold text-gray-900'>Delete Report</h2>
+              <h2 className='text-xl font-semibold text-gray-900'>
+                Delete Report
+              </h2>
               <button
                 onClick={() => setIsOpen(false)}
                 className='cursor-pointer text-gray-400 hover:text-gray-600'
@@ -119,7 +120,8 @@ const DeleteReportModal: React.FC<DeleteReportModalProps> = ({
 
             <div className='mb-6'>
               <p className='text-gray-600'>
-                Are you sure you want to delete this report? This action cannot be undone.
+                Are you sure you want to delete this report? This action cannot
+                be undone.
               </p>
             </div>
 
