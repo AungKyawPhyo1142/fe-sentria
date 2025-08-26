@@ -1,6 +1,6 @@
 import Logo from '@/assets/sentria-logo.svg?react'
 import CircleLogo from '@/assets/CircleLogo.svg?react'
-import { Bell, Heart, LogOut } from 'lucide-react'
+import { Bell, Bookmark, LogOut } from 'lucide-react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useLocation, useNavigate } from 'react-router'
 import { AppConstantRoutes } from '@/services/routes/path'
@@ -42,7 +42,7 @@ const Sidebar = () => {
         {/* SideBar items */}
         <div className='text-primary space-y-6 pl-6 text-[16px]'>
           <span className='flex px-2 hover:cursor-pointer'>
-            <Heart className='hover:stroke-primary/70 transition-all duration-200 ease-linear' />
+            <Bookmark className='hover:stroke-primary/70 transition-all duration-200 ease-linear' />
             <span className='ml-2 transition-all duration-330 ease-linear'>
               {!isMapPage && <p>{t('sidebar.Favorites')}</p>}
             </span>

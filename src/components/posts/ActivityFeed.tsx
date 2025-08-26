@@ -287,6 +287,8 @@ export const ActivityFeed = () => {
                       createdAt={postCardProps.createdAt}
                       onEdit={() => handleEdit(activity.id)}
                       onDelete={() => deleteHandler(activity.id)}
+                      postedById={String(activity.postedById)}
+                      loginUserId={String(currentUserId)}
                     />
                   )
                 })

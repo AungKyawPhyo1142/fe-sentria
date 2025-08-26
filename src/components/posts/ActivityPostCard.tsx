@@ -1,5 +1,5 @@
 import VerifyBadge from '@/assets/VerifiedBadge.svg?react'
-import { MapPinned, Wifi } from 'lucide-react'
+import { Bookmark, MapPinned, Wifi } from 'lucide-react'
 import OfferHand3 from '@/assets/icons/OfferHand3.svg?react'
 import OfferHelp from '@/assets/icons/OfferHelp.svg?react'
 import Water from '@/assets/icons/Water.svg?react'
@@ -25,6 +25,8 @@ interface ActivityPostCardProps {
   onReadMore?: () => void // to open full post content
   onEdit?: () => void
   onDelete?: () => void
+  postedById?: string
+  loginUserId?: string
 }
 
 const ActivityPostCard = ({
@@ -37,7 +39,10 @@ const ActivityPostCard = ({
   onReadMore,
   onEdit,
   onDelete,
+  postedById,
+  loginUserId,
 }: ActivityPostCardProps) => {
+  const isOwner = String(postedById) === String(loginUserId)
   const getResourceIcon = (resource: string) => {
     switch (resource.toLowerCase()) {
       case 'water':
@@ -182,13 +187,17 @@ const ActivityPostCard = ({
           )}
         </div>
 
-        {/* Dropdown menu for edit and delete */}
-        {(onEdit || onDelete) && (
-          <DropdownMenu
-            onEdit={() => onEdit?.()}
-            onDelete={() => onDelete?.()}
-          />
-        )}
+        {/* Dropdown and fav icons */}
+        <div className='flex items-center space-x-4'>
+          {/* Dropdown menu for edit and delete */}
+          {isOwner && (
+            <DropdownMenu
+              onEdit={() => onEdit?.()}
+              onDelete={() => onDelete?.()}
+            />
+          )}
+          <Bookmark className='hover:fill-accent text-gray-600 transition-all duration-200 ease-linear hover:cursor-pointer' />
+        </div>
       </div>
     </div>
   )

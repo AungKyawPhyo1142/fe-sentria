@@ -8,9 +8,6 @@ import {
   Waves,
   Tornado,
   Dot,
-  Ellipsis,
-  EditIcon,
-  Trash,
 } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 
@@ -26,6 +23,7 @@ import { useGetDisasterReportDetail } from '@/services/network/lib/disasterRepor
 import { selectAuth, useAuthStore } from '@/zustand/authStore'
 import DeleteReportModal from './DeleteReportModal'
 import EditReportModal from './EditReportModal'
+import DropdownMenu from '../common/DropdownMenu'
 
 export const PostCardSkeleton = () => {
   return (
@@ -170,7 +168,6 @@ const PostCard = ({
   const { userId } = useAuthStore(selectAuth)
   const isOwner = String(reporterId) === String(loginUser)
 
-  const [showMenu, setShowMenu] = useState(false)
   const [showDetail, setShowDetail] = useState(false)
   // const [selectedId, setSelectedId] = useState<string | null>(null)
   const [isDelete, setIsDelete] = useState(false)
@@ -233,13 +230,11 @@ const PostCard = ({
   // delete
   const handleDelete = () => {
     console.log('delete button clicked!')
-    setShowMenu(false)
     setIsDelete(true)
   }
   // edit
   const handleEdit = () => {
     console.log('edit button clicked!')
-    setShowMenu(false)
     setIsEdit(true)
   }
 
@@ -438,30 +433,7 @@ const PostCard = ({
             </div>
             {/* menu */}
             {isOwner && (
-              <div className='relative'>
-                <button
-                  onClick={() => setShowMenu((prev) => !prev)}
-                  className='text-[#33333430] focus-within:ring-0 hover:cursor-pointer hover:text-[#33333430]/80 focus:ring-0 focus:outline-none focus-visible:ring-0'
-                >
-                  <Ellipsis className='h-6 w-6 stroke-1' />
-                </button>
-                {showMenu && (
-                  <div className='absolute right-0 bottom-full z-50 mb-1 w-28 rounded-md border border-[#333334]/30 bg-white'>
-                    <button
-                      onClick={handleEdit}
-                      className='flex w-full cursor-pointer items-center gap-2 px-4 py-2 text-xs text-[#333334]/80 hover:text-[#333334]/30 focus:ring-0 focus:outline-none focus-visible:ring-0'
-                    >
-                      <EditIcon className='h-4 w-4' /> Edit
-                    </button>
-                    <button
-                      onClick={handleDelete}
-                      className='flex w-full items-center gap-2 px-4 py-2 text-xs text-[#B22222] hover:cursor-pointer hover:text-[#B22222]/50 focus:ring-0 focus:outline-none focus-visible:ring-0'
-                    >
-                      <Trash className='h-4 w-4' /> Delete
-                    </button>
-                  </div>
-                )}
-              </div>
+              <DropdownMenu onEdit={handleEdit} onDelete={handleDelete} />
             )}
             {isDelete && (
               <DeleteReportModal
