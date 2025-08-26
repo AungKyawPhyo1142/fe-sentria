@@ -15,6 +15,7 @@ import Profile from '@/pages/user/Profile'
 import MapPage from '@/pages/user/MapPage'
 import SocketExample from '@/pages/example/SocketExample'
 import ResourcePage from '@/components/resources/ResourcePage'
+import FavPage from '@/pages/user/FavPage'
 
 /*
   This file is where you define the routes
@@ -98,6 +99,10 @@ export const router = createBrowserRouter([
       {
         path: AppConstantRoutes.paths.resources,
         element: <ResourcePage />,
+      },
+      {
+        path: AppConstantRoutes.paths.fav,
+        element: <FavPage />,
       },
     ],
   },
