@@ -46,7 +46,10 @@ const Sidebar = () => {
               onClick={() => navigate(AppConstantRoutes.paths.fav)}
               className='hover:stroke-primary/70 transition-all duration-200 ease-linear'
             />
-            <span className='ml-2 transition-all duration-330 ease-linear'>
+            <span
+              onClick={() => navigate(AppConstantRoutes.paths.fav)}
+              className='ml-2 transition-all duration-330 ease-linear'
+            >
               {!isMapPage && <p>{t('sidebar.Favorites')}</p>}
             </span>
           </span>
