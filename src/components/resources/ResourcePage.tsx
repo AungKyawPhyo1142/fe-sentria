@@ -229,6 +229,7 @@ export default function ResourcePage() {
           {filteredResources?.map((resource, index) => (
             <ResourceCard
               key={resource._id || index}
+              resourceId={resource._id}
               user={getUserDisplayInfo(resource.userId)}
               location={
                 resource.address?.city ||

@@ -106,5 +106,15 @@ export const ApiConstantRoutes = {
         },
       }
     },
+    get favorites() {
+      return {
+        get default() {
+          return '/favorites'
+        },
+        get toggle() {
+          return `${this.default}/toggle`
+        },
+      }
+    },
   },
 }

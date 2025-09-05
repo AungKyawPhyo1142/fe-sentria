@@ -289,6 +289,7 @@ export const ActivityFeed = () => {
                       onDelete={() => deleteHandler(activity.id)}
                       postedById={String(activity.postedById)}
                       loginUserId={String(currentUserId)}
+                      activityId={activity.id}
                     />
                   )
                 })

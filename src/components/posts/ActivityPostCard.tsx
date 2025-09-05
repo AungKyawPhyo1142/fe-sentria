@@ -1,5 +1,5 @@
 import VerifyBadge from '@/assets/VerifiedBadge.svg?react'
-import { Bookmark, MapPinned, Wifi } from 'lucide-react'
+import { MapPinned, Wifi } from 'lucide-react'
 import OfferHand3 from '@/assets/icons/OfferHand3.svg?react'
 import OfferHelp from '@/assets/icons/OfferHelp.svg?react'
 import Water from '@/assets/icons/Water.svg?react'
@@ -8,6 +8,7 @@ import Shelter from '@/assets/icons/Shelter.svg?react'
 import DropdownMenu from '@/components/common/DropdownMenu'
 import '@/components/RichTextStyles.css'
 import { formatDistanceToNow } from 'date-fns'
+import FavoriteButton from '../common/FavoriteButton'
 
 interface User {
   name: string
@@ -27,6 +28,7 @@ interface ActivityPostCardProps {
   onDelete?: () => void
   postedById?: string
   loginUserId?: string
+  activityId: string
 }
 
 const ActivityPostCard = ({
@@ -41,6 +43,7 @@ const ActivityPostCard = ({
   onDelete,
   postedById,
   loginUserId,
+  activityId,
 }: ActivityPostCardProps) => {
   const isOwner = String(postedById) === String(loginUserId)
   const getResourceIcon = (resource: string) => {
@@ -196,7 +199,7 @@ const ActivityPostCard = ({
               onDelete={() => onDelete?.()}
             />
           )}
-          <Bookmark className='hover:fill-accent text-gray-600 transition-all duration-200 ease-linear hover:cursor-pointer' />
+          <FavoriteButton postId={activityId} postType='FEED' />
         </div>
       </div>
     </div>
