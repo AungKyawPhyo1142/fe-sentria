@@ -16,7 +16,7 @@ interface User {
 
 interface ResourceCardProps {
   user: User
-  resourceId: string 
+  resourceId: string
   location: string
   description: string
   images?: string[]
