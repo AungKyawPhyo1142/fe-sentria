@@ -1,88 +1,105 @@
-// import ResourceCard from '../resources/ResourceCard'
+import { useGetFavoritesByType } from '@/services/network/lib/favorite'
+import { useAuthStore, selectAuth } from '@/zustand/authStore'
+import ResourceCard from '../resources/ResourceCard'
+import { useGetResources } from '@/services/network/lib/resources'
+import {
+  UserProfileMap,
+  useBatchUserProfiles,
+} from '@/services/network/lib/user'
+import { useEffect, useState } from 'react'
 
 export const FavResource = () => {
-  // const mockResources = [
-  //   {
-  //     user: {
-  //       name: 'Samantha Green',
-  //       avatar: 'https://randomuser.me/api/portraits/women/21.jpg',
-  //       isVerified: true,
-  //     },
-  //     location: 'Cebu City, Philippines',
-  //     description:
-  //       '<p>We are setting up a <strong>survival training workshop</strong> for families affected by the recent typhoon. The training will cover basic first aid, emergency kit prep, and survival strategies.</p>',
-  //     resourceTypes: ['Survival', 'First_Aid'],
-  //     createdAt: new Date(Date.now() - 1000 * 60 * 15), // 15 min ago
-  //     images: [
-  //       'https://source.unsplash.com/400x300/?survival,training',
-  //       'https://source.unsplash.com/400x300/?firstaid',
-  //     ],
-  //   },
-  //   {
-  //     user: {
-  //       name: 'Daniel Kim',
-  //       avatar: 'https://randomuser.me/api/portraits/men/22.jpg',
-  //       isVerified: false,
-  //     },
-  //     location: 'Hanoi, Vietnam',
-  //     description:
-  //       '<p>Our local hotline is <em>now active 24/7</em> for emergency calls related to flood-affected areas. Please save the number: <strong>+84-123-456-789</strong>.</p>',
-  //     resourceTypes: ['Hotline'],
-  //     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2 hours ago
-  //     images: [],
-  //   },
-  //   {
-  //     user: {
-  //       name: 'Maria Lopez',
-  //       avatar: null, // no avatar → fallback to initial
-  //       isVerified: true,
-  //     },
-  //     location: 'Lima, Peru',
-  //     description:
-  //       '<p>We have prepared <strong>first aid kits</strong> and are distributing them to families in need. Each kit includes bandages, antiseptics, and emergency medicine.</p>',
-  //     resourceTypes: ['First_Aid'],
-  //     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 5), // 5 hours ago
-  //     images: ['https://source.unsplash.com/400x300/?first-aid,kit'],
-  //   },
-  //   {
-  //     user: {
-  //       name: 'John Smith',
-  //       avatar: 'https://randomuser.me/api/portraits/men/55.jpg',
-  //       isVerified: false,
-  //     },
-  //     location: 'Tokyo, Japan',
-  //     description:
-  //       '<p>Launching a <strong>community hotline</strong> to connect volunteers with people in need of shelter and food supplies. Please stay tuned for updates.</p>',
-  //     resourceTypes: ['Hotline', 'Survival'],
-  //     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 12), // 12 hours ago
-  //     images: ['https://source.unsplash.com/400x300/?hotline,phone'],
-  //   },
-  //   {
-  //     user: {
-  //       name: 'Emily Carter',
-  //       avatar: 'https://randomuser.me/api/portraits/women/65.jpg',
-  //       isVerified: true,
-  //     },
-  //     location: 'Nairobi, Kenya',
-  //     description:
-  //       '<p>We are running a <strong>3-day survival camp</strong> for local youth to prepare for disasters. The camp will include training, outdoor activities, and hands-on survival skills.</p>',
-  //     resourceTypes: ['Survival'],
-  //     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24), // 1 day ago
-  //     images: [
-  //       'https://source.unsplash.com/400x300/?camp,survival',
-  //       'https://source.unsplash.com/400x300/?outdoor,training',
-  //     ],
-  //   },
-  // ]
+  const [userProfiles, setUserProfiles] = useState<UserProfileMap>({})
+  const { userId: currentUserId } = useAuthStore(selectAuth)
+
+  // Fetch favorites
+  const { data: favData, isLoading: favLoading } =
+    useGetFavoritesByType('RESOURCE')
+
+  // Fetch all resources
+  const { data: resourcesData, isLoading: resourcesLoading } = useGetResources()
+
+  // user
+  const userIds = resourcesData?.resources
+    ? [
+        ...new Set(
+          resourcesData.resources
+            .map((resource) => resource.userId)
+            .filter((id) => id !== undefined),
+        ),
+      ]
+    : []
+
+  const { data: batchUserProfiles, isSuccess: userProfilesFetched } =
+    useBatchUserProfiles(userIds)
+
+  useEffect(() => {
+    if (userProfilesFetched && batchUserProfiles) {
+      setUserProfiles(batchUserProfiles)
+    }
+  }, [batchUserProfiles, userProfilesFetched])
+
+  // loading state
+  if (favLoading || resourcesLoading) {
+    return <p>Loading...</p>
+  }
+
+  if (!favData?.favorites || !resourcesData?.resources) {
+    return <p>No favorites found</p>
+  }
+
+  // favorites and resources
+  const favorites = favData.favorites
+  const resources = resourcesData.resources
+  const favResources = favorites
+    .map((fav) => resources.find((a) => a._id === fav.postId))
+    .filter((a): a is (typeof resources)[number] => a !== undefined)
+
+  // Map favorites to full activity objects
+
+  const getUserDisplayInfo = (userId: number) => {
+    if (!userId) {
+      return { name: 'Unknown User', avatar: null, isVerified: false }
+    }
+
+    const profile = userProfiles[userId]
+    const isCurrentUser = userId === Number(currentUserId)
+
+    return {
+      name: profile
+        ? `${profile.firstName || ''} ${profile.lastName || ''}`.trim() ||
+          (isCurrentUser ? 'You' : 'Unknown User')
+        : isCurrentUser
+          ? 'You'
+          : 'Unknown User',
+      avatar: profile?.profile_image || null,
+      isVerified: profile?.verified_profile || false,
+    }
+  }
 
   return (
-    <div className='fade-in flex h-full w-full'>
-      <div className='scrollbar-hide flex flex-col items-center gap-y-3 overflow-y-auto'>
-        {/* {mockResources.map((resource, idx) => (
-          // <ResourceCard key={idx} {...resource} />
-        ))} */}
-        <div>Resource Card</div>
-      </div>
+    <div className='flex flex-col space-y-4 p-4'>
+      {favResources.length === 0 ? (
+        <p>No favorite posts available.</p>
+      ) : (
+        favResources.map((act) => (
+          <ResourceCard
+            key={act._id}
+            resourceId={act._id}
+            user={getUserDisplayInfo(act.userId)}
+            location={
+              act.address?.city ||
+              (act.location?.coordinates
+                ? act.location.coordinates.join(', ')
+                : 'Location not specified')
+            }
+            description={act.description || ''}
+            resourceTypes={act.resourceType ? [act.resourceType] : []}
+            images={act.media?.map((media) => media.url) || []}
+            onReadMore={() => console.log('View full resource', act)}
+          />
+        ))
+      )}
     </div>
   )
 }
