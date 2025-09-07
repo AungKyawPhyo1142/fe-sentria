@@ -97,3 +97,17 @@ export function useGetAllFavorites() {
     staleTime: 1000 * 60, // 1 minute
   })
 }
+
+// get fav by type
+export function useGetFavoritesByType(postType: 'FEED' | 'RESOURCE') {
+  return useQuery<FavoritesResponse>({
+    queryKey: ['favorites', postType],
+    queryFn: async () => {
+      const res = await apiClient.get(
+        ApiConstantRoutes.paths.favorites.getFavByType(postType),
+      )
+      return res.data.result as FavoritesResponse
+    },
+    staleTime: 1000 * 60, // 1 minute
+  })
+}

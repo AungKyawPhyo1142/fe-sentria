@@ -92,8 +92,8 @@ export const ApiConstantRoutes = {
         get getAll() {
           return `${this.default}`
         },
-        get getById() {
-          return `${this.default}/:id`
+        getById(id: string) {
+          return `${this.default}/${id}`
         },
         get create() {
           return `${this.default}`
@@ -116,6 +116,9 @@ export const ApiConstantRoutes = {
         },
         get getFavorites() {
           return `${this.default}`
+        },
+        getFavByType(postType: string) {
+          return `${this.default}/${postType}`
         },
       }
     },
