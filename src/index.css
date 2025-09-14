@@ -148,3 +148,9 @@
     background-position: 200% 0;
   }
 }
+
+
+.Toastify__progress-bar {
+  background: #2e8b57 !important;
+}
+

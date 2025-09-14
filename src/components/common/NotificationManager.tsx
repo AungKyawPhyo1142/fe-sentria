@@ -1,18 +1,30 @@
-// src/components/NotificationManager.tsx
+import '@/index.css';
 import { useSocketStore } from '@/zustand/socketStore'; // Adjust path
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { toast } from 'react-toastify';
 
 const NotificationManager = () => {
   // This component subscribes to the part of the Zustand store that holds the notification data.
   const { allEarthquakeAlerts, clearLatestEarthquakeAlert } = useSocketStore()
+  
+  // Track if this is the initial mount to prevent showing toasts on refresh
+  const isInitialMount = useRef(true)
+  const previousAlertsLength = useRef(0)
 
   useEffect(() => {
     // This log confirms the effect is running when the component mounts
     console.log('[NotificationManager] Effect is active.')
 
-    // This effect runs ONLY when latestNotification changes from null to an object.
-    if (allEarthquakeAlerts.length > 0) {
+    // On initial mount, just store the current alerts length and don't show toasts
+    if (isInitialMount.current) {
+      previousAlertsLength.current = allEarthquakeAlerts.length
+      isInitialMount.current = false
+      console.log('[NotificationManager] Initial mount - stored existing alerts count:', previousAlertsLength.current)
+      return
+    }
+
+    // Only show toast if we have MORE alerts than before (new notification received)
+    if (allEarthquakeAlerts.length > previousAlertsLength.current) {
       const latestAlert = allEarthquakeAlerts[0] // Assuming the latest alert is at index 0
       const {
         title = latestAlert.title || 'Earthquake Alert',
@@ -29,7 +41,7 @@ const NotificationManager = () => {
       // Now, we call toast() from inside a React component's lifecycle.
       toast(
         // It's safer to create the element outside the function call
-        <div>
+        <div style={{ fontFamily: 'Poppins' }}>
           <strong>
             {title} (M{magnitude.toFixed(1)})
           </strong>
@@ -53,12 +65,20 @@ const NotificationManager = () => {
           pauseOnHover: true,
           draggable: true,
           theme: 'light',
+          style: {
+            fontFamily: 'Poppins'
+          },
+          
+          
           // When the toast is closed (either by user or autoClose), clear the state
           onClose: () => clearLatestEarthquakeAlert(),
         },
       )
+      
+      // Update the previous alerts length
+      previousAlertsLength.current = allEarthquakeAlerts.length
     } else {
-      console.log(allEarthquakeAlerts)
+      console.log('[NotificationManager] No new alerts to show. Current alerts:', allEarthquakeAlerts.length)
     }
   }, [allEarthquakeAlerts, clearLatestEarthquakeAlert])
 
