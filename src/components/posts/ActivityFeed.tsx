@@ -208,7 +208,7 @@ export const ActivityFeed = () => {
   return (
     <div className='fade-in flex h-full w-full'>
       <div className='scrollbar-hide flex flex-1 flex-col overflow-y-auto'>
-        <div className='mt-4 flex items-center justify-between gap-4 px-6 py-4'>
+        <div className='mt-4 flex items-center justify-between gap-4 py-4'>
           <div className='flex flex-shrink-0 items-center gap-4'>
             <span className='text-[16px] font-extralight whitespace-nowrap text-black'>
               Sort by:
@@ -299,7 +299,7 @@ export const ActivityFeed = () => {
         </div>
       </div>
 
-      <div className='w-80 p-6'>
+      <div className='w-80 p-6 pr-0 pl-8'>
         <div className='flex flex-col gap-y-5'>
           <div className='mt-2 flex w-full flex-col gap-y-4 rounded-lg border border-[#33333430] p-4'>
             <div className='flex items-center justify-between'>

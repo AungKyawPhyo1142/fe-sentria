@@ -78,7 +78,7 @@ export const FavResource = () => {
   }
 
   return (
-    <div className='flex flex-col space-y-4 p-4'>
+    <div className='flex flex-col space-y-4 py-4'>
       {favResources.length === 0 ? (
         <p>No favorite posts available.</p>
       ) : (

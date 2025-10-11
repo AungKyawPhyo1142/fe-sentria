@@ -29,7 +29,7 @@ export const FavFeed = () => {
     .map((fav) => activities.find((a) => a.id === fav.postId))
     .filter((a): a is (typeof activities)[number] => a !== undefined)
   return (
-    <div className='flex flex-col space-y-4 p-4'>
+    <div className='scrollbar-hide flex flex-col space-y-4 py-4'>
       {favActivities.length === 0 ? (
         <p>No favorite posts available.</p>
       ) : (

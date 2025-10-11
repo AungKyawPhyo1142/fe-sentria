@@ -157,7 +157,7 @@ export default function ResourcePage() {
   const sortOptions = ['latest', 'oldest']
 
   return (
-    <div className='flex w-full items-start gap-6 p-6'>
+    <div className='flex w-full items-start gap-8 p-6 px-0'>
       {/* resources */}
       <div className='flex w-full flex-col items-center justify-between'>
         <div className='mt-2 flex w-full items-center justify-between gap-4 py-4'>

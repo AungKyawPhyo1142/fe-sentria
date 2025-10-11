@@ -11,14 +11,9 @@ const FavPage = () => {
   ]
   return (
     <div className='fade-in flex h-screen flex-col items-center justify-start'>
-      <div className='flex w-full flex-col gap-y-3'>
-        {/* search bar */}
-        <div className='flex justify-end'>
-          <SearchInput />
-        </div>
-
+      <div className='flex w-full flex-row items-center justify-between'>
         {/* tab buttons */}
-        <div className='flex flex-row items-center justify-between gap-x-5 rounded-lg bg-[#3333340e] p-2'>
+        <div className='flex w-2xl flex-row items-center justify-between gap-x-5 rounded-lg bg-[#3333340e] p-2'>
           {postType.map((item) => (
             <button
               key={item.id}
@@ -33,6 +28,10 @@ const FavPage = () => {
               {item.label}
             </button>
           ))}
+        </div>
+        {/* search bar */}
+        <div className='flex justify-end'>
+          <SearchInput />
         </div>
       </div>
 

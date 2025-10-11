@@ -67,7 +67,7 @@ const ResourceCard = ({
   }
 
   return (
-    <div className='mx-6 flex w-full flex-col space-y-3 rounded-lg border border-[#33333430] px-8 py-7'>
+    <div className='flex w-full flex-col space-y-3 rounded-lg border border-[#33333430] px-8 py-7'>
       {/* header */}
       <div className='mb-2'>
         <div className='mb-4 flex items-center justify-between'>
