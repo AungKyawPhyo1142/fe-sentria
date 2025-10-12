@@ -40,7 +40,7 @@ const ProfileNav = () => {
   return (
     <div
       onClick={() => navigate(AppConstantRoutes.paths.profile)}
-      className='flex h-12.5 cursor-pointer items-center justify-center '
+      className='flex h-12.5 cursor-pointer items-center justify-center'
     >
       {/* <Profile className='size-8 rounded-full object-cover' border border-black/30 px-4 py-1 /> */}
       {userProfile.profile_image ? (
