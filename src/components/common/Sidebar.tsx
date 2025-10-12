@@ -12,6 +12,12 @@ const Sidebar = () => {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
 
+  // for style change
+  const location = useLocation()
+  const isMapPage = location.pathname === '/map'
+  const isFavPage = location.pathname.includes(AppConstantRoutes.paths.fav)
+  const { t } = useTranslation()
+
   //for logout
   const handleLogout = () => {
     cleanupAfterLogout()
@@ -19,43 +25,44 @@ const Sidebar = () => {
     navigate(AppConstantRoutes.paths.auth.login)
   }
 
-  // for style change
-  const location = useLocation()
-  const isMapPage = location.pathname === '/map'
-  const { t } = useTranslation()
+  const getIconClass = (isActive: boolean) =>
+    `transition-all duration-300 ease-linear ${
+      isActive ? 'fill-primary' : 'fill-none'
+    }`
+
   return (
     <aside
-      className={`fixed left-0 z-40 hidden h-full ${isMapPage ? 'w-22' : 'w-64'} rounded-tr-2xl rounded-br-2xl border-r-1 border-black/30 bg-white pt-3 transition-[width] duration-300 ease-in-out md:block`}
+      className={`fixed left-0 z-40 hidden h-full ${isMapPage ? 'w-22' : 'w-64'} rounded-tr-2xl rounded-br-2xl border-r-1 border-black/30 bg-white pt-3 transition-[width] duration-300 ease-linear md:block`}
     >
       {isMapPage ? (
         <CircleLogo
           onClick={() => navigate(AppConstantRoutes.paths.home)}
-          className='mx-auto mt-3 w-12 cursor-pointer transition-all duration-300 ease-in-out hover:opacity-80'
+          className='mx-auto mt-3 w-12 cursor-pointer transition-all duration-300 ease-linear hover:opacity-80'
         />
       ) : (
         <Logo
           onClick={() => navigate(AppConstantRoutes.paths.home)}
-          className='mx-4 w-38 cursor-pointer transition-all duration-300 ease-in-out hover:opacity-80'
+          className='mx-4 w-38 cursor-pointer transition-all duration-300 ease-linear hover:opacity-80'
         />
       )}
       <div className='mt-10 flex h-[87%] flex-col justify-between'>
         {/* SideBar items */}
         <div className='text-primary space-y-6 pl-6 text-[16px]'>
-          <span className='flex px-2 hover:cursor-pointer'>
-            <Bookmark
-              onClick={() => navigate(AppConstantRoutes.paths.fav)}
-              className='hover:stroke-primary/70 transition-all duration-200 ease-linear'
-            />
-            <span
-              onClick={() => navigate(AppConstantRoutes.paths.fav)}
-              className='ml-2 transition-all duration-330 ease-linear'
-            >
-              {!isMapPage && <p>{t('sidebar.Favorites')}</p>}
-            </span>
+          {/* fav  */}
+          <span
+            className={`flex px-2 transition-all duration-300 ease-linear hover:cursor-pointer hover:opacity-50 ${isFavPage ? 'font-semibold hover:opacity-100' : ''}`}
+            onClick={() => navigate(AppConstantRoutes.paths.fav)}
+          >
+            <Bookmark className={getIconClass(isFavPage)} />
+            {!isMapPage && (
+              <span className='ml-2'>{t('sidebar.Favorites')}</span>
+            )}
           </span>
-          <hr className='mr-5 text-[#D9D9D9] transition-all duration-300 ease-in-out' />
-          <span className='flex px-2 transition-all duration-300 ease-in-out hover:cursor-pointer'>
-            <Bell className='hover:stroke-primary/70 transition-all duration-200 ease-linear' />
+          {/* bar */}
+          <hr className='mr-5 text-[#D9D9D9] transition-all duration-300 ease-linear' />
+          {/* noti */}
+          <span className='flex px-2 transition-all duration-300 ease-linear hover:cursor-pointer hover:opacity-50'>
+            <Bell className='transition-all duration-200 ease-linear' />
             <span className='ml-2 transition-all duration-330 ease-linear'>
               {!isMapPage && <p>{t('sidebar.Notifications')}</p>}
             </span>
@@ -63,7 +70,7 @@ const Sidebar = () => {
         </div>
         {/* Language and Logout */}
         <div className='text-primary space-y-6 border-t-1 border-[#D9D9D9] py-6 pl-6 text-[16px]'>
-          <span className='flex cursor-pointer px-2 transition-all duration-300 ease-in-out hover:opacity-70'>
+          <span className='flex cursor-pointer px-2 transition-all duration-300 ease-linear hover:opacity-70'>
             {/* <Languages />
             <span className='ml-2 transition-all duration-330 ease-linear'>
               {!isMapPage && <p>{t('sidebar.Language')}</p>}
@@ -75,7 +82,7 @@ const Sidebar = () => {
           </span>
 
           <span
-            className='flex cursor-pointer px-2 transition-all duration-300 ease-in-out hover:opacity-70'
+            className='flex cursor-pointer px-2 transition-all duration-300 ease-linear hover:opacity-70'
             onClick={handleLogout}
           >
             <LogOut />
