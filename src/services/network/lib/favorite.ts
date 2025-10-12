@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ApiConstantRoutes } from '@/services/network/path'
 import { apiClient } from '../apiClient'
 import { toast } from 'react-toastify'
+import { selectAuth, useAuthStore } from '@/zustand/authStore'
 
 export interface FavToggle {
   postId: string
@@ -36,6 +37,8 @@ export interface FavoritesResponse {
 
 // toggle fav
 export const useToggleFavorite = () => {
+  const { userId: currentUser } = useAuthStore(selectAuth)
+
   const queryClient = useQueryClient()
 
   return useMutation({
@@ -48,22 +51,39 @@ export const useToggleFavorite = () => {
     onMutate: async ({ postId }) => {
       await queryClient.cancelQueries({ queryKey: ['favorites'] })
 
-      const prevFavorites = queryClient.getQueryData<any>(['favorites'])
+      const prevFavorites = queryClient.getQueryData<FavoritesResponse>([
+        'favorites',
+      ])
 
       // Optimistically update cache
-      queryClient.setQueryData(['favorites'], (old: any) => {
-        if (!old?.favorites) return old
-        const alreadySaved = old.favorites.some(
-          (f: any) => f.post_id === postId,
-        )
+      queryClient.setQueryData<FavoritesResponse | undefined>(
+        ['favorites'],
+        (old) => {
+          if (!old?.favorites) return old
 
-        return {
-          ...old,
-          favorites: alreadySaved
-            ? old.favorites.filter((f: any) => f.post_id !== postId)
-            : [...old.favorites, { post_id: postId }],
-        }
-      })
+          const alreadySaved = old.favorites.some(
+            (f: FavoriteItem) => f.postId === postId,
+          )
+
+          return {
+            ...old,
+            favorites: alreadySaved
+              ? old.favorites.filter((f: FavoriteItem) => f.postId !== postId)
+              : [
+                  ...old.favorites,
+                  {
+                    id: crypto.randomUUID(),
+                    userId: Number(currentUser),
+                    postId,
+                    postType: 'FEED',
+                    favoriteTimestamp: new Date().toISOString(),
+                    systemCreatedAt: new Date().toISOString(),
+                    systemUpdatedAt: new Date().toISOString(),
+                  },
+                ],
+          }
+        },
+      )
 
       return { prevFavorites }
     },
