@@ -55,6 +55,7 @@ const Map = () => {
         (pos) => {
           const { latitude, longitude } = pos.coords
           setPosition([latitude, longitude])
+          console.log('User position:', latitude, longitude)
         },
         (err) => {
           console.error('Error getting location:', err)
