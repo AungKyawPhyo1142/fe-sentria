@@ -3,8 +3,8 @@ import Input from '@/components/common/Input'
 import LanguageToggle from '@/components/common/LanguageToggle'
 import Map from '@/components/common/Map'
 import { MapFilterProvider } from '@/components/common/MapFilterContext'
-import ActivityPostCard from '@/components/posts/ActivityPostCard'
-import ResourceCard from '@/components/resources/ResourceCard'
+// import ActivityPostCard from '@/components/posts/ActivityPostCard'
+// import ResourceCard from '@/components/resources/ResourceCard'
 import CreateResourceModal from '@/components/resources/CreateResourceModal'
 import { AppConstantRoutes } from '@/services/routes/path'
 import {
@@ -18,87 +18,87 @@ import { useNavigate } from 'react-router'
 import { useState } from 'react'
 import ActivityPostModal from '@/components/posts/ActivityPostModal'
 
-const sampleActivityFeedPosts = [
-  {
-    id: '1',
-    user: {
-      name: 'Scarlett Johansson',
-      avatar: null,
-      isVerified: true,
-    },
+// const sampleActivityFeedPosts = [
+//   {
+//     id: '1',
+//     user: {
+//       name: 'Scarlett Johansson',
+//       avatar: null,
+//       isVerified: true,
+//     },
 
-    location: 'London, UK',
-    title: 'Earthquake',
-    content:
-      'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using Content here, content here, making it look like readable English.',
+//     location: 'London, UK',
+//     title: 'Earthquake',
+//     content:
+//       'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using Content here, content here, making it look like readable English.',
 
-    helpType: 'Offering Help' as const,
-    offeredHelp: ['water', 'food', 'shelter'],
+//     helpType: 'Offering Help' as const,
+//     offeredHelp: ['water', 'food', 'shelter'],
 
-    createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-  },
-  {
-    id: '2',
-    user: {
-      name: 'Scarlett Johansson',
-      avatar: null,
-      isVerified: true,
-    },
+//     createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
+//   },
+//   {
+//     id: '2',
+//     user: {
+//       name: 'Scarlett Johansson',
+//       avatar: null,
+//       isVerified: true,
+//     },
 
-    location: 'London, UK',
-    content:
-      'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using Content here, content here, making it look like readable English.',
+//     location: 'London, UK',
+//     content:
+//       'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using Content here, content here, making it look like readable English.',
 
-    helpType: 'Need Help' as const,
-    offeredHelp: ['water', 'food', 'shelter'],
+//     helpType: 'Need Help' as const,
+//     offeredHelp: ['water', 'food', 'shelter'],
 
-    createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-  },
-]
+//     createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
+//   },
+// ]
 
-const sampleResources = [
-  {
-    id: '1',
-    user: {
-      name: 'Scarlett Johansson',
-      avatar: null,
-      isVerified: true,
-    },
+// const sampleResources = [
+//   {
+//     id: '1',
+//     user: {
+//       name: 'Scarlett Johansson',
+//       avatar: null,
+//       isVerified: true,
+//     },
 
-    location: 'London, UK',
-    content:
-      'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using Content here, content here, making it look like readable English.',
+//     location: 'London, UK',
+//     content:
+//       'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using Content here, content here, making it look like readable English.',
 
-    resourceTypes: ['survival', 'hotline', 'first aid'],
-    hotlineNumbers: ['123-456-7890', '987-654-3210'],
-    hotlineEmail: 'support@example.com',
-    images: [
-      'https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=400',
-      'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=400',
-    ],
+//     resourceTypes: ['survival', 'hotline', 'first aid'],
+//     hotlineNumbers: ['123-456-7890', '987-654-3210'],
+//     hotlineEmail: 'support@example.com',
+//     images: [
+//       'https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=400',
+//       'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=400',
+//     ],
 
-    createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-  },
-  {
-    id: '2',
-    user: {
-      name: 'Scarlett Johansson',
-      avatar: null,
-      isVerified: true,
-    },
+//     createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
+//   },
+//   {
+//     id: '2',
+//     user: {
+//       name: 'Scarlett Johansson',
+//       avatar: null,
+//       isVerified: true,
+//     },
 
-    location: 'London, UK',
-    content:
-      'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using Content here, content here, making it look like readable English.',
+//     location: 'London, UK',
+//     content:
+//       'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using Content here, content here, making it look like readable English.',
 
-    resourceTypes: ['hotline', 'survival'],
-    images: [
-      'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=400',
-    ],
+//     resourceTypes: ['hotline', 'survival'],
+//     images: [
+//       'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=400',
+//     ],
 
-    createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-  },
-]
+//     createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
+//   },
+// ]
 
 const Example = () => {
   const navigate = useNavigate()
@@ -193,14 +193,14 @@ const Example = () => {
 
       {/* Sample activity feed Cards */}
       <div>Sample activity feed Cards</div>
-      <div className='mt-10 flex w-full flex-col items-center gap-y-4'>
+      {/* <div className='mt-10 flex w-full flex-col items-center gap-y-4'>
         {sampleActivityFeedPosts.map((resource, index) => (
           <ActivityPostCard key={index} {...resource} />
         ))}
-      </div>
+      </div> */}
       {/* Sample Resource Cards */}
       <div>Sample Resource Cards</div>
-      <div className='mt-10 flex w-full flex-col items-center gap-y-4'>
+      {/* <div className='mt-10 flex w-full flex-col items-center gap-y-4'>
         {sampleResources.map((resource, index) => (
           <ResourceCard
             key={index}
@@ -210,7 +210,7 @@ const Example = () => {
             resourceTypes={resource.resourceTypes}
           />
         ))}
-      </div>
+      </div> */}
 
       {/* Resource Modal */}
       <div className='mt-10 flex w-full flex-col items-center gap-y-4'>
