@@ -14,7 +14,7 @@ import {
 } from '@/services/network/lib/activity'
 import { AppConstantRoutes } from '@/services/routes/path'
 import { CirclePlus, HeartHandshake, Map, Phone } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router'
 import ActivityPostModal from '../posts/ActivityPostModal'
 import SearchInput from './SearchInput'
@@ -110,7 +110,7 @@ const NavbarItems = [
 ]
 
 const Navbar = () => {
-  const [activeIcon, setActiveIcon] = useState<string>('home')
+  // const [activeIcon, setActiveIcon] = useState<string>('home')
   const [isActivityModalOpen, setIsActivityModalOpen] = useState(false)
   const navigate = useNavigate()
   const { t } = useTranslation()
@@ -180,35 +180,14 @@ const Navbar = () => {
     }
   }
 
-  const handleIconClick = (title: string, path?: string) => {
-    setActiveIcon(title)
-    if (path) navigate(path) /**will chang it later */
-  }
-
   //map page
   const location = useLocation()
   const isMapPage = location.pathname === '/map'
 
-  useEffect(() => {
-    const currentPath = location.pathname
-    const matchedItem = NavbarItems.find(
-      (item) => item.path && currentPath.includes(item.path),
-    )
-    if (matchedItem) {
-      setActiveIcon(matchedItem.title)
-    }
-  }, [location.pathname])
+  const currentPath = location.pathname
 
-  // const [loading, setLoading] = useState(true)
-
-  // useEffect(() => {
-  //   const timeout = setTimeout(() => {
-  //     setLoading(false)
-  //   }, 1000)
-  //   return () => clearTimeout(timeout)
-  // }, [])
-
-  // if (loading) return <NavbarSkeleton isMapPage={isMapPage} />
+  const isActive = (path?: string) =>
+    path ? currentPath.includes(path) : false
 
   return (
     <div
@@ -222,10 +201,10 @@ const Navbar = () => {
           {NavbarItems.map((item) => (
             <button
               key={item.title}
-              onClick={() => handleIconClick(item.title, item.path)}
+              onClick={() => item.path && navigate(item.path)}
               disabled={!item.path}
             >
-              {item.icon(activeIcon === item.title)}
+              {item.icon(isActive(item.path))}
             </button>
           ))}
         </div>

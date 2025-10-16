@@ -124,7 +124,7 @@ export const useGetActivityById = (id: string) => {
     queryKey: ['activity', id],
     queryFn: async () => {
       const response = await apiClient.get(
-        ApiConstantRoutes.paths.activity.getById.replace(':id', id),
+        ApiConstantRoutes.paths.activity.getById(id),
       )
       return response.data as Activity
     },

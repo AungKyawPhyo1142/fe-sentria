@@ -11,6 +11,7 @@ import {
 import {
   UserProfileMap,
   useBatchUserProfiles,
+  useUserProfile,
 } from '@/services/network/lib/user'
 import { selectAuth, useAuthStore } from '@/zustand/authStore'
 import {
@@ -31,6 +32,9 @@ export default function ResourcePage() {
   const [sortOrder, setSortOrder] = useState<'latest' | 'oldest'>('latest')
 
   const { userId: currentUserId } = useAuthStore(selectAuth)
+  const { data: userProfile } = useUserProfile(String(currentUserId))
+
+  const isVerified = userProfile?.verified_profile
 
   const { data: resourcesData, isLoading: resourcesLoading } = useGetResources()
 
@@ -157,7 +161,7 @@ export default function ResourcePage() {
   const sortOptions = ['latest', 'oldest']
 
   return (
-    <div className='flex w-full items-start gap-6 p-6'>
+    <div className='flex w-full items-start gap-8 p-6 px-0'>
       {/* resources */}
       <div className='flex w-full flex-col items-center justify-between'>
         <div className='mt-2 flex w-full items-center justify-between gap-4 py-4'>
@@ -201,13 +205,19 @@ export default function ResourcePage() {
               </p>
             )}
           </div>
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className='bg-primary flex h-12.5 flex-shrink-0 items-center justify-center rounded-xl px-4 py-1 font-light text-white hover:cursor-pointer'
-          >
-            <CirclePlus size={26} strokeWidth={1} />
-            <span className='ml-3 text-[16px]'>Create a resource</span>
-          </button>
+          {isVerified ? (
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className='bg-primary flex h-12.5 flex-shrink-0 items-center justify-center rounded-xl px-4 py-1 font-light text-white hover:cursor-pointer'
+            >
+              <CirclePlus size={26} strokeWidth={1} />
+              <span className='ml-3 text-[16px]'>Create a resource</span>
+            </button>
+          ) : (
+            <div className='min-h-[50px] items-center justify-center text-center flex rounded-lg border border-red-300 bg-red-50/50 px-4  text-xs text-red-700'>
+              Verify your profile to create resources
+            </div>
+          )}
         </div>
 
         {/* Resource List */}
@@ -229,6 +239,7 @@ export default function ResourcePage() {
           {filteredResources?.map((resource, index) => (
             <ResourceCard
               key={resource._id || index}
+              resourceId={resource._id}
               user={getUserDisplayInfo(resource.userId)}
               location={
                 resource.address?.city ||

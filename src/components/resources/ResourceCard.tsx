@@ -6,6 +6,7 @@ import FirstAid from '@/assets/icons/FirstAid.svg?react'
 import PostImages from '../posts/PostImages'
 import '../RichTextStyles.css'
 import { formatDistanceToNow } from 'date-fns'
+import FavoriteButton from '../common/FavoriteButton'
 
 interface User {
   name: string
@@ -15,6 +16,7 @@ interface User {
 
 interface ResourceCardProps {
   user: User
+  resourceId: string
   location: string
   description: string
   images?: string[]
@@ -25,6 +27,7 @@ interface ResourceCardProps {
 
 const ResourceCard = ({
   user,
+  resourceId,
   location,
   description,
   resourceTypes,
@@ -64,7 +67,7 @@ const ResourceCard = ({
   }
 
   return (
-    <div className='mx-6 flex w-full flex-col space-y-10 rounded-lg border border-[#33333430] px-8 py-7'>
+    <div className='flex w-full flex-col space-y-3 rounded-lg border border-[#33333430] px-8 py-7'>
       {/* header */}
       <div className='mb-2'>
         <div className='mb-4 flex items-center justify-between'>
@@ -156,8 +159,12 @@ const ResourceCard = ({
       </div>
 
       {/* Images */}
-      <div className='flex items-center space-x-2 text-xs'>
+      <div className='mb-5 flex items-center space-x-2 text-xs'>
         {images && images.length > 0 && <PostImages images={images} />}
+      </div>
+      {/* Favorite */}
+      <div className='flex justify-end'>
+        <FavoriteButton postId={resourceId} postType='RESOURCE' />
       </div>
     </div>
   )

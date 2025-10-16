@@ -45,6 +45,9 @@ export const AppConstantRoutes = {
     get resources() {
       return '/resources'
     },
+    get fav() {
+      return '/fav'
+    },
     get example() {
       return {
         get default() {

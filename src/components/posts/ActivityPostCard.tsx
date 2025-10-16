@@ -8,6 +8,7 @@ import Shelter from '@/assets/icons/Shelter.svg?react'
 import DropdownMenu from '@/components/common/DropdownMenu'
 import '@/components/RichTextStyles.css'
 import { formatDistanceToNow } from 'date-fns'
+import FavoriteButton from '../common/FavoriteButton'
 
 interface User {
   name: string
@@ -25,6 +26,9 @@ interface ActivityPostCardProps {
   onReadMore?: () => void // to open full post content
   onEdit?: () => void
   onDelete?: () => void
+  postedById?: string
+  loginUserId?: string
+  activityId: string
 }
 
 const ActivityPostCard = ({
@@ -37,7 +41,11 @@ const ActivityPostCard = ({
   onReadMore,
   onEdit,
   onDelete,
+  postedById,
+  loginUserId,
+  activityId,
 }: ActivityPostCardProps) => {
+  const isOwner = String(postedById) === String(loginUserId)
   const getResourceIcon = (resource: string) => {
     switch (resource.toLowerCase()) {
       case 'water':
@@ -91,7 +99,7 @@ const ActivityPostCard = ({
   }
 
   return (
-    <div className='mx-6 rounded-lg border border-[#33333430] px-8 py-7'>
+    <div className='rounded-lg border border-[#33333430] px-8 py-7'>
       {/* header */}
       <div className='mb-2'>
         <div className='mb-4 flex items-center justify-between'>
@@ -182,13 +190,17 @@ const ActivityPostCard = ({
           )}
         </div>
 
-        {/* Dropdown menu for edit and delete */}
-        {(onEdit || onDelete) && (
-          <DropdownMenu
-            onEdit={() => onEdit?.()}
-            onDelete={() => onDelete?.()}
-          />
-        )}
+        {/* Dropdown and fav icons */}
+        <div className='flex items-center space-x-4'>
+          {/* Dropdown menu for edit and delete */}
+          {isOwner && (
+            <DropdownMenu
+              onEdit={() => onEdit?.()}
+              onDelete={() => onDelete?.()}
+            />
+          )}
+          <FavoriteButton postId={activityId} postType='FEED' />
+        </div>
       </div>
     </div>
   )
