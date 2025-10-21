@@ -152,3 +152,106 @@
 .Toastify__progress-bar {
   background: #2e8b57 !important;
 }
+
+/* Loader */
+.loader {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  perspective: 1000px;
+}
+.circle {
+  position: absolute;
+  border-radius: 50%;
+  box-shadow:
+    8px 8px 16px #a3b1c6,
+    -8px -8px 16px #ffffff;
+  background: linear-gradient(145deg, #e0e5ec, #f9f9f9);
+  transition: all 0.3s ease;
+}
+.outer-circle {
+  width: 150px;
+  height: 150px;
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  box-shadow:
+    10px 10px 20px rgba(163, 177, 198, 0.5),
+    -10px -10px 20px rgba(255, 255, 255, 0.5);
+}
+.inner-circle {
+  width: 100px;
+  height: 100px;
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(5px);
+  box-shadow:
+    inset 8px 8px 16px rgba(163, 177, 198, 0.5),
+    inset -8px -8px 16px rgba(255, 255, 255, 0.5);
+}
+/* .ball {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(145deg, #f1f1f1, #2e8b57);
+  border-radius: 50%;
+  box-shadow:
+    inset 5px 5px 10px rgba(163, 177, 198, 0.5),
+    inset -5px -5px 10px rgba(255, 255, 255, 0.5),
+    0 0 8px rgba(0, 0, 0, 0.1);
+  animation: spin 2s linear infinite;
+  transition: all 0.3s ease;
+} */
+/* Orbit wrapper (new) */
+.orbit {
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  animation: spin 2s linear infinite;
+  transform-origin: center;
+}
+
+/* Ball follows orbit rotation */
+.ball {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(145deg, #2e8b57, #0b6833);
+  border-radius: 50%;
+  box-shadow:
+    inset 5px 5px 10px rgba(163, 177, 198, 0.5),
+    inset -5px -5px 10px rgba(255, 255, 255, 0.5),
+    0 0 8px rgba(0, 0, 0, 0.1);
+  transform: translate(-80%, -350%);
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loader:hover .orbit {
+  animation-duration: 1.5s;
+}
+
+.custom-svg {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  opacity: 0.8;
+  animation: svgSpin 4s linear infinite;
+}
+@keyframes svgSpin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
