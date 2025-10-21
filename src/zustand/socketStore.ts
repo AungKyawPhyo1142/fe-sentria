@@ -1,16 +1,16 @@
 // src/stores/socketStore.ts
 
-import { ReportResponse } from '@/services/network/lib/disasterReport';
+import { ReportResponse } from '@/services/network/lib/disasterReport'
 import {
   ClientToServerEvents,
   EQAlert,
   ReportFactCheckUpdatePayload,
   ServerToClientEvents,
-} from '@/services/socketio/types';
-import { InfiniteData, useQueryClient } from '@tanstack/react-query'; // We can get this inside actions
-import { io, Socket } from 'socket.io-client';
-import { create } from 'zustand';
-import { persist, PersistStorage } from 'zustand/middleware';
+} from '@/services/socketio/types'
+import { InfiniteData, useQueryClient } from '@tanstack/react-query' // We can get this inside actions
+import { io, Socket } from 'socket.io-client'
+import { create } from 'zustand'
+import { persist, PersistStorage } from 'zustand/middleware'
 
 // Get backend URL from Vite environment variables
 const SOCKET_SERVER_URL =
@@ -41,7 +41,6 @@ type PersistedAlerts = {
   allEarthquakeAlerts: SocketState['allEarthquakeAlerts']
   latestEarthquakeAlert: SocketState['latestEarthquakeAlert']
 }
-
 
 // custom storage with expiry
 const EXPIRY_TIME = 3 * 24 * 60 * 60 * 1000 // 3 days in ms
@@ -86,7 +85,6 @@ const storageWithExpiry: PersistStorage<PersistedAlerts> = {
     localStorage.removeItem(name)
   },
 }
-
 
 export const useSocketStore = create<SocketState>()(
   persist(

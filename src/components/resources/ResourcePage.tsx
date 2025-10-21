@@ -214,7 +214,7 @@ export default function ResourcePage() {
               <span className='ml-3 text-[16px]'>Create a resource</span>
             </button>
           ) : (
-            <div className='min-h-[50px] items-center justify-center text-center flex rounded-lg border border-red-300 bg-red-50/50 px-4  text-xs text-red-700'>
+            <div className='flex min-h-[50px] items-center justify-center rounded-lg border border-red-300 bg-red-50/50 px-4 text-center text-xs text-red-700'>
               Verify your profile to create resources
             </div>
           )}

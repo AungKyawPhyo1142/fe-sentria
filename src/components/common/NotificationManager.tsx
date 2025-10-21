@@ -1,12 +1,12 @@
-import '@/index.css';
-import { useSocketStore } from '@/zustand/socketStore'; // Adjust path
-import { useEffect, useRef } from 'react';
-import { toast } from 'react-toastify';
+import '@/index.css'
+import { useSocketStore } from '@/zustand/socketStore' // Adjust path
+import { useEffect, useRef } from 'react'
+import { toast } from 'react-toastify'
 
 const NotificationManager = () => {
   // This component subscribes to the part of the Zustand store that holds the notification data.
   const { allEarthquakeAlerts, clearLatestEarthquakeAlert } = useSocketStore()
-  
+
   // Track if this is the initial mount to prevent showing toasts on refresh
   const isInitialMount = useRef(true)
   const previousAlertsLength = useRef(0)
@@ -19,7 +19,10 @@ const NotificationManager = () => {
     if (isInitialMount.current) {
       previousAlertsLength.current = allEarthquakeAlerts.length
       isInitialMount.current = false
-      console.log('[NotificationManager] Initial mount - stored existing alerts count:', previousAlertsLength.current)
+      console.log(
+        '[NotificationManager] Initial mount - stored existing alerts count:',
+        previousAlertsLength.current,
+      )
       return
     }
 
@@ -66,19 +69,21 @@ const NotificationManager = () => {
           draggable: true,
           theme: 'light',
           style: {
-            fontFamily: 'Poppins'
+            fontFamily: 'Poppins',
           },
-          
-          
+
           // When the toast is closed (either by user or autoClose), clear the state
           onClose: () => clearLatestEarthquakeAlert(),
         },
       )
-      
+
       // Update the previous alerts length
       previousAlertsLength.current = allEarthquakeAlerts.length
     } else {
-      console.log('[NotificationManager] No new alerts to show. Current alerts:', allEarthquakeAlerts.length)
+      console.log(
+        '[NotificationManager] No new alerts to show. Current alerts:',
+        allEarthquakeAlerts.length,
+      )
     }
   }, [allEarthquakeAlerts, clearLatestEarthquakeAlert])
 
