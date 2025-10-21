@@ -228,7 +228,7 @@ const Example = () => {
         </MapFilterProvider>
       </div>
       {/* Logo */}
-      {/* <Logo/> */}
+      <Logo/>
     </div>
   )
 }
