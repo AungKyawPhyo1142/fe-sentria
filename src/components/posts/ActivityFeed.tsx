@@ -16,6 +16,7 @@ import {
   useBatchUserProfiles,
 } from '@/services/network/lib/user'
 import LogoLoader from '../common/LogoLoader'
+import NoDataStatement from '../common/NoDataStatement'
 
 export const ActivityFeed = () => {
   const [sortBy, setSortBy] = useState('latest')
@@ -253,24 +254,25 @@ export const ActivityFeed = () => {
             // <div className='py-10 text-center text-gray-500'>
             //   Loading activities...
             // </div>
-            <LogoLoader/>
+            <LogoLoader />
           )}
 
           {/* Empty state */}
           {!activitiesLoading && (!activities || activities.length === 0) && (
-            <div className='py-10 text-center text-gray-500'>
-              No activities found. Create your first activity!
-            </div>
+            <NoDataStatement
+              heading='No Activity Post Found'
+              subHeading="There's nothing here yet! Start by adding your first activity post."
+            />
           )}
 
           {!activitiesLoading &&
             activities &&
             activities.length > 0 &&
             filteredActivities.length === 0 && (
-              <div className='py-10 text-center text-gray-500'>
-                No activities match your current filters. Try adjusting your
-                search criteria.
-              </div>
+              <NoDataStatement
+                heading='No Activity Post Found'
+                subHeading='No activities match your current filters. Try adjusting your search criteria.'
+              />
             )}
 
           {!activitiesLoading && filteredActivities.length > 0 && (

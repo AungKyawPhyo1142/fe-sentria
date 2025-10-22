@@ -23,6 +23,7 @@ import {
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import LogoLoader from '../common/LogoLoader'
+import NoDataStatement from '../common/NoDataStatement'
 
 export default function ResourcePage() {
   const [resources, setResources] = useState<Resource[] | null>(null)
@@ -233,9 +234,10 @@ export default function ResourcePage() {
           )}
 
           {!resourcesLoading && resources?.length === 0 && (
-            <div className='py-10 text-center text-gray-500'>
-              No resources found. Create your first resource!
-            </div>
+            <NoDataStatement
+              heading='No Resource Post Found'
+              subHeading="There's nothing here yet! Start by adding your first resource post."
+            />
           )}
 
           {filteredResources?.map((resource, index) => (

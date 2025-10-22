@@ -9,6 +9,7 @@ import {
 import { selectAuth, useAuthStore } from '@/zustand/authStore'
 import { setUserCurrentLocation } from '@/zustand/userCurrentLocationStore'
 import { useEffect } from 'react'
+import NoDataStatement from '@/components/common/NoDataStatement'
 
 // component for Post Lists
 interface ReportPostProps {
@@ -119,7 +120,10 @@ const Home = () => {
       <div className='w-3/4'>
         {/* Post Cards */}
         {reports.length === 0 ? (
-          <p>No reports found.</p>
+          <NoDataStatement
+            heading='No Disaster Report Found'
+            subHeading="There's nothing here yet! Start by adding your first disaster report post."
+          />
         ) : (
           <PostList postLists={reports} isLoading={isLoading} />
         )}
