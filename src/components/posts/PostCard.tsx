@@ -123,7 +123,7 @@ export interface User {
 }
 type DisasterType = 'earthquake' | 'flood' | 'fire' | 'storm' | 'other'
 
-interface PostCardProps {
+export interface PostCardProps {
   id: string
   user: User
   trustScore: number
