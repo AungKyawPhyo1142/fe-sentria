@@ -39,7 +39,12 @@ export default function ResourcePage() {
 
   const isVerified = userProfile?.verified_profile
 
-  const { data: resourcesData, isLoading: resourcesLoading, error, refetch } = useGetResources()
+  const {
+    data: resourcesData,
+    isLoading: resourcesLoading,
+    error,
+    refetch,
+  } = useGetResources()
 
   const userIds = resourcesData?.resources
     ? [
@@ -163,13 +168,13 @@ export default function ResourcePage() {
 
   const sortOptions = ['latest', 'oldest']
 
-   if (error) {
-      <ErrorFetch
-        heading='Try Again!'
-        subHeading="There's error data fetching in resources.Please try again!"
-        reFetch={refetch}
-      />
-    }
+  if (error) {
+    ;<ErrorFetch
+      heading='Try Again!'
+      subHeading="There's error data fetching in resources.Please try again!"
+      reFetch={refetch}
+    />
+  }
 
   return (
     <div className='flex w-full items-start gap-8 p-6 px-0'>

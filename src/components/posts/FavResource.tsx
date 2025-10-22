@@ -60,7 +60,7 @@ export const FavResource = () => {
     )
   }
   if (error) {
-    <ErrorFetch
+    ;<ErrorFetch
       heading='Try Again!'
       subHeading="There's error data fetching in resources.Please try again!"
       reFetch={refetch}
