@@ -22,6 +22,7 @@ import {
   PhoneCall,
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import LogoLoader from '../common/LogoLoader'
 
 export default function ResourcePage() {
   const [resources, setResources] = useState<Resource[] | null>(null)
@@ -225,9 +226,10 @@ export default function ResourcePage() {
         {/* Resource Cards */}
         <div className='mt-6 flex w-full flex-col items-center gap-y-4'>
           {resourcesLoading && (
-            <div className='py-10 text-center text-gray-500'>
-              Loading resources...
-            </div>
+            // <div className='py-10 text-center text-gray-500'>
+            //   Loading resources...
+            // </div>
+            <LogoLoader />
           )}
 
           {!resourcesLoading && resources?.length === 0 && (

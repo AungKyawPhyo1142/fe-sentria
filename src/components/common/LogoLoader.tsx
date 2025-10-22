@@ -1,6 +1,6 @@
 import CircleLogo from '@/assets/CircleLogo.svg?react'
 
-const Logo = () => {
+const LogoLoader = () => {
   return (
     <div className='fixed inset-0 z-[999] flex items-center justify-center bg-black/30'>
       <div className='loader'>
@@ -16,4 +16,4 @@ const Logo = () => {
   )
 }
 
-export default Logo
+export default LogoLoader

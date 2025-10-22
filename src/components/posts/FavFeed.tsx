@@ -2,6 +2,7 @@ import { useGetFavoritesByType } from '@/services/network/lib/favorite'
 import { useGetActivities } from '@/services/network/lib/activity'
 import { useAuthStore, selectAuth } from '@/zustand/authStore'
 import ActivityPostCard from './ActivityPostCard'
+import LogoLoader from '../common/LogoLoader'
 
 export const FavFeed = () => {
   const { userId: currentUserId } = useAuthStore(selectAuth)
@@ -14,7 +15,7 @@ export const FavFeed = () => {
     useGetActivities()
 
   if (favLoading || activitiesLoading) {
-    return <p>Loading...</p>
+    return <LogoLoader/>
   }
 
   if (!favData?.favorites || !activitiesData?.data) {

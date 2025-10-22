@@ -7,6 +7,7 @@ import {
   useBatchUserProfiles,
 } from '@/services/network/lib/user'
 import { useEffect, useState } from 'react'
+import LogoLoader from '../common/LogoLoader'
 
 export const FavResource = () => {
   const [userProfiles, setUserProfiles] = useState<UserProfileMap>({})
@@ -41,7 +42,7 @@ export const FavResource = () => {
 
   // loading state
   if (favLoading || resourcesLoading) {
-    return <p>Loading...</p>
+    return <LogoLoader />
   }
 
   if (!favData?.favorites || !resourcesData?.resources) {

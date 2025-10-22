@@ -17,7 +17,7 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router'
 import { useState } from 'react'
 import ActivityPostModal from '@/components/posts/ActivityPostModal'
-import Logo from '@/components/common/Logo'
+import LogoLoader from '@/components/common/LogoLoader'
 
 // const sampleActivityFeedPosts = [
 //   {
@@ -228,7 +228,7 @@ const Example = () => {
         </MapFilterProvider>
       </div>
       {/* Logo */}
-      <Logo/>
+      <LogoLoader/>
     </div>
   )
 }

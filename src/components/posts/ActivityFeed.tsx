@@ -15,6 +15,7 @@ import {
   UserProfileMap,
   useBatchUserProfiles,
 } from '@/services/network/lib/user'
+import LogoLoader from '../common/LogoLoader'
 
 export const ActivityFeed = () => {
   const [sortBy, setSortBy] = useState('latest')
@@ -249,9 +250,10 @@ export const ActivityFeed = () => {
         <div className='flex flex-col space-y-4 pt-6 pb-8'>
           {/* Loading state */}
           {activitiesLoading && (
-            <div className='py-10 text-center text-gray-500'>
-              Loading activities...
-            </div>
+            // <div className='py-10 text-center text-gray-500'>
+            //   Loading activities...
+            // </div>
+            <LogoLoader/>
           )}
 
           {/* Empty state */}
