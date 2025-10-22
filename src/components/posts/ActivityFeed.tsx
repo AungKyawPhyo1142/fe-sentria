@@ -17,6 +17,7 @@ import {
 } from '@/services/network/lib/user'
 import LogoLoader from '../common/LogoLoader'
 import NoDataStatement from '../common/NoDataStatement'
+import ErrorFetch from '../common/ErrorFetch'
 
 export const ActivityFeed = () => {
   const [sortBy, setSortBy] = useState('latest')
@@ -34,8 +35,12 @@ export const ActivityFeed = () => {
   const { userId: currentUserId } = useAuthStore(selectAuth)
 
   // Fetch activities
-  const { data: activitiesData, isLoading: activitiesLoading } =
-    useGetActivities()
+  const {
+    data: activitiesData,
+    isLoading: activitiesLoading,
+    error,
+    refetch,
+  } = useGetActivities()
 
   // Get unique user IDs
   const userIds = activitiesData?.data
@@ -205,6 +210,14 @@ export const ActivityFeed = () => {
       setEditingActivity(activity)
       setIsCreateModalOpen(true)
     }
+  }
+
+  if (error) {
+    <ErrorFetch
+      heading='Try Again!'
+      subHeading="There's error data fetching in activity feed.Please try again!"
+      reFetch={refetch}
+    />
   }
 
   return (

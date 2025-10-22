@@ -4,12 +4,18 @@ import { useAuthStore, selectAuth } from '@/zustand/authStore'
 import ActivityPostCard from './ActivityPostCard'
 import LogoLoader from '../common/LogoLoader'
 import NoFavStatement from '../common/NoFavStatement'
+import ErrorFetch from '../common/ErrorFetch'
 
 export const FavFeed = () => {
   const { userId: currentUserId } = useAuthStore(selectAuth)
 
   // Fetch favorites
-  const { data: favData, isLoading: favLoading } = useGetFavoritesByType('FEED')
+  const {
+    data: favData,
+    isLoading: favLoading,
+    error,
+    refetch,
+  } = useGetFavoritesByType('FEED')
 
   // Fetch all activities
   const { data: activitiesData, isLoading: activitiesLoading } =
@@ -26,6 +32,14 @@ export const FavFeed = () => {
         subHeading="You haven't added any activity posts to Favorite!"
       />
     )
+  }
+
+  if (error) {
+    <ErrorFetch
+      heading='Try Again!'
+      subHeading="There's error data fetching in favorite activity feed.Please try again!"
+      reFetch={refetch}
+    />
   }
 
   const favorites = favData.favorites

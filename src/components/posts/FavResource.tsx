@@ -9,6 +9,7 @@ import {
 import { useEffect, useState } from 'react'
 import LogoLoader from '../common/LogoLoader'
 import NoFavStatement from '../common/NoFavStatement'
+import ErrorFetch from '../common/ErrorFetch'
 
 export const FavResource = () => {
   const [userProfiles, setUserProfiles] = useState<UserProfileMap>({})
@@ -32,8 +33,12 @@ export const FavResource = () => {
       ]
     : []
 
-  const { data: batchUserProfiles, isSuccess: userProfilesFetched } =
-    useBatchUserProfiles(userIds)
+  const {
+    data: batchUserProfiles,
+    isSuccess: userProfilesFetched,
+    error,
+    refetch,
+  } = useBatchUserProfiles(userIds)
 
   useEffect(() => {
     if (userProfilesFetched && batchUserProfiles) {
@@ -47,7 +52,19 @@ export const FavResource = () => {
   }
 
   if (!favData?.favorites || !resourcesData?.resources) {
-    return <p>No favorites found</p>
+    return (
+      <NoFavStatement
+        heading='No Favorite Resource Post Found'
+        subHeading="You haven't added any resource posts to Favorite!"
+      />
+    )
+  }
+  if (error) {
+    <ErrorFetch
+      heading='Try Again!'
+      subHeading="There's error data fetching in resources.Please try again!"
+      reFetch={refetch}
+    />
   }
 
   // favorites and resources
