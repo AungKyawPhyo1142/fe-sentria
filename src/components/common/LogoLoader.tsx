@@ -1,7 +1,8 @@
 import CircleLogo from '@/assets/CircleLogo.svg?react'
+import ReactDOM from 'react-dom'
 
 const LogoLoader = () => {
-  return (
+  return ReactDOM.createPortal(
     <div className='fixed inset-0 z-[999] flex items-center justify-center bg-black/30'>
       <div className='loader'>
         <div className='circle outer-circle'></div>
@@ -12,7 +13,9 @@ const LogoLoader = () => {
         {/* Inner circle  */}
         <CircleLogo className='custom-svg rounded-full bg-white object-center' />
       </div>
-    </div>
+    </div>,
+
+    document.body,
   )
 }
 

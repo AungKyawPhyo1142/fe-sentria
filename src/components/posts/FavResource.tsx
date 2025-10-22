@@ -8,6 +8,7 @@ import {
 } from '@/services/network/lib/user'
 import { useEffect, useState } from 'react'
 import LogoLoader from '../common/LogoLoader'
+import NoFavStatement from '../common/NoFavStatement'
 
 export const FavResource = () => {
   const [userProfiles, setUserProfiles] = useState<UserProfileMap>({})
@@ -81,7 +82,10 @@ export const FavResource = () => {
   return (
     <div className='flex flex-col space-y-4 py-4'>
       {favResources.length === 0 ? (
-        <p>No favorite posts available.</p>
+        <NoFavStatement
+          heading='No Favorite Resource Post Found'
+          subHeading="You haven't added any resource posts to Favorite!"
+        />
       ) : (
         favResources.map((act) => (
           <ResourceCard

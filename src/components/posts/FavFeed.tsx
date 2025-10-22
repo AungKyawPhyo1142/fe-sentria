@@ -3,6 +3,7 @@ import { useGetActivities } from '@/services/network/lib/activity'
 import { useAuthStore, selectAuth } from '@/zustand/authStore'
 import ActivityPostCard from './ActivityPostCard'
 import LogoLoader from '../common/LogoLoader'
+import NoFavStatement from '../common/NoFavStatement'
 
 export const FavFeed = () => {
   const { userId: currentUserId } = useAuthStore(selectAuth)
@@ -15,11 +16,16 @@ export const FavFeed = () => {
     useGetActivities()
 
   if (favLoading || activitiesLoading) {
-    return <LogoLoader/>
+    return <LogoLoader />
   }
 
   if (!favData?.favorites || !activitiesData?.data) {
-    return <p>No favorites found</p>
+    return (
+      <NoFavStatement
+        heading='No Favorite Activity Post Found'
+        subHeading="You haven't added any activity posts to Favorite!"
+      />
+    )
   }
 
   const favorites = favData.favorites
@@ -32,7 +38,10 @@ export const FavFeed = () => {
   return (
     <div className='scrollbar-hide flex flex-col space-y-4 py-4'>
       {favActivities.length === 0 ? (
-        <p>No favorite posts available.</p>
+        <NoFavStatement
+          heading='No Favorite Activity Post Found'
+          subHeading="You haven't favorited any activity posts yet!"
+        />
       ) : (
         favActivities.map((act) => (
           <ActivityPostCard
