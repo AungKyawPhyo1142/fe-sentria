@@ -213,7 +213,7 @@ export const ActivityFeed = () => {
   }
 
   if (error) {
-    <ErrorFetch
+    ;<ErrorFetch
       heading='Try Again!'
       subHeading="There's error data fetching in activity feed.Please try again!"
       reFetch={refetch}
