@@ -2,11 +2,12 @@ import React, { useState } from 'react'
 import ErrorFetchIcon from '@/assets/icons/NoNetwrok.svg?react'
 import Button from './Button'
 import { RotateCw } from 'lucide-react'
+import { QueryObserverResult } from '@tanstack/react-query'
 
 interface ErrorFetchProps {
   heading: string
   subHeading: string
-  reFetch: () => Promise<any> | void
+  reFetch: () => Promise<QueryObserverResult> | void
 }
 
 const ErrorFetch: React.FC<ErrorFetchProps> = ({
