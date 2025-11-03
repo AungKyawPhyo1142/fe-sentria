@@ -40,12 +40,12 @@ export default function ResourcePage() {
 
   const userIds = resourcesData?.resources
     ? [
-        ...new Set(
-          resourcesData.resources
-            .map((resource) => resource.userId)
-            .filter((id) => id !== undefined),
-        ),
-      ]
+      ...new Set(
+        resourcesData.resources
+          .map((resource) => resource.userId)
+          .filter((id) => id !== undefined),
+      ),
+    ]
     : []
 
   const { data: batchUserProfiles, isSuccess: userProfilesFetched } =
@@ -103,7 +103,7 @@ export default function ResourcePage() {
     return {
       name: profile
         ? `${profile.firstName || ''} ${profile.lastName || ''}`.trim() ||
-          (isCurrentUser ? 'You' : 'Unknown User')
+        (isCurrentUser ? 'You' : 'Unknown User')
         : isCurrentUser
           ? 'You'
           : 'Unknown User',
@@ -190,11 +190,10 @@ export default function ResourcePage() {
             <Input
               showSearchIcon
               type='text'
-              className={`min-h-[50px] w-full border-r ps-11 text-[16px] ${
-                locationSearch.trim()
+              className={`min-h-[50px] w-full border-r ps-11 text-[16px] ${locationSearch.trim()
                   ? 'border-blue-300 ring-2 ring-blue-200'
                   : ''
-              }`}
+                }`}
               value={locationSearch}
               onChange={(e) => setLocationSearch(e.target.value)}
               placeholder='Location'
