@@ -7,6 +7,9 @@ import {
   useBatchUserProfiles,
 } from '@/services/network/lib/user'
 import { useEffect, useState } from 'react'
+import LogoLoader from '../common/LogoLoader'
+import NoFavStatement from '../common/NoFavStatement'
+import ErrorFetch from '../common/ErrorFetch'
 
 export const FavResource = () => {
   const [userProfiles, setUserProfiles] = useState<UserProfileMap>({})
@@ -30,8 +33,12 @@ export const FavResource = () => {
       ]
     : []
 
-  const { data: batchUserProfiles, isSuccess: userProfilesFetched } =
-    useBatchUserProfiles(userIds)
+  const {
+    data: batchUserProfiles,
+    isSuccess: userProfilesFetched,
+    error,
+    refetch,
+  } = useBatchUserProfiles(userIds)
 
   useEffect(() => {
     if (userProfilesFetched && batchUserProfiles) {
@@ -41,11 +48,23 @@ export const FavResource = () => {
 
   // loading state
   if (favLoading || resourcesLoading) {
-    return <p>Loading...</p>
+    return <LogoLoader />
   }
 
   if (!favData?.favorites || !resourcesData?.resources) {
-    return <p>No favorites found</p>
+    return (
+      <NoFavStatement
+        heading='No Favorite Resource Post Found'
+        subHeading="You haven't added any resource posts to Favorite!"
+      />
+    )
+  }
+  if (error) {
+    ;<ErrorFetch
+      heading='Try Again!'
+      subHeading="There's error data fetching in resources.Please try again!"
+      reFetch={refetch}
+    />
   }
 
   // favorites and resources
@@ -80,7 +99,10 @@ export const FavResource = () => {
   return (
     <div className='flex flex-col space-y-4 py-4'>
       {favResources.length === 0 ? (
-        <p>No favorite posts available.</p>
+        <NoFavStatement
+          heading='No Favorite Resource Post Found'
+          subHeading="You haven't added any resource posts to Favorite!"
+        />
       ) : (
         favResources.map((act) => (
           <ResourceCard

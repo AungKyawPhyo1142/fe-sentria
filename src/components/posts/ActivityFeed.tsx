@@ -15,6 +15,9 @@ import {
   UserProfileMap,
   useBatchUserProfiles,
 } from '@/services/network/lib/user'
+import LogoLoader from '../common/LogoLoader'
+import NoDataStatement from '../common/NoDataStatement'
+import ErrorFetch from '../common/ErrorFetch'
 
 export const ActivityFeed = () => {
   const [sortBy, setSortBy] = useState('latest')
@@ -32,8 +35,12 @@ export const ActivityFeed = () => {
   const { userId: currentUserId } = useAuthStore(selectAuth)
 
   // Fetch activities
-  const { data: activitiesData, isLoading: activitiesLoading } =
-    useGetActivities()
+  const {
+    data: activitiesData,
+    isLoading: activitiesLoading,
+    error,
+    refetch,
+  } = useGetActivities()
 
   // Get unique user IDs
   const userIds = activitiesData?.data
@@ -205,6 +212,14 @@ export const ActivityFeed = () => {
     }
   }
 
+  if (error) {
+    ;<ErrorFetch
+      heading='Try Again!'
+      subHeading="There's error data fetching in activity feed.Please try again!"
+      reFetch={refetch}
+    />
+  }
+
   return (
     <div className='fade-in flex h-full w-full'>
       <div className='scrollbar-hide flex flex-1 flex-col overflow-y-auto'>
@@ -249,26 +264,28 @@ export const ActivityFeed = () => {
         <div className='flex flex-col space-y-4 pt-6 pb-8'>
           {/* Loading state */}
           {activitiesLoading && (
-            <div className='py-10 text-center text-gray-500'>
-              Loading activities...
-            </div>
+            // <div className='py-10 text-center text-gray-500'>
+            //   Loading activities...
+            // </div>
+            <LogoLoader />
           )}
 
           {/* Empty state */}
           {!activitiesLoading && (!activities || activities.length === 0) && (
-            <div className='py-10 text-center text-gray-500'>
-              No activities found. Create your first activity!
-            </div>
+            <NoDataStatement
+              heading='No Activity Post Found'
+              subHeading="There's nothing here yet! Start by adding your first activity post."
+            />
           )}
 
           {!activitiesLoading &&
             activities &&
             activities.length > 0 &&
             filteredActivities.length === 0 && (
-              <div className='py-10 text-center text-gray-500'>
-                No activities match your current filters. Try adjusting your
-                search criteria.
-              </div>
+              <NoDataStatement
+                heading='No Activity Post Found'
+                subHeading='No activities match your current filters. Try adjusting your search criteria.'
+              />
             )}
 
           {!activitiesLoading && filteredActivities.length > 0 && (

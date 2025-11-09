@@ -24,6 +24,7 @@ import { selectAuth, useAuthStore } from '@/zustand/authStore'
 import DeleteReportModal from './DeleteReportModal'
 import EditReportModal from './EditReportModal'
 import DropdownMenu from '../common/DropdownMenu'
+import LogoLoader from '../common/LogoLoader'
 
 export const PostCardSkeleton = () => {
   return (
@@ -122,7 +123,7 @@ export interface User {
 }
 type DisasterType = 'earthquake' | 'flood' | 'fire' | 'storm' | 'other'
 
-interface PostCardProps {
+export interface PostCardProps {
   id: string
   user: User
   trustScore: number
@@ -212,7 +213,7 @@ const PostCard = ({
 
   // data fetch
   const { data, isLoading, isError } = useGetDisasterReportDetail(id)
-  if (isLoading) return <p>Loading...</p>
+  if (isLoading) return <LogoLoader />
   if (isError) return <p>Error fetching detail</p>
 
   const reportDetail = data?.data?.report?.data

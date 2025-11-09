@@ -17,6 +17,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { ReverseGeocodeResponse } from '@/services/network/lib/report'
 import { apiClient } from '@/services/network/apiClient'
 import { ApiConstantRoutes } from '@/services/network/path'
+import LogoLoader from '../common/LogoLoader'
 
 interface EditReportModalProps {
   isOpen: boolean
@@ -148,7 +149,7 @@ const EditReportModal: React.FC<EditReportModalProps> = ({
     setIsOpen(false)
   }
 
-  if (isLoading) return <div>Loading...</div>
+  if (isLoading) return <LogoLoader />
   if (isError || !report) return <div>Error loading report details</div>
 
   return ReactDOM.createPortal(

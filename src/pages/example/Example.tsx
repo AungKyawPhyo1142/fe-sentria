@@ -17,6 +17,9 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router'
 import { useState } from 'react'
 import ActivityPostModal from '@/components/posts/ActivityPostModal'
+import LogoLoader from '@/components/common/LogoLoader'
+import NoDataStatement from '@/components/common/NoDataStatement'
+import ErrorFetch from '@/components/common/ErrorFetch'
 
 const Example = () => {
   const navigate = useNavigate()
@@ -144,6 +147,20 @@ const Example = () => {
           <Map />
         </MapFilterProvider>
       </div>
+      {/* Logo */}
+      <LogoLoader />
+      {/*  */}
+      <NoDataStatement
+        heading='No Disaster Report Found'
+        subHeading="There's nothing here yet! Start by adding your first disaster report post."
+      />
+      <br />
+      <ErrorFetch
+        heading='Try Again!'
+        subHeading='Error data fetch'
+        reFetch={() => console.log('refetch')}
+      />
+      <br />
     </div>
   )
 }

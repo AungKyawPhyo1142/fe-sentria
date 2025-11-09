@@ -22,6 +22,9 @@ import {
   PhoneCall,
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import LogoLoader from '../common/LogoLoader'
+import NoDataStatement from '../common/NoDataStatement'
+import ErrorFetch from '../common/ErrorFetch'
 
 export default function ResourcePage() {
   const [resources, setResources] = useState<Resource[] | null>(null)
@@ -36,7 +39,12 @@ export default function ResourcePage() {
 
   const isVerified = userProfile?.verified_profile
 
-  const { data: resourcesData, isLoading: resourcesLoading } = useGetResources()
+  const {
+    data: resourcesData,
+    isLoading: resourcesLoading,
+    error,
+    refetch,
+  } = useGetResources()
 
   const userIds = resourcesData?.resources
     ? [
@@ -160,6 +168,14 @@ export default function ResourcePage() {
 
   const sortOptions = ['latest', 'oldest']
 
+  if (error) {
+    ;<ErrorFetch
+      heading='Try Again!'
+      subHeading="There's error data fetching in resources.Please try again!"
+      reFetch={refetch}
+    />
+  }
+
   return (
     <div className='flex w-full items-start gap-8 p-6 px-0'>
       {/* resources */}
@@ -225,15 +241,17 @@ export default function ResourcePage() {
         {/* Resource Cards */}
         <div className='mt-6 flex w-full flex-col items-center gap-y-4'>
           {resourcesLoading && (
-            <div className='py-10 text-center text-gray-500'>
-              Loading resources...
-            </div>
+            // <div className='py-10 text-center text-gray-500'>
+            //   Loading resources...
+            // </div>
+            <LogoLoader />
           )}
 
           {!resourcesLoading && resources?.length === 0 && (
-            <div className='py-10 text-center text-gray-500'>
-              No resources found. Create your first resource!
-            </div>
+            <NoDataStatement
+              heading='No Resource Post Found'
+              subHeading="There's nothing here yet! Start by adding your first resource post."
+            />
           )}
 
           {filteredResources?.map((resource, index) => (

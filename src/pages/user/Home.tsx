@@ -9,6 +9,8 @@ import {
 import { selectAuth, useAuthStore } from '@/zustand/authStore'
 import { setUserCurrentLocation } from '@/zustand/userCurrentLocationStore'
 import { useEffect } from 'react'
+import NoDataStatement from '@/components/common/NoDataStatement'
+import ErrorFetch from '@/components/common/ErrorFetch'
 
 // component for Post Lists
 interface ReportPostProps {
@@ -104,7 +106,7 @@ const Home = () => {
     }
   }, [isConnected, sendUserLocation])
 
-  const { data, isLoading, error } = useGetAllDisasterReports()
+  const { data, isLoading, error, refetch } = useGetAllDisasterReports()
   // console.log('report data: ', data)
   // console.log('data.pages', data?.pages)
 
@@ -112,14 +114,24 @@ const Home = () => {
     data?.pages?.flatMap((page) => page.data.reports.data ?? []) ?? []
   console.log('reports: ', reports)
 
-  if (error) return <p>Error loading reports</p>
+  if (error)
+    return (
+      <ErrorFetch
+        heading='Try Again!'
+        subHeading="There's error data fetching in disaster reports.Please try again!"
+        reFetch={refetch}
+      />
+    )
 
   return (
     <div className='fade-in'>
       <div className='w-3/4'>
         {/* Post Cards */}
         {reports.length === 0 ? (
-          <p>No reports found.</p>
+          <NoDataStatement
+            heading='No Disaster Report Found'
+            subHeading="There's nothing here yet! Start by adding your first disaster report post."
+          />
         ) : (
           <PostList postLists={reports} isLoading={isLoading} />
         )}
