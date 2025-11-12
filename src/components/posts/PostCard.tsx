@@ -388,10 +388,17 @@ const PostCard = ({
         {/* actions */}
         <div className='pt-3'>
           <div className='flex items-center text-[10px] font-semibold text-[#33333430]'>
-            {upvotes === 0 || downvotes === 0 ? (
+            {upvotes === 0 && downvotes === 0 ? (
               <span className='text-[#33333430]'>No votes yet</span>
             ) : (
               <>
+                {/* {
+                  // this case is when there have number in both
+                  <span>
+                    <span className='text-primary'>{formatNumber(upvotes)} upvotes</span> &{' '}
+                    <span className='text-[#B22222]'>{formatNumber(downvotes)} downvotes</span>
+                  </span>
+                } */}
                 {upvotes > downvotes ? (
                   <span className='text-primary'>
                     {formatNumber(upvotes)} upvotes
