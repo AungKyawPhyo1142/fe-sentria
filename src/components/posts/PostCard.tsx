@@ -25,6 +25,7 @@ import DeleteReportModal from './DeleteReportModal'
 import EditReportModal from './EditReportModal'
 import DropdownMenu from '../common/DropdownMenu'
 import LogoLoader from '../common/LogoLoader'
+import { useVote } from '@/services/network/lib/votes'
 
 export const PostCardSkeleton = () => {
   return (
@@ -159,8 +160,8 @@ const PostCard = ({
   downvotes = 0,
   comments = 0,
   createdAt,
-  onUpvote,
-  onDownvote,
+  // onUpvote,
+  // onDownvote,
   onComment,
   reporterId,
   loginUser,
@@ -173,6 +174,8 @@ const PostCard = ({
   // const [selectedId, setSelectedId] = useState<string | null>(null)
   const [isDelete, setIsDelete] = useState(false)
   const [isEdit, setIsEdit] = useState(false)
+  // voting
+  const vote = useVote()
 
   const getTrustWarning = (score: number, isDebunked: boolean) => {
     if (isDebunked) {
@@ -216,6 +219,7 @@ const PostCard = ({
   if (isLoading) return <LogoLoader />
   if (isError) return <p>Error fetching detail</p>
 
+  // data processing for report detail
   const reportDetail = data?.data?.report?.data
   const imgUrl =
     reportDetail?.media
@@ -237,6 +241,31 @@ const PostCard = ({
   const handleEdit = () => {
     console.log('edit button clicked!')
     setIsEdit(true)
+  }
+
+  // handleVotes
+  const postgresId = reportDetail?.postgresReportId
+  const handleUpvote = async () => {
+    try {
+      const res = await vote.mutateAsync({
+        id: postgresId!,
+        voteType: 'UPVOTE',
+      })
+      console.log('Upvote success:', res)
+    } catch (err) {
+      console.error('Upvote failed:', err)
+    }
+  }
+  const handleDownvote = async () => {
+    try {
+      const res = await vote.mutateAsync({
+        id: postgresId!,
+        voteType: 'DOWNVOTE',
+      })
+      console.log('Downvote success:', res)
+    } catch (err) {
+      console.error('Downvote failed:', err)
+    }
   }
 
   return (
@@ -377,8 +406,8 @@ const PostCard = ({
             downvotes={reportDetail?.factCheck.communityScore?.downvotes ?? 0}
             comments={12}
             createdAt={new Date(reportDetail?.createdAt ?? Date.now())}
-            onUpvote={() => alert('Upvoted')}
-            onDownvote={() => alert('Downvoted')}
+            onUpvote={handleUpvote}
+            onDownvote={handleDownvote}
             onComment={() => alert('Commented')}
             reporterId={reportDetail?.generatedBy.id}
             loginUser={userId}
@@ -419,14 +448,14 @@ const PostCard = ({
             {/* up/down/cmt */}
             <div className='flex w-full items-center space-x-4'>
               <button
-                onClick={onUpvote}
+                onClick={handleUpvote}
                 className={`flex min-h-0 items-center space-x-1 border-none bg-transparent p-0 ${upvotes > downvotes ? 'text-primary hover:text-primary/80' : 'text-[#33333430] hover:text-[3333430]/80'}`}
               >
                 <CircleArrowUp className='h-6 w-6 stroke-1' />
               </button>
 
               <button
-                onClick={onDownvote}
+                onClick={handleDownvote}
                 className={`flex items-center space-x-1 ${downvotes > upvotes ? 'text-[#B22222] hover:text-[#B22222]/80' : 'text-[#33333430] hover:text-[#33333430]/80'}`}
               >
                 <CircleArrowDown className='h-6 w-6 stroke-1' />

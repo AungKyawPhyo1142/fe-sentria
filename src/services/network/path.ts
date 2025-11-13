@@ -53,6 +53,9 @@ export const ApiConstantRoutes = {
         editReport(id: string) {
           return `${this.default}/update/${id}`
         },
+        votingReport(id: string) {
+          return `${this.default}/vote/${id}` // id here is postgresReportId
+        },
       }
     },
     get location() {
