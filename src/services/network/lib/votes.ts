@@ -43,9 +43,9 @@ export interface VotesResponse {
   data: VoteItems[]
   status: STATUS
 }
-
 export function useVote() {
   const queryClient = useQueryClient()
+
   return useMutation({
     mutationFn: async ({
       id,
@@ -53,23 +53,60 @@ export function useVote() {
     }: {
       id: string
       voteType: Votes['voteType']
-    }): Promise<VotesResponse> => {
-      try {
-        const res = await apiClient.post<VotesResponse>(
-          ApiConstantRoutes.paths.report.votingReport(id),
-          { voteType },
+    }) => {
+      const res = await apiClient.post<VotesResponse>(
+        ApiConstantRoutes.paths.report.votingReport(id),
+        { voteType },
+      )
+      return res.data
+    },
+
+    onMutate: async ({ id, voteType }) => {
+      await queryClient.cancelQueries({
+        queryKey: ['get-disaster-report-detail', id],
+      })
+      const previousDetail = queryClient.getQueryData([
+        'get-disaster-report-detail',
+        id,
+      ])
+
+      queryClient.setQueryData(
+        ['get-disaster-report-detail', id],
+        (old: any) => {
+          if (!old) return old
+          return {
+            ...old,
+            data: {
+              ...old.data,
+              report: {
+                ...old.data.report,
+                data: {
+                  ...old.data.report.data,
+                  userVote: voteType,
+                },
+              },
+            },
+          }
+        },
+      )
+
+      return { previousDetail }
+    },
+
+    onError: (_err, variables, context) => {
+      if (context?.previousDetail) {
+        queryClient.setQueryData(
+          ['get-disaster-report-detail', variables.id],
+          context.previousDetail,
         )
-        return res.data
-      } catch (error) {
-        throw error
       }
     },
-    // Refresh updated reports afeter voting is success
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['get-all-disaster-reports'] })
+
+    onSettled: (_data, _error, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ['get-disaster-report-detail'],
+        queryKey: ['get-disaster-report-detail', variables.id],
       })
+      queryClient.invalidateQueries({ queryKey: ['get-all-disaster-reports'] })
     },
   })
 }

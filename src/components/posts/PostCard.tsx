@@ -246,26 +246,13 @@ const PostCard = ({
   // handleVotes
   const postgresId = reportDetail?.postgresReportId
   const handleUpvote = async () => {
-    try {
-      const res = await vote.mutateAsync({
-        id: postgresId!,
-        voteType: 'UPVOTE',
-      })
-      console.log('Upvote success:', res)
-    } catch (err) {
-      console.error('Upvote failed:', err)
-    }
+    if (!postgresId) return
+    vote.mutate({ id: postgresId, voteType: 'UPVOTE' })
   }
+
   const handleDownvote = async () => {
-    try {
-      const res = await vote.mutateAsync({
-        id: postgresId!,
-        voteType: 'DOWNVOTE',
-      })
-      console.log('Downvote success:', res)
-    } catch (err) {
-      console.error('Downvote failed:', err)
-    }
+    if (!postgresId) return
+    vote.mutate({ id: postgresId, voteType: 'DOWNVOTE' })
   }
 
   return (
@@ -421,22 +408,15 @@ const PostCard = ({
               <span className='text-[#33333430]'>No votes yet</span>
             ) : (
               <>
-                {/* {
-                  // this case is when there have number in both
-                  <span>
-                    <span className='text-primary'>{formatNumber(upvotes)} upvotes</span> &{' '}
-                    <span className='text-[#B22222]'>{formatNumber(downvotes)} downvotes</span>
-                  </span>
-                } */}
-                {upvotes > downvotes ? (
+                <span className='flex flex-row items-center justify-center'>
                   <span className='text-primary'>
                     {formatNumber(upvotes)} upvotes
                   </span>
-                ) : (
+                  <Dot className='h-5 w-5 text-[#33333430]' />
                   <span className='text-[#B22222]'>
                     {formatNumber(downvotes)} downvotes
                   </span>
-                )}
+                </span>
               </>
             )}
 
@@ -456,7 +436,7 @@ const PostCard = ({
 
               <button
                 onClick={handleDownvote}
-                className={`flex items-center space-x-1 ${downvotes > upvotes ? 'text-[#B22222] hover:text-[#B22222]/80' : 'text-[#33333430] hover:text-[#33333430]/80'}`}
+                className={`flex items-center space-x-1 ${downvotes > 0 ? 'text-[#B22222] hover:text-[#B22222]/80' : 'text-[#33333430] hover:text-[#33333430]/80'}`}
               >
                 <CircleArrowDown className='h-6 w-6 stroke-1' />
               </button>
