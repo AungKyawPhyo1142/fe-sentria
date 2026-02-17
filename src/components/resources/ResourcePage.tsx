@@ -1,7 +1,7 @@
-import DropDown from '@/components/common/DropDown'
-import Input from '@/components/common/Input'
 import CreateResourceModal from '@/components/resources/CreateResourceModal'
-import ResourceCard from '@/components/resources/ResourceCard'
+import ResourceCard, {
+  ResourceCardSkeleton,
+} from '@/components/resources/ResourceCard'
 import {
   CreateResourceFormValuesWithFiles,
   Resource,
@@ -14,29 +14,28 @@ import {
   useUserProfile,
 } from '@/services/network/lib/user'
 import { selectAuth, useAuthStore } from '@/zustand/authStore'
-import {
-  BriefcaseMedical,
-  ChevronDown,
-  CirclePlus,
-  FlameKindling,
-  PhoneCall,
-} from 'lucide-react'
+import { BriefcaseMedical, FlameKindling, PhoneCall, Plus } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import LogoLoader from '../common/LogoLoader'
 import NoDataStatement from '../common/NoDataStatement'
 import ErrorFetch from '../common/ErrorFetch'
+
+const FILTER_OPTIONS = [
+  { label: 'Survival', id: 'SURVIVAL', icon: FlameKindling },
+  { label: 'Hotline', id: 'HOTLINE', icon: PhoneCall },
+  { label: 'First Aid', id: 'FIRST_AID', icon: BriefcaseMedical },
+] as const
 
 export default function ResourcePage() {
   const [resources, setResources] = useState<Resource[] | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [userProfiles, setUserProfiles] = useState<UserProfileMap>({})
-  const [locationSearch, setLocationSearch] = useState('')
 
-  const [sortOrder, setSortOrder] = useState<'latest' | 'oldest'>('latest')
+  const [selectedTypes, setSelectedTypes] = useState<Set<string>>(
+    new Set(['SURVIVAL', 'HOTLINE', 'FIRST_AID']),
+  )
 
   const { userId: currentUserId } = useAuthStore(selectAuth)
   const { data: userProfile } = useUserProfile(String(currentUserId))
-
   const isVerified = userProfile?.verified_profile
 
   const {
@@ -67,7 +66,6 @@ export default function ResourcePage() {
     }
   }, [resourcesData])
 
-  // Update our userProfiles state when batch query succeeds
   useEffect(() => {
     if (userProfilesFetched && batchUserProfiles) {
       setUserProfiles(batchUserProfiles)
@@ -79,13 +77,8 @@ export default function ResourcePage() {
   const handleSaveResource = (
     resourceData: CreateResourceFormValuesWithFiles,
   ) => {
-    console.log('Resource data to be saved:', resourceData)
-
-    // Use the mutation to create the resource
     createResourceMutation.mutate(resourceData, {
-      onSuccess: (response) => {
-        console.log('Resource created successfully:', response)
-
+      onSuccess: () => {
         setIsModalOpen(false)
       },
       onError: (error) => {
@@ -94,20 +87,12 @@ export default function ResourcePage() {
     })
   }
 
-  // Helper function to get user display info for a resource
   const getUserDisplayInfo = (userId: number) => {
     if (!userId) {
-      console.warn('Received undefined or null userId in getUserDisplayInfo')
-      return {
-        name: 'Unknown User',
-        avatar: null,
-        isVerified: false,
-      }
+      return { name: 'Unknown User', avatar: null, isVerified: false }
     }
-
     const profile = userProfiles[userId]
     const isCurrentUser = userId === Number(currentUserId)
-
     return {
       name: profile
         ? `${profile.firstName || ''} ${profile.lastName || ''}`.trim() ||
@@ -120,137 +105,95 @@ export default function ResourcePage() {
     }
   }
 
-  // Filter item list for resource types
-  const filterItemList = [
-    {
-      label: 'Survival',
-      id: 'SURVIVAL',
-      icon: <FlameKindling strokeWidth={1.5} />,
-    },
-    { label: 'Hotline', id: 'HOTLINE', icon: <PhoneCall strokeWidth={1.5} /> },
-    {
-      label: 'First Aid',
-      id: 'FIRST_AID',
-      icon: <BriefcaseMedical strokeWidth={1.5} />,
-    },
-  ]
-  const [selectedTypes, setSelectedTypes] = useState<Set<string>>(
-    new Set(['SURVIVAL', 'HOTLINE', 'FIRST_AID']),
-  )
+  const toggleFilter = (id: string) => {
+    setSelectedTypes((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) {
+        next.delete(id)
+      } else {
+        next.add(id)
+      }
+      return next
+    })
+  }
 
   const filteredResources = resources
     ?.filter((resource) => {
-      // Filter by resource type
       if (selectedTypes.size === 0) return true
-      const typeMatch = selectedTypes.has(resource.resourceType || '')
-
-      // Filter by location search if provided
-      if (locationSearch.trim()) {
-        const location =
-          resource.address?.city ||
-          (resource.location?.coordinates
-            ? resource.location.coordinates.join(', ')
-            : '')
-        const locationMatch = location
-          .toLowerCase()
-          .includes(locationSearch.toLowerCase())
-        return typeMatch && locationMatch
-      }
-
-      return typeMatch
+      return selectedTypes.has(resource.resourceType || '')
     })
     ?.sort((a, b) => {
       const timeA = new Date(a.resourceTimestamp).getTime()
       const timeB = new Date(b.resourceTimestamp).getTime()
-
-      return sortOrder === 'latest' ? timeB - timeA : timeA - timeB
+      return timeB - timeA
     })
 
-  const sortOptions = ['latest', 'oldest']
-
   if (error) {
-    ;<ErrorFetch
-      heading='Try Again!'
-      subHeading="There's error data fetching in resources.Please try again!"
-      reFetch={refetch}
-    />
+    return (
+      <ErrorFetch
+        heading='Try Again!'
+        subHeading="There's an error fetching resources. Please try again!"
+        reFetch={refetch}
+      />
+    )
   }
 
   return (
-    <div className='flex w-full items-start gap-8 p-6 px-0'>
-      {/* resources */}
-      <div className='flex w-full flex-col items-center justify-between'>
-        <div className='mt-2 flex w-full items-center justify-between gap-4 py-4'>
-          <div className='flex flex-shrink-0 items-center gap-4'>
-            <span className='text-base font-normal whitespace-nowrap text-gray-900'>
-              Sort by:
-            </span>
-            <div className='relative w-75 flex-shrink-0'>
-              <DropDown
-                className='h-10 w-full appearance-none text-sm'
-                itemList={sortOptions.map(
-                  (option) => option[0].toUpperCase() + option.slice(1),
-                )}
-                value={sortOrder[0].toUpperCase() + sortOrder.slice(1)}
-                onChange={(e) =>
-                  setSortOrder(
-                    e.target.value.toLowerCase() as 'latest' | 'oldest',
-                  )
-                }
-                placeholder='Sort by'
-              />
-              <ChevronDown className='pointer-events-none absolute top-1/2 right-4 h-6 w-6 -translate-y-1/2 text-gray-900' />
-            </div>
+    <div className='fade-in'>
+      <div className='mx-auto max-w-[640px]'>
+        {/* Toolbar: filter pills + create button */}
+        <div className='mb-5 flex items-center justify-between'>
+          {/* Filter pills */}
+          <div className='flex items-center gap-2'>
+            {FILTER_OPTIONS.map(({ label, id, icon: Icon }) => {
+              const isActive = selectedTypes.has(id)
+              return (
+                <button
+                  key={id}
+                  onClick={() => toggleFilter(id)}
+                  className={`flex h-8 cursor-pointer items-center gap-1.5 rounded-full px-3 text-[12px] font-medium transition-all duration-150 ${
+                    isActive
+                      ? 'bg-primary/8 text-primary ring-primary/15 ring-1'
+                      : 'bg-gray-50 text-gray-400 hover:bg-gray-100 hover:text-gray-500'
+                  }`}
+                >
+                  <Icon size={13} strokeWidth={isActive ? 2.5 : 2} />
+                  <span>{label}</span>
+                </button>
+              )
+            })}
           </div>
-          <div className='max-w-md flex-1'>
-            <Input
-              showSearchIcon
-              type='text'
-              className={`h-10 w-full border-r ps-11 text-base ${
-                locationSearch.trim()
-                  ? 'border-blue-300 ring-2 ring-blue-200'
-                  : ''
-              }`}
-              value={locationSearch}
-              onChange={(e) => setLocationSearch(e.target.value)}
-              placeholder='Location'
-            />
-            {locationSearch.trim() && (
-              <p className='mt-1 text-xs text-blue-600'>
-                Searching: "{locationSearch}"
-              </p>
-            )}
-          </div>
+
+          {/* Create button */}
           {isVerified ? (
             <button
               onClick={() => setIsModalOpen(true)}
-              className='bg-primary flex h-12.5 flex-shrink-0 items-center justify-center rounded-xl px-4 py-1 font-normal text-white hover:cursor-pointer'
+              className='bg-primary hover:bg-primary-dark flex h-8 cursor-pointer items-center gap-1.5 rounded-full px-3.5 text-[13px] font-medium text-white shadow-sm transition-all duration-150 hover:shadow-md active:scale-[0.98]'
             >
-              <CirclePlus size={26} strokeWidth={1} />
-              <span className='ml-3 text-base'>Create a resource</span>
+              <Plus size={15} strokeWidth={2.5} />
+              <span>Create Resource</span>
             </button>
           ) : (
-            <div className='flex h-10 items-center justify-center rounded-lg border border-red-300 bg-red-50/50 px-4 text-center text-xs text-red-700'>
-              Verify your profile to create resources
-            </div>
+            <span className='text-[12px] text-gray-400'>
+              Verify profile to create
+            </span>
           )}
         </div>
 
-        {/* Resource List */}
-
-        {/* Resource Cards */}
-        <div className='mt-6 flex w-full flex-col items-center gap-y-4'>
+        {/* Resource list */}
+        <div className='space-y-4'>
           {resourcesLoading && (
-            // <div className='py-10 text-center text-gray-500'>
-            //   Loading resources...
-            // </div>
-            <LogoLoader />
+            <>
+              {[...Array(3)].map((_, i) => (
+                <ResourceCardSkeleton key={i} />
+              ))}
+            </>
           )}
 
           {!resourcesLoading && resources?.length === 0 && (
             <NoDataStatement
-              heading='No Resource Post Found'
-              subHeading="There's nothing here yet! Start by adding your first resource post."
+              heading='No Resources Yet'
+              subHeading='Start by adding your first resource to help your community.'
             />
           )}
 
@@ -270,58 +213,18 @@ export default function ResourcePage() {
                 resource.resourceType ? [resource.resourceType] : []
               }
               images={resource.media?.map((media) => media.url) || []}
+              createdAt={new Date(resource.resourceTimestamp)}
               onReadMore={() => console.log('View full resource', resource)}
             />
           ))}
         </div>
 
-        {/* Resource Modal */}
-        <div className='mt-10 flex w-full flex-col items-center gap-y-4'>
-          <CreateResourceModal
-            isOpen={isModalOpen}
-            setIsOpen={setIsModalOpen}
-            onSave={handleSaveResource}
-          />
-        </div>
-      </div>
-
-      {/* Resource Filter */}
-      <div className='flex w-2/6 flex-col items-center justify-center gap-y-5 pt-6'>
-        <div className='flex w-full flex-col gap-y-4 rounded-lg border border-gray-200 p-4'>
-          <h2 className='text-lg font-normal text-gray-400'>Filter by</h2>
-          <hr className='mb-1 border-t border-gray-200' />
-          <div className='flex flex-col gap-y-5'>
-            {filterItemList.map((item) => (
-              <label
-                key={item.id}
-                htmlFor={item.id}
-                className='flex cursor-pointer flex-row items-center justify-between gap-x-2'
-              >
-                <div className='flex flex-row items-center gap-x-5'>
-                  {item.icon}
-                  <span className='text-base text-gray-700'>{item.label}</span>
-                </div>
-                <input
-                  type='checkbox'
-                  id={item.id}
-                  className='accent-primary h-4 w-4 cursor-pointer rounded border-gray-300'
-                  checked={selectedTypes.has(item.id)}
-                  onChange={() => {
-                    setSelectedTypes((prev) => {
-                      const newSet = new Set(prev)
-                      if (newSet.has(item.id)) {
-                        newSet.delete(item.id)
-                      } else {
-                        newSet.add(item.id)
-                      }
-                      return newSet
-                    })
-                  }}
-                />
-              </label>
-            ))}
-          </div>
-        </div>
+        {/* Create modal */}
+        <CreateResourceModal
+          isOpen={isModalOpen}
+          setIsOpen={setIsModalOpen}
+          onSave={handleSaveResource}
+        />
       </div>
     </div>
   )
