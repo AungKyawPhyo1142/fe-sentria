@@ -63,9 +63,9 @@ const PostImages = ({ images }: { images?: string[] }) => {
               downvotes={125}
               comments={12}
               createdAt={new Date(Date.now() - 2 * 60 * 60 * 1000)}
-              onUpvote={() => alert('Upvoted')}
-              onDownvote={() => alert('Downvoted')}
-              onComment={() => alert('Commented')}
+              onUpvote={() => {}}
+              onDownvote={() => {}}
+              onComment={() => {}}
               reporterId='user123'
               loginUser='user123'
             />

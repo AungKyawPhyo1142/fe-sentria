@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ApiConstantRoutes } from '@/services/network/path'
 import { apiClient } from '../apiClient'
-import { toast } from 'react-toastify'
+import { toast } from '@/lib/toast'
 import { selectAuth, useAuthStore } from '@/zustand/authStore'
 
 export interface FavToggle {
@@ -95,9 +95,9 @@ export const useToggleFavorite = () => {
     onSuccess: (res) => {
       const result = res?.data?.result
       if (result?.action === 'added') {
-        toast.success('Added to favorites ✅')
+        toast.success('Added to favorites')
       } else {
-        toast.info('Removed from favorites ❌')
+        toast.info('Removed from favorites')
       }
       queryClient.invalidateQueries({ queryKey: ['favorites'] })
     },

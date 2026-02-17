@@ -4,7 +4,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { backdropVariants, modalVariants } from './constants/constants'
 import Button from '../common/Button'
-import { toast } from 'react-toastify'
+import { toast } from '@/lib/toast'
 import { useDeleteReport } from '@/services/network/lib/disasterReport'
 import { X } from 'lucide-react'
 

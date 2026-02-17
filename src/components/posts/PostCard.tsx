@@ -18,7 +18,11 @@ import TrustScoreBadge from './TrustScoreBadge'
 import { useTranslation } from 'react-i18next'
 import { useState } from 'react'
 import ReportDetailModal from './ReportDetailModal'
-import { useGetDisasterReportDetail } from '@/services/network/lib/disasterReport'
+import {
+  useGetDisasterReportDetail,
+  useVoteOnReport,
+  type VoteType,
+} from '@/services/network/lib/disasterReport'
 import { selectAuth, useAuthStore } from '@/zustand/authStore'
 import DeleteReportModal from './DeleteReportModal'
 import EditReportModal from './EditReportModal'
@@ -83,6 +87,7 @@ type DisasterType = 'earthquake' | 'flood' | 'fire' | 'storm' | 'other'
 
 export interface PostCardProps {
   id: string
+  postgresId?: string
   user: User
   trustScore: number
   isDebunked: boolean
@@ -104,6 +109,7 @@ export interface PostCardProps {
 
 const PostCard = ({
   id,
+  postgresId,
   user,
   trustScore,
   isDebunked = false,
@@ -116,8 +122,6 @@ const PostCard = ({
   downvotes = 0,
   comments = 0,
   createdAt,
-  onUpvote,
-  onDownvote,
   onComment,
   reporterId,
   loginUser,
@@ -130,9 +134,15 @@ const PostCard = ({
   const [isDelete, setIsDelete] = useState(false)
   const [isEdit, setIsEdit] = useState(false)
 
+  const voteMutation = useVoteOnReport()
+
+  const handleVote = (voteType: VoteType) => {
+    voteMutation.mutate({ reportId: postgresId ?? id, voteType })
+  }
+
   const getDisasterIcon = (type: string) => {
     const iconClass = 'h-3 w-3'
-    switch (type) {
+    switch (type.toLowerCase()) {
       case 'earthquake':
         return <AlertTriangle className={iconClass} />
       case 'flood':
@@ -289,7 +299,7 @@ const PostCard = ({
             avatar: reportDetail?.generatedBy.profile_image ?? null,
             isVerified: true,
           }}
-          trustScore={reportDetail?.factCheck?.overallPercentage ?? 0}
+          trustScore={reportDetail?.factCheck?.overallPercentage ?? trustScore}
           isDebunked={reportDetail?.factCheck.goService.status === 'debunked'}
           location={`${reportDetail?.location.city}, ${reportDetail?.location.country}`}
           coords={{
@@ -304,9 +314,9 @@ const PostCard = ({
           downvotes={reportDetail?.factCheck.communityScore?.downvotes ?? 0}
           comments={12}
           createdAt={new Date(reportDetail?.createdAt ?? Date.now())}
-          onUpvote={() => alert('Upvoted')}
-          onDownvote={() => alert('Downvoted')}
-          onComment={() => alert('Commented')}
+          onUpvote={() => handleVote('UPVOTE')}
+          onDownvote={() => handleVote('DOWNVOTE')}
+          onComment={() => {}}
           reporterId={reportDetail?.generatedBy.id}
           loginUser={userId}
         />
@@ -317,8 +327,8 @@ const PostCard = ({
         {/* Votes + comments */}
         <div className='flex items-center gap-1'>
           <button
-            onClick={onUpvote}
-            className={`flex h-8 items-center gap-1 rounded-lg px-2 transition-all duration-150 ${
+            onClick={() => handleVote('UPVOTE')}
+            className={`flex h-8 cursor-pointer items-center gap-1 rounded-lg px-2 transition-all duration-150 ${
               upvotes > downvotes
                 ? 'bg-primary/8 text-primary'
                 : 'text-gray-400 hover:bg-gray-50 hover:text-gray-600'
@@ -331,8 +341,8 @@ const PostCard = ({
           </button>
 
           <button
-            onClick={onDownvote}
-            className={`flex h-8 items-center gap-1 rounded-lg px-2 transition-all duration-150 ${
+            onClick={() => handleVote('DOWNVOTE')}
+            className={`flex h-8 cursor-pointer items-center gap-1 rounded-lg px-2 transition-all duration-150 ${
               downvotes > upvotes
                 ? 'bg-danger-light text-danger'
                 : 'text-gray-400 hover:bg-gray-50 hover:text-gray-600'

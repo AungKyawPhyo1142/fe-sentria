@@ -45,6 +45,7 @@ const PostList: React.FC<ReportPostProps> = ({ postLists, isLoading }) => {
             reporterId={postList.generatedBy.id}
             key={index}
             id={postList._id}
+            postgresId={postList.postgresReportId}
             loginUser={userId}
             user={{
               name: `${postList.generatedBy.firstName} ${postList.generatedBy.lastName}`,

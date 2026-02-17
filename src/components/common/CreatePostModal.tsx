@@ -40,10 +40,26 @@ const DISASTER_TYPES = [
 ] as const
 
 const SEVERITY_LEVELS = [
-  { value: 'UNKNOWN', labelKey: 'severity.unknown', activeClass: 'border-gray-500 bg-gray-100 text-gray-700' },
-  { value: 'MINOR', labelKey: 'severity.minor', activeClass: 'border-info bg-info-light text-info' },
-  { value: 'MODERATE', labelKey: 'severity.moderate', activeClass: 'border-warning bg-warning-light text-warning' },
-  { value: 'SEVERE', labelKey: 'severity.severe', activeClass: 'border-danger bg-danger-light text-danger' },
+  {
+    value: 'UNKNOWN',
+    labelKey: 'severity.unknown',
+    activeClass: 'border-gray-500 bg-gray-100 text-gray-700',
+  },
+  {
+    value: 'MINOR',
+    labelKey: 'severity.minor',
+    activeClass: 'border-info bg-info-light text-info',
+  },
+  {
+    value: 'MODERATE',
+    labelKey: 'severity.moderate',
+    activeClass: 'border-warning bg-warning-light text-warning',
+  },
+  {
+    value: 'SEVERE',
+    labelKey: 'severity.severe',
+    activeClass: 'border-danger bg-danger-light text-danger',
+  },
 ] as const
 
 // Create Post Modal Interface
@@ -352,7 +368,8 @@ const CreatePostModal: React.FC<createPostProps> = ({
               {/* Disaster Type — icon card grid */}
               <div className='py-5'>
                 <label className='mb-1.5 block text-sm font-medium text-gray-700'>
-                  {t('createPost.disaster')} <span className='text-danger'>*</span>
+                  {t('createPost.disaster')}{' '}
+                  <span className='text-danger'>*</span>
                 </label>
                 <div className='grid grid-cols-4 gap-2.5'>
                   {DISASTER_TYPES.map(({ value, labelKey, Icon }) => {
@@ -384,7 +401,7 @@ const CreatePostModal: React.FC<createPostProps> = ({
                   })}
                 </div>
                 {formik.errors.parameters?.incidentType && (
-                  <p className='mt-1.5 text-sm text-danger'>
+                  <p className='text-danger mt-1.5 text-sm'>
                     {formik.errors.parameters.incidentType}
                   </p>
                 )}
@@ -393,7 +410,8 @@ const CreatePostModal: React.FC<createPostProps> = ({
               {/* Severity — color-coded pills */}
               <div className='pb-5'>
                 <label className='mb-1.5 block text-sm font-medium text-gray-700'>
-                  {t('createPost.severity')} <span className='text-danger'>*</span>
+                  {t('createPost.severity')}{' '}
+                  <span className='text-danger'>*</span>
                 </label>
                 <div className='flex gap-2'>
                   {SEVERITY_LEVELS.map(({ value, labelKey, activeClass }) => {
@@ -419,7 +437,7 @@ const CreatePostModal: React.FC<createPostProps> = ({
                   })}
                 </div>
                 {formik.errors.parameters?.severity && (
-                  <p className='mt-1.5 text-sm text-danger'>
+                  <p className='text-danger mt-1.5 text-sm'>
                     {formik.errors.parameters.severity}
                   </p>
                 )}
@@ -471,7 +489,7 @@ const CreatePostModal: React.FC<createPostProps> = ({
                   required
                 />
                 {formik.errors.parameters?.description && (
-                  <p className='mt-1.5 text-sm text-danger'>
+                  <p className='text-danger mt-1.5 text-sm'>
                     {formik.errors.parameters.description}
                   </p>
                 )}
@@ -499,7 +517,7 @@ const CreatePostModal: React.FC<createPostProps> = ({
 
                 {/* Detected location badge */}
                 {detectedCity && detectedCountry && !isGeocoding && (
-                  <div className='mb-3 inline-flex items-center gap-1.5 rounded-lg bg-primary-light px-3 py-1.5 text-sm text-primary'>
+                  <div className='bg-primary-light text-primary mb-3 inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm'>
                     <MapPin className='h-3.5 w-3.5' />
                     <span className='font-medium'>
                       {detectedCity}, {detectedCountry}
@@ -513,7 +531,7 @@ const CreatePostModal: React.FC<createPostProps> = ({
                   typeof formik.errors.parameters.location === 'object' &&
                   Object.values(formik.errors.parameters.location).map(
                     (error, index) => (
-                      <p key={index} className='mb-1 text-sm text-danger'>
+                      <p key={index} className='text-danger mb-1 text-sm'>
                         {error}
                       </p>
                     ),
@@ -521,7 +539,7 @@ const CreatePostModal: React.FC<createPostProps> = ({
                 {formik.touched.parameters?.location &&
                   formik.errors.parameters?.location &&
                   typeof formik.errors.parameters.location === 'string' && (
-                    <p className='mb-1 text-sm text-danger'>
+                    <p className='text-danger mb-1 text-sm'>
                       {formik.errors.parameters.location}
                     </p>
                   )}
@@ -553,7 +571,7 @@ const CreatePostModal: React.FC<createPostProps> = ({
                 >
                   <input {...getInputProps()} />
                   {isDragActive ? (
-                    <p className='text-sm font-medium text-primary'>
+                    <p className='text-primary text-sm font-medium'>
                       {t('createPost.dropFile')} ...
                     </p>
                   ) : (

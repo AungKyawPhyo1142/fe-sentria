@@ -4,8 +4,6 @@ import { CreateActivityRequest } from '@/services/network/lib/activity'
 import { ApiConstantRoutes } from '@/services/network/path'
 import clsx from 'clsx'
 import { AnimatePresence, motion } from 'motion/react'
-import L from 'leaflet'
-import 'leaflet/dist/leaflet.css'
 import {
   X,
   HandHeart,
@@ -19,12 +17,19 @@ import {
   Minus,
   Plus,
 } from 'lucide-react'
-import { useEffect, useState } from 'react'
-import { MapContainer, Marker, TileLayer, useMapEvents } from 'react-leaflet'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import {
+  Map as MapView,
+  MapMarker,
+  MarkerContent,
+  MapControls,
+  type MapRef,
+} from '@/components/ui/map'
+import type MapLibreGL from 'maplibre-gl'
 import Button from '../common/Button'
-import LocateButton from '../common/LocateButton'
 import RichTextEditor from '../RichTextEditor'
 import { backdropVariants, modalVariants } from './constants/constants'
+import { toast } from '@/lib/toast'
 
 type ActivityType = 'offer' | 'request'
 
@@ -44,58 +49,6 @@ const HELP_OPTIONS = [
   { id: 'shelter', label: 'Shelter', Icon: HouseIcon },
   { id: 'wifi', label: 'Wifi', Icon: Wifi },
 ] as const
-
-const DraggableMarker = ({
-  position,
-  onPositionChange,
-}: {
-  position: [number, number] | null
-  onPositionChange: (pos: [number, number]) => void
-}) => {
-  const map = useMapEvents({
-    click(e) {
-      const newPos: [number, number] = [e.latlng.lat, e.latlng.lng]
-      onPositionChange(newPos)
-    },
-    locationfound(e) {
-      const newPos: [number, number] = [e.latlng.lat, e.latlng.lng]
-      onPositionChange(newPos)
-      map.setView(e.latlng, map.getZoom())
-    },
-  })
-
-  useEffect(() => {
-    map.locate({
-      setView: true,
-      maxZoom: 16,
-      watch: false,
-      enableHighAccuracy: true,
-    })
-  }, [map])
-
-  return position ? (
-    <Marker
-      position={position}
-      draggable={true}
-      eventHandlers={{
-        dragend: (e) => {
-          const marker = e.target
-          const newPos = marker.getLatLng()
-          onPositionChange([newPos.lat, newPos.lng])
-        },
-      }}
-      icon={L.icon({
-        iconUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png',
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
-        shadowUrl:
-          'https://unpkg.com/leaflet@1.9.3/dist/images/marker-shadow.png',
-        shadowSize: [41, 41],
-      })}
-    />
-  ) : null
-}
 
 interface Props {
   isOpen: boolean
@@ -121,6 +74,8 @@ const ActivityPostModal: React.FC<Props> = ({
     coordinates: initialData?.coordinates || null,
   })
 
+  const mapRef = useRef<MapRef>(null)
+
   useEffect(() => {
     if (initialData) {
       setFormData({
@@ -134,6 +89,77 @@ const ActivityPostModal: React.FC<Props> = ({
       })
     }
   }, [initialData])
+
+  const getLocation = async (lat: number, lng: number) => {
+    setIsGeocoding(true)
+    try {
+      const response = await apiClient.post(
+        ApiConstantRoutes.paths.location.reverseGeocode,
+        { lat, lng },
+      )
+      const data = await response.data
+      return {
+        city: data.city || 'Location Selected',
+        country: data.country || '',
+      }
+    } catch (error) {
+      console.error('Error fetching location:', error)
+      return { city: 'Location Selected', country: '' }
+    } finally {
+      setIsGeocoding(false)
+    }
+  }
+
+  const handlePositionChange = useCallback(
+    (pos: [number, number]) => {
+      getLocation(pos[0], pos[1]).then((location) => {
+        setFormData((prev) => ({
+          ...prev,
+          coordinates: pos,
+          city: location.city,
+          country: location.country,
+        }))
+      })
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  )
+
+  // Auto-locate on mount
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const newPos: [number, number] = [
+            pos.coords.latitude,
+            pos.coords.longitude,
+          ]
+          handlePositionChange(newPos)
+          mapRef.current?.flyTo({
+            center: [pos.coords.longitude, pos.coords.latitude],
+            zoom: 13,
+            duration: 1500,
+          })
+        },
+        (err) => console.error('Error getting location:', err),
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 },
+      )
+    }
+  }, [handlePositionChange])
+
+  // Click-to-place
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map) return
+
+    const handleClick = (e: MapLibreGL.MapMouseEvent) => {
+      handlePositionChange([e.lngLat.lat, e.lngLat.lng])
+    }
+    map.on('click', handleClick)
+    return () => {
+      map.off('click', handleClick)
+    }
+  }, [mapRef.current, handlePositionChange])
 
   function resetModal() {
     setFormData(
@@ -200,31 +226,11 @@ const ActivityPostModal: React.FC<Props> = ({
 
   function handleSubmit() {
     if (!formData.description.trim() || formData.helpItems.length === 0) {
-      alert('Please fill in all required fields.')
+      toast.warning('Please fill in all required fields.')
       return
     }
     onSubmit?.(formData)
     closeModal()
-  }
-
-  const getLocation = async (lat: number, lng: number) => {
-    setIsGeocoding(true)
-    try {
-      const response = await apiClient.post(
-        ApiConstantRoutes.paths.location.reverseGeocode,
-        { lat, lng },
-      )
-      const data = await response.data
-      return {
-        city: data.city || 'Location Selected',
-        country: data.country || '',
-      }
-    } catch (error) {
-      console.error('Error fetching location:', error)
-      return { city: 'Location Selected', country: '' }
-    } finally {
-      setIsGeocoding(false)
-    }
   }
 
   const isRequest = formData.activityType === 'request'
@@ -336,8 +342,7 @@ const ActivityPostModal: React.FC<Props> = ({
               {/* Help Items — toggleable cards with icons */}
               <div className='pb-5'>
                 <label className='mb-2 block text-sm font-medium text-gray-700'>
-                  What kind of help?{' '}
-                  <span className='text-danger'>*</span>
+                  What kind of help? <span className='text-danger'>*</span>
                 </label>
                 <div className='grid grid-cols-4 gap-2.5'>
                   {HELP_OPTIONS.map(({ id, label, Icon }) => {
@@ -425,7 +430,7 @@ const ActivityPostModal: React.FC<Props> = ({
                   content={formData.description}
                   onChange={handleDescriptionChange}
                   minHeight='96px'
-                  className='block min-h-24 w-full rounded-lg border border-gray-200 px-3.5 py-2.5 text-sm text-gray-900 transition-colors duration-200 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20'
+                  className='focus-within:border-primary focus-within:ring-primary/20 block min-h-24 w-full rounded-lg border border-gray-200 px-3.5 py-2.5 text-sm text-gray-900 transition-colors duration-200 focus-within:ring-2'
                 />
               </div>
 
@@ -466,31 +471,44 @@ const ActivityPostModal: React.FC<Props> = ({
                 )}
 
                 <div className='h-56 w-full overflow-hidden rounded-xl border border-gray-200'>
-                  <MapContainer
-                    center={formData.coordinates || [0, 0]}
+                  <MapView
+                    ref={mapRef}
+                    center={
+                      formData.coordinates
+                        ? [formData.coordinates[1], formData.coordinates[0]]
+                        : [0, 0]
+                    }
                     zoom={13}
-                    scrollWheelZoom={true}
-                    style={{ height: '100%', width: '100%' }}
+                    scrollZoom={true}
                   >
-                    <LocateButton position={formData.coordinates} />
-                    <TileLayer
-                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                      url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-                    />
-                    <DraggableMarker
-                      position={formData.coordinates}
-                      onPositionChange={(pos) => {
-                        getLocation(pos[0], pos[1]).then((location) => {
-                          setFormData((prev) => ({
-                            ...prev,
-                            coordinates: pos,
-                            city: location.city,
-                            country: location.country,
-                          }))
-                        })
+                    <MapControls
+                      position='bottom-right'
+                      showZoom
+                      showLocate
+                      onLocate={(coords) => {
+                        handlePositionChange([
+                          coords.latitude,
+                          coords.longitude,
+                        ])
                       }}
                     />
-                  </MapContainer>
+                    {formData.coordinates && (
+                      <MapMarker
+                        longitude={formData.coordinates[1]}
+                        latitude={formData.coordinates[0]}
+                        draggable
+                        onDragEnd={(lngLat) =>
+                          handlePositionChange([lngLat.lat, lngLat.lng])
+                        }
+                      >
+                        <MarkerContent>
+                          <div className='flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-blue-500 shadow-lg'>
+                            <div className='h-2 w-2 rounded-full bg-white' />
+                          </div>
+                        </MarkerContent>
+                      </MapMarker>
+                    )}
+                  </MapView>
                 </div>
               </div>
 
@@ -500,9 +518,7 @@ const ActivityPostModal: React.FC<Props> = ({
                   Cancel
                 </Button>
                 <Button
-                  variant={
-                    !initialData && isRequest ? 'danger' : 'primary'
-                  }
+                  variant={!initialData && isRequest ? 'danger' : 'primary'}
                   onClick={handleSubmit}
                   type='button'
                 >

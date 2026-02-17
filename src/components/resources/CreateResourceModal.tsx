@@ -3,14 +3,18 @@ import ReactDOM from 'react-dom'
 import { X, CloudUpload, ChevronDown } from 'lucide-react'
 import clsx from 'clsx'
 import { AnimatePresence, motion } from 'motion/react'
-import L from 'leaflet'
-import 'leaflet/dist/leaflet.css'
-import { MapContainer, Marker, TileLayer, useMapEvents } from 'react-leaflet'
+import maplibregl from 'maplibre-gl'
+import {
+  Map as MapView,
+  MapMarker,
+  MarkerContent,
+  MapControls,
+  type MapRef,
+} from '@/components/ui/map'
 import { apiClient } from '@/services/network/apiClient'
 import { ApiConstantRoutes } from '@/services/network/path'
 import Button from '../common/Button'
 import Input from '../common/Input'
-import LocateButton from '../common/LocateButton'
 import RichTextEditor from '../RichTextEditor'
 import {
   ResourceType,
@@ -18,58 +22,7 @@ import {
   CreateResourceFormValuesWithFiles,
 } from '@/services/network/lib/resources'
 import { backdropVariants, modalVariants } from '../posts/constants/constants'
-
-const DraggableMarker = ({
-  position,
-  onPositionChange,
-}: {
-  position: [number, number] | null
-  onPositionChange: (pos: [number, number]) => void
-}) => {
-  const map = useMapEvents({
-    click(e) {
-      const newPos: [number, number] = [e.latlng.lat, e.latlng.lng]
-      onPositionChange(newPos)
-    },
-    locationfound(e) {
-      const newPos: [number, number] = [e.latlng.lat, e.latlng.lng]
-      onPositionChange(newPos)
-      map.setView(e.latlng, map.getZoom())
-    },
-  })
-
-  useEffect(() => {
-    map.locate({
-      setView: true,
-      maxZoom: 16,
-      watch: false,
-      enableHighAccuracy: true,
-    })
-  }, [map])
-
-  return position ? (
-    <Marker
-      position={position}
-      draggable={true}
-      eventHandlers={{
-        dragend: (e) => {
-          const marker = e.target
-          const newPos = marker.getLatLng()
-          onPositionChange([newPos.lat, newPos.lng])
-        },
-      }}
-      icon={L.icon({
-        iconUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png',
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
-        shadowUrl:
-          'https://unpkg.com/leaflet@1.9.3/dist/images/marker-shadow.png',
-        shadowSize: [41, 41],
-      })}
-    />
-  ) : null
-}
+import { toast } from '@/lib/toast'
 
 interface Props {
   isOpen: boolean
@@ -101,6 +54,8 @@ const CreateResourceModal: React.FC<Props> = ({
     },
   })
 
+  const mapRef = useRef<MapRef>(null)
+
   const handleDescriptionChange = (html: string) => {
     setFormData((prev) => ({
       ...prev,
@@ -127,6 +82,78 @@ const CreateResourceModal: React.FC<Props> = ({
       previewUrls.forEach((url) => URL.revokeObjectURL(url))
     }
   }, [previewUrls])
+
+  const getLocation = async (lat: number, lng: number) => {
+    try {
+      const response = await apiClient.post(
+        ApiConstantRoutes.paths.location.reverseGeocode,
+        {
+          lat: lat,
+          lng: lng,
+        },
+      )
+      const data = await response.data
+      return {
+        city: data.city || 'Location Selected',
+        country: data.country || 'Thailand',
+      }
+    } catch (error) {
+      console.error('Error fetching location:', error)
+      return {
+        city: 'Location Selected',
+        country: 'Thailand',
+      }
+    }
+  }
+
+  const handleMapPositionChange = (pos: [number, number]) => {
+    getLocation(pos[0], pos[1]).then((location) => {
+      setFormData((prev) => ({
+        ...prev,
+        parameters: {
+          ...prev.parameters,
+          location: {
+            ...prev.parameters.location,
+            latitude: pos[0],
+            longitude: pos[1],
+            city: location.city,
+            country: location.country,
+          },
+        },
+      }))
+    })
+  }
+
+  // Auto-locate on mount
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          handleMapPositionChange([pos.coords.latitude, pos.coords.longitude])
+          mapRef.current?.flyTo({
+            center: [pos.coords.longitude, pos.coords.latitude],
+            zoom: 13,
+            duration: 1500,
+          })
+        },
+        (err) => console.error('Error getting location:', err),
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 },
+      )
+    }
+  }, [])
+
+  // Click-to-place handler
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map) return
+    const handleClick = (e: maplibregl.MapMouseEvent) => {
+      handleMapPositionChange([e.lngLat.lat, e.lngLat.lng])
+    }
+    map.on('click', handleClick)
+    return () => {
+      map.off('click', handleClick)
+    }
+  }, [mapRef.current])
 
   function resetModal() {
     setFormData({
@@ -161,7 +188,7 @@ const CreateResourceModal: React.FC<Props> = ({
 
   function handleSave() {
     if (!formData.name.trim() || !formData.resourceType) {
-      alert('Please fill in required fields')
+      toast.warning('Please fill in required fields.')
       return
     }
 
@@ -180,29 +207,6 @@ const CreateResourceModal: React.FC<Props> = ({
 
     onSave?.(dataWithFiles)
     closeModal()
-  }
-
-  const getLocation = async (lat: number, lng: number) => {
-    try {
-      const response = await apiClient.post(
-        ApiConstantRoutes.paths.location.reverseGeocode,
-        {
-          lat: lat,
-          lng: lng,
-        },
-      )
-      const data = await response.data
-      return {
-        city: data.city || 'Location Selected',
-        country: data.country || 'Thailand',
-      }
-    } catch (error) {
-      console.error('Error fetching location:', error)
-      return {
-        city: 'Location Selected',
-        country: 'Thailand',
-      }
-    }
   }
 
   function handleImageSelect(files: FileList) {
@@ -376,64 +380,49 @@ const CreateResourceModal: React.FC<Props> = ({
                   Click or drag the pin to set your location
                 </p>
                 <div className='h-48 w-full overflow-hidden rounded-xl border border-gray-200'>
-                  <MapContainer
+                  <MapView
+                    ref={mapRef}
                     center={
                       formData.parameters.location.latitude !== 0 &&
                       formData.parameters.location.longitude !== 0
                         ? [
-                            formData.parameters.location.latitude,
                             formData.parameters.location.longitude,
+                            formData.parameters.location.latitude,
                           ]
                         : [0, 0]
                     }
                     zoom={13}
-                    scrollWheelZoom={true}
-                    style={{ height: '100%', width: '100%' }}
+                    scrollZoom={true}
                   >
-                    <LocateButton
-                      position={
-                        formData.parameters.location.latitude !== 0 &&
-                        formData.parameters.location.longitude !== 0
-                          ? [
-                              formData.parameters.location.latitude,
-                              formData.parameters.location.longitude,
-                            ]
-                          : null
-                      }
-                    />
-                    <TileLayer
-                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                      url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-                    />
-                    <DraggableMarker
-                      position={
-                        formData.parameters.location.latitude !== 0 &&
-                        formData.parameters.location.longitude !== 0
-                          ? [
-                              formData.parameters.location.latitude,
-                              formData.parameters.location.longitude,
-                            ]
-                          : null
-                      }
-                      onPositionChange={(pos) => {
-                        getLocation(pos[0], pos[1]).then((location) => {
-                          setFormData((prev) => ({
-                            ...prev,
-                            parameters: {
-                              ...prev.parameters,
-                              location: {
-                                ...prev.parameters.location,
-                                latitude: pos[0],
-                                longitude: pos[1],
-                                city: location.city,
-                                country: location.country,
-                              },
-                            },
-                          }))
-                        })
+                    <MapControls
+                      position='bottom-right'
+                      showZoom
+                      showLocate
+                      onLocate={(coords) => {
+                        handleMapPositionChange([
+                          coords.latitude,
+                          coords.longitude,
+                        ])
                       }}
                     />
-                  </MapContainer>
+                    {formData.parameters.location.latitude !== 0 &&
+                      formData.parameters.location.longitude !== 0 && (
+                        <MapMarker
+                          longitude={formData.parameters.location.longitude}
+                          latitude={formData.parameters.location.latitude}
+                          draggable
+                          onDragEnd={(lngLat) =>
+                            handleMapPositionChange([lngLat.lat, lngLat.lng])
+                          }
+                        >
+                          <MarkerContent>
+                            <div className='flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-blue-500 shadow-lg'>
+                              <div className='h-2 w-2 rounded-full bg-white' />
+                            </div>
+                          </MarkerContent>
+                        </MapMarker>
+                      )}
+                  </MapView>
                 </div>
                 {formData.parameters.location.latitude !== 0 &&
                   formData.parameters.location.longitude !== 0 && (

@@ -8,7 +8,7 @@ import { STATUS } from './auth'
 import { apiClient } from '../apiClient'
 import { ApiConstantRoutes } from '../path'
 import { CreateReportFormValues } from '@/components/common/CreatePostModal'
-import { toast } from 'react-toastify'
+import { toast } from '@/lib/toast'
 
 export interface PlaceInfo {
   city: string
@@ -242,6 +242,152 @@ export const useCreateDisasterReport = () => {
     },
     onError: () => {
       toast.error('Failed to create post!')
+    },
+  })
+}
+
+// vote on report
+export type VoteType = 'UPVOTE' | 'DOWNVOTE'
+
+interface VoteResponse {
+  data: {
+    id: string
+    upvoteCount: number
+    downvoteCount: number
+  }
+  status: STATUS
+}
+
+export const useVoteOnReport = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation<
+    VoteResponse,
+    Error,
+    { reportId: string; voteType: VoteType },
+    {
+      previousList: unknown
+      previousDetail: unknown
+    }
+  >({
+    mutationFn: async ({ reportId, voteType }) => {
+      const res = await apiClient.post(
+        ApiConstantRoutes.paths.report.voteOnReport(reportId),
+        { voteType },
+      )
+      return res.data
+    },
+
+    onMutate: async ({ reportId, voteType }) => {
+      // Cancel outgoing refetches
+      await queryClient.cancelQueries({
+        queryKey: ['get-all-disaster-reports'],
+      })
+      await queryClient.cancelQueries({
+        queryKey: ['get-disaster-report-detail', reportId],
+      })
+
+      // Snapshot previous values
+      const previousList = queryClient.getQueriesData({
+        queryKey: ['get-all-disaster-reports'],
+      })
+      const previousDetail = queryClient.getQueryData([
+        'get-disaster-report-detail',
+        reportId,
+      ])
+
+      // Helper to apply vote delta to a report
+      const applyVote = (report: ReportData): ReportData => {
+        const current = report.factCheck.communityScore ?? {
+          upvotes: 0,
+          downvotes: 0,
+        }
+        const delta =
+          voteType === 'UPVOTE'
+            ? { upvotes: current.upvotes + 1, downvotes: current.downvotes }
+            : { upvotes: current.upvotes, downvotes: current.downvotes + 1 }
+
+        return {
+          ...report,
+          factCheck: {
+            ...report.factCheck,
+            communityScore: delta,
+          },
+        }
+      }
+
+      // Optimistically update the infinite list cache
+      queryClient.setQueriesData<{
+        pages: ReportResponse[]
+        pageParams: unknown[]
+      }>({ queryKey: ['get-all-disaster-reports'] }, (old) => {
+        if (!old) return old
+        return {
+          ...old,
+          pages: old.pages.map((page) => ({
+            ...page,
+            data: {
+              ...page.data,
+              reports: {
+                ...page.data.reports,
+                data: page.data.reports.data.map((r) =>
+                  r._id === reportId ? applyVote(r) : r,
+                ),
+              },
+            },
+          })),
+        }
+      })
+
+      // Optimistically update the detail cache
+      queryClient.setQueryData<ReportDetailResponse>(
+        ['get-disaster-report-detail', reportId],
+        (old) => {
+          if (!old) return old
+          return {
+            ...old,
+            data: {
+              ...old.data,
+              report: {
+                ...old.data.report,
+                data: applyVote(old.data.report.data),
+              },
+            },
+          }
+        },
+      )
+
+      return { previousList, previousDetail }
+    },
+
+    onError: (_err, { reportId }, context) => {
+      // Rollback on error
+      if (context?.previousList) {
+        for (const [key, data] of context.previousList as [
+          unknown[],
+          unknown,
+        ][]) {
+          queryClient.setQueryData(key, data)
+        }
+      }
+      if (context?.previousDetail) {
+        queryClient.setQueryData(
+          ['get-disaster-report-detail', reportId],
+          context.previousDetail,
+        )
+      }
+      toast.error('Failed to vote. Please try again.')
+    },
+
+    onSettled: (_data, _err, { reportId }) => {
+      // Refetch to sync with server truth
+      queryClient.invalidateQueries({
+        queryKey: ['get-all-disaster-reports'],
+        exact: false,
+      })
+      queryClient.invalidateQueries({
+        queryKey: ['get-disaster-report-detail', reportId],
+      })
     },
   })
 }

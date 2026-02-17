@@ -3,11 +3,31 @@ import clsx from 'clsx'
 import { useMapFilter } from './MapFilterContext'
 
 const filterItemList = [
-  { label: 'Shelter', id: 'SHELTER', icon: <HouseIcon className='h-4 w-4' strokeWidth={1.5} /> },
-  { label: 'Water', id: 'WATER', icon: <Droplets className='h-4 w-4' strokeWidth={1.5} /> },
-  { label: 'Food', id: 'FOOD', icon: <Utensils className='h-4 w-4' strokeWidth={1.5} /> },
-  { label: 'Wifi', id: 'WIFI', icon: <Wifi className='h-4 w-4' strokeWidth={1.5} /> },
-  { label: 'Nearby', id: 'near', icon: <MapPinHouse className='h-4 w-4' strokeWidth={1.5} /> },
+  {
+    label: 'Shelter',
+    id: 'SHELTER',
+    icon: <HouseIcon className='h-4 w-4' strokeWidth={1.5} />,
+  },
+  {
+    label: 'Water',
+    id: 'WATER',
+    icon: <Droplets className='h-4 w-4' strokeWidth={1.5} />,
+  },
+  {
+    label: 'Food',
+    id: 'FOOD',
+    icon: <Utensils className='h-4 w-4' strokeWidth={1.5} />,
+  },
+  {
+    label: 'Wifi',
+    id: 'WIFI',
+    icon: <Wifi className='h-4 w-4' strokeWidth={1.5} />,
+  },
+  {
+    label: 'Nearby',
+    id: 'near',
+    icon: <MapPinHouse className='h-4 w-4' strokeWidth={1.5} />,
+  },
 ]
 
 const MapFilter = () => {

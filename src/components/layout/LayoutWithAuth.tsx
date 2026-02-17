@@ -2,7 +2,7 @@ import { Outlet, useLocation } from 'react-router'
 import Sidebar from '../common/Sidebar'
 import NavBar from '../common/NavBar'
 import NotificationManager from '../common/NotificationManager'
-import { ToastContainer } from 'react-toastify'
+import { Toaster } from 'sonner'
 
 const LayoutWithAuth = () => {
   const location = useLocation()
@@ -11,7 +11,15 @@ const LayoutWithAuth = () => {
 
   return (
     <div className='flex min-h-screen bg-gray-50'>
-      <ToastContainer />
+      <Toaster
+        position='bottom-right'
+        duration={3000}
+        richColors
+        closeButton
+        toastOptions={{
+          className: '!font-sans',
+        }}
+      />
       <Sidebar />
 
       <div className='ml-16 flex flex-1 flex-col'>

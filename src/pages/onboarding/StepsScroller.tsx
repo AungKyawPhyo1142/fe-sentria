@@ -103,7 +103,7 @@ const StepsScroller: React.FC = () => {
   }, [])
 
   const handleStart = () => {
-    alert('Navigate to dashboard')
+    // TODO: navigate('/Home')
     // navigate('/Home');
   }
 

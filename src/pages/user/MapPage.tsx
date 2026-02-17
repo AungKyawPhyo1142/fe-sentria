@@ -17,15 +17,15 @@ const MapPage = () => {
   return (
     <div className='fade-in flex h-[calc(100vh-88px)] flex-col'>
       {/* Tab bar */}
-      <div className='flex shrink-0 gap-1 rounded-lg bg-gray-100 p-1'>
+      <div className='flex shrink-0 items-center gap-6 border-b border-gray-200'>
         {tabs.map(({ id, label, Icon }) => (
           <button
             key={id}
             onClick={() => setActiveTab(id)}
-            className={`flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-md py-2 text-sm font-medium transition-all duration-150 ${
+            className={`flex cursor-pointer items-center gap-2 border-b-2 pb-2 text-sm font-medium transition-colors duration-150 ${
               activeTab === id
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-500 hover:text-gray-700'
+                ? 'border-primary text-gray-900'
+                : 'border-transparent text-gray-400 hover:text-gray-600'
             }`}
           >
             <Icon className='h-4 w-4' />

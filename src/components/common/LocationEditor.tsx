@@ -1,38 +1,19 @@
-import 'leaflet/dist/leaflet.css'
-import L from 'leaflet'
-import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet'
-import React, { useEffect, useState } from 'react'
-
-// Fix Leaflet default icon
-function deleteDefaultIconUrl() {
-  const proto = L.Icon.Default.prototype as unknown as {
-    _getIconUrl?: () => string
-  }
-  delete proto._getIconUrl
-}
-deleteDefaultIconUrl()
-
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl:
-    'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-})
-
-function SetViewLocation({ position }: { position: [number, number] }) {
-  const map = useMap()
-  useEffect(() => {
-    map.setView(position, 13)
-  }, [position, map])
-  return null
-}
+import React, { useEffect, useRef, useState } from 'react'
+import {
+  Map as MapView,
+  MapMarker,
+  MarkerContent,
+  MarkerTooltip,
+  MapControls,
+  type MapRef,
+} from '@/components/ui/map'
 
 export interface LocationCoordinates {
   lat: number
   lng: number
 }
 
-interface LocationEditorProps {
+export interface LocationEditorProps {
   postLocation: LocationCoordinates
   onPositionChange: (position: LocationCoordinates) => void
 }
@@ -42,43 +23,57 @@ const LocationEditor: React.FC<LocationEditorProps> = ({
   onPositionChange,
 }) => {
   const [position, setPosition] = useState<LocationCoordinates>(postLocation)
+  const mapRef = useRef<MapRef>(null)
 
   // Reset to original post location when postLocation changes (e.g., after reload)
   useEffect(() => {
     setPosition(postLocation)
   }, [postLocation])
 
-  const handleDragEnd = (e: L.DragEndEvent) => {
-    const marker = e.target as L.Marker
-    const newCoords = {
-      lat: marker.getLatLng().lat,
-      lng: marker.getLatLng().lng,
-    }
+  // Fly to the new position when it changes
+  useEffect(() => {
+    mapRef.current?.flyTo({
+      center: [position.lng, position.lat],
+      zoom: 13,
+      duration: 1500,
+    })
+  }, [position])
+
+  const handleDragEnd = (lngLat: { lng: number; lat: number }) => {
+    const newCoords = { lat: lngLat.lat, lng: lngLat.lng }
     setPosition(newCoords)
     onPositionChange(newCoords)
   }
 
   return (
     <div className='relative z-0'>
-      <MapContainer
-        center={[position.lat, position.lng]}
-        zoom={13}
-        style={{ height: '400px', width: '100%' }}
-        scrollWheelZoom={false}
-      >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/">OSM</a>'
-          url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-        />
-        <Marker
-          position={[position.lat, position.lng]}
-          draggable
-          eventHandlers={{ dragend: handleDragEnd }}
+      <div className='h-[400px] w-full overflow-hidden rounded-lg'>
+        <MapView
+          ref={mapRef}
+          center={[position.lng, position.lat]}
+          zoom={13}
+          scrollZoom={false}
         >
-          <Popup>Drag to change post location</Popup>
-        </Marker>
-        <SetViewLocation position={[position.lat, position.lng]} />
-      </MapContainer>
+          <MapControls
+            position='bottom-right'
+            showZoom={true}
+            showLocate={false}
+          />
+          <MapMarker
+            longitude={position.lng}
+            latitude={position.lat}
+            draggable
+            onDragEnd={(lngLat) => handleDragEnd(lngLat)}
+          >
+            <MarkerContent>
+              <div className='flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-blue-500 shadow-lg'>
+                <div className='h-2 w-2 rounded-full bg-white' />
+              </div>
+            </MarkerContent>
+            <MarkerTooltip>Drag to change post location</MarkerTooltip>
+          </MapMarker>
+        </MapView>
+      </div>
     </div>
   )
 }

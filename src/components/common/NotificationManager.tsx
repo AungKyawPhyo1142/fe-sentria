@@ -1,7 +1,8 @@
 import '@/index.css'
 import { useSocketStore } from '@/zustand/socketStore' // Adjust path
 import { useEffect, useRef } from 'react'
-import { toast } from 'react-toastify'
+import { toast } from '@/lib/toast'
+import { ExternalLink } from 'lucide-react'
 
 const NotificationManager = () => {
   // This component subscribes to the part of the Zustand store that holds the notification data.
@@ -41,41 +42,28 @@ const NotificationManager = () => {
         title,
       )
 
-      // Now, we call toast() from inside a React component's lifecycle.
-      toast(
-        // It's safer to create the element outside the function call
-        <div style={{ fontFamily: 'Poppins' }}>
-          <strong>
-            {title} (M{magnitude.toFixed(1)})
-          </strong>
-          <p style={{ margin: '8px 0 0 0' }}>{body}</p>
-          {url && (
+      // Show earthquake alert toast using sonner
+      toast.warning(`${title} (M${magnitude.toFixed(1)})`, {
+        description: url ? (
+          <div>
+            <p>{body}</p>
             <a
               href={url}
               target='_blank'
               rel='noopener noreferrer'
-              className='text-info underline'
+              className='text-info hover:text-info/80 mt-1.5 inline-flex items-center gap-1 text-[12px] font-medium transition-colors'
             >
-              View Details on USGS
+              View on USGS
+              <ExternalLink size={11} />
             </a>
-          )}
-        </div>,
-        {
-          position: 'top-right',
-          autoClose: 20000, // 20 seconds
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          theme: 'light',
-          style: {
-            fontFamily: 'Poppins',
-          },
-
-          // When the toast is closed (either by user or autoClose), clear the state
-          onClose: () => clearLatestEarthquakeAlert(),
-        },
-      )
+          </div>
+        ) : (
+          body
+        ),
+        duration: 20000,
+        onDismiss: () => clearLatestEarthquakeAlert(),
+        onAutoClose: () => clearLatestEarthquakeAlert(),
+      })
 
       // Update the previous alerts length
       previousAlertsLength.current = allEarthquakeAlerts.length

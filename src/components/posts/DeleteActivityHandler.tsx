@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useDeleteActivity } from '@/services/network/lib/activity'
 import DeleteConfirmationModal from './DeleteConfirmationModal'
+import { toast } from '@/lib/toast'
 
 interface DeleteActivityHandlerProps {
   children: (deleteHandler: (id: string) => void) => React.ReactNode
@@ -30,7 +31,7 @@ export const DeleteActivityHandler: React.FC<DeleteActivityHandlerProps> = ({
       },
       onError: (error) => {
         console.error('Error deleting activity:', error)
-        alert('Failed to delete activity. Please try again.')
+        toast.error('Failed to delete activity. Please try again.')
       },
       onSettled: () => {
         setDeletingId('')

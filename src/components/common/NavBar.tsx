@@ -11,14 +11,7 @@ import { Plus, Search } from 'lucide-react'
 import { useState } from 'react'
 import { useLocation } from 'react-router'
 import ActivityPostModal from '../posts/ActivityPostModal'
-
-const pageTitleMap: Record<string, string> = {
-  '/home': 'sidebar.Home',
-  '/map': 'sidebar.Map',
-  '/resources': 'sidebar.Resources',
-  '/fav': 'sidebar.Favorites',
-  '/profile': 'Profile',
-}
+import { toast } from '@/lib/toast'
 
 const Navbar = () => {
   const [isActivityModalOpen, setIsActivityModalOpen] = useState(false)
@@ -30,18 +23,14 @@ const Navbar = () => {
 
   const createActivityMutation = useCreateActivity()
 
-  const pageTitle: string = pageTitleMap[location.pathname]
-    ? t(pageTitleMap[location.pathname] as never)
-    : ''
-
   const handleActivitySubmit = (data: CreateActivityFormValues) => {
     if (!data.description?.trim()) {
-      alert('Please provide a description for your activity.')
+      toast.warning('Please provide a description for your activity.')
       return
     }
 
     if (!data.helpItems || data.helpItems.length === 0) {
-      alert('Please select at least one type of help.')
+      toast.warning('Please select at least one type of help.')
       return
     }
 
@@ -70,7 +59,7 @@ const Navbar = () => {
       },
       onError: (error) => {
         console.error('Error creating activity from NavBar:', error)
-        alert('Failed to create activity. Please try again.')
+        toast.error('Failed to create activity. Please try again.')
       },
     })
   }
@@ -92,35 +81,22 @@ const Navbar = () => {
 
   return (
     <div className='fixed top-0 right-0 left-16 z-50 flex h-14 items-center justify-between bg-white/80 px-6 backdrop-blur-md'>
-      {/* Left: Page title */}
-      <div className='flex items-center gap-3'>
-        <h1 className='text-[15px] font-semibold tracking-tight text-gray-800'>
-          {pageTitle}
-        </h1>
-      </div>
-
-      {/* Center: Search */}
-      <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'>
-        <div
-          className={`flex h-9 items-center gap-2 rounded-full border bg-gray-50 px-3.5 transition-all duration-200 ${
-            searchFocused
-              ? 'border-primary/30 ring-primary/10 w-80 bg-white shadow-sm ring-2'
-              : 'w-64 border-transparent hover:border-gray-200 hover:bg-white'
-          }`}
-        >
-          <Search
-            size={15}
-            className='shrink-0 text-gray-400'
-            strokeWidth={2}
-          />
-          <input
-            type='text'
-            placeholder='Search reports...'
-            className='w-full bg-transparent text-sm text-gray-700 outline-none placeholder:text-gray-400'
-            onFocus={() => setSearchFocused(true)}
-            onBlur={() => setSearchFocused(false)}
-          />
-        </div>
+      {/* Left: Search */}
+      <div
+        className={`flex h-9 items-center gap-2 rounded-full border bg-gray-50 px-3.5 transition-all duration-200 ${
+          searchFocused
+            ? 'border-primary/30 ring-primary/10 w-80 bg-white shadow-sm ring-2'
+            : 'w-64 border-transparent hover:border-gray-200 hover:bg-white'
+        }`}
+      >
+        <Search size={15} className='shrink-0 text-gray-400' strokeWidth={2} />
+        <input
+          type='text'
+          placeholder='Search reports...'
+          className='w-full bg-transparent text-sm text-gray-700 outline-none placeholder:text-gray-400'
+          onFocus={() => setSearchFocused(true)}
+          onBlur={() => setSearchFocused(false)}
+        />
       </div>
 
       {/* Right: Action button */}

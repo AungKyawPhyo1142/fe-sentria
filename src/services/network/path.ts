@@ -53,6 +53,9 @@ export const ApiConstantRoutes = {
         editReport(id: string) {
           return `${this.default}/update/${id}`
         },
+        voteOnReport(id: string) {
+          return `${this.default}/vote/${id}`
+        },
       }
     },
     get location() {

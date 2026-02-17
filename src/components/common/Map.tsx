@@ -1,14 +1,15 @@
 import { useGetActivities } from '@/services/network/lib/activity'
-import L from 'leaflet'
-import 'leaflet/dist/leaflet.css'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
-  MapContainer,
-  Marker,
-  Popup,
-  TileLayer,
-  useMapEvents,
-} from 'react-leaflet'
+  Map as MapView,
+  MapMarker,
+  MarkerContent,
+  MarkerPopup,
+  MarkerTooltip,
+  MapControls,
+  type MapRef,
+} from '@/components/ui/map'
+import { isWithinDistance } from '@/lib/geo'
 import FoodAvailable from '../../assets/foodBlue.svg'
 import FoodNeeded from '../../assets/foodRed.svg'
 import ShelterAvailable from '../../assets/houseBlue.svg'
@@ -18,60 +19,18 @@ import WaterNeeded from '../../assets/waterRed.svg'
 import WifiAvailable from '../../assets/wifiBlue.svg'
 import WifiNeeded from '../../assets/wifiRed.svg'
 import HelpInfo from './HelpInfo'
-import LocateButton from './LocateButton'
 import MapFilter from './MapFilter'
 import { useMapFilter } from './MapFilterContext'
 
-const LocationMarker = ({
-  setPosition,
-}: {
-  setPosition: (pos: [number, number]) => void
-}) => {
-  const map = useMapEvents({
-    locationfound(e) {
-      setPosition([e.latlng.lat, e.latlng.lng])
-      map.setView(e.latlng, map.getZoom())
-    },
-  })
-
-  useEffect(() => {
-    map.locate({
-      setView: true,
-      maxZoom: 16,
-      watch: false,
-      enableHighAccuracy: true,
-    })
-  }, [map])
-
-  return null
+const iconMap: Record<string, Record<string, string>> = {
+  SHELTER: { REQUEST: ShelterNeeded, OFFER: ShelterAvailable },
+  WATER: { REQUEST: WaterNeeded, OFFER: WaterAvailable },
+  FOOD: { REQUEST: FoodNeeded, OFFER: FoodAvailable },
+  WIFI: { REQUEST: WifiNeeded, OFFER: WifiAvailable },
 }
 
-function isWithinDistance(
-  pos1: [number, number],
-  pos2: [number, number],
-  maxMeters: number,
-) {
-  const latLng1 = L.latLng(pos1[0], pos1[1])
-  const latLng2 = L.latLng(pos2[0], pos2[1])
-  return latLng1.distanceTo(latLng2) <= maxMeters
-}
-
-function getMarkerIcon(helpType: string, activityType: string) {
-  const iconMap: Record<string, Record<string, string>> = {
-    SHELTER: { REQUEST: ShelterNeeded, OFFER: ShelterAvailable },
-    WATER: { REQUEST: WaterNeeded, OFFER: WaterAvailable },
-    FOOD: { REQUEST: FoodNeeded, OFFER: FoodAvailable },
-    WIFI: { REQUEST: WifiNeeded, OFFER: WifiAvailable },
-  }
-  const iconUrl =
-    iconMap[helpType]?.[activityType] || ShelterAvailable
-
-  return L.icon({
-    iconUrl,
-    iconSize: [40, 60],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-  })
+function getMarkerIcon(helpType: string, activityType: string): string {
+  return iconMap[helpType]?.[activityType] || ShelterAvailable
 }
 
 type DisasterHelp = {
@@ -83,6 +42,7 @@ type DisasterHelp = {
 
 const Map = () => {
   const [position, setPosition] = useState<[number, number] | null>(null)
+  const mapRef = useRef<MapRef>(null)
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -90,6 +50,11 @@ const Map = () => {
         (pos) => {
           const { latitude, longitude } = pos.coords
           setPosition([latitude, longitude])
+          mapRef.current?.flyTo({
+            center: [longitude, latitude],
+            zoom: 13,
+            duration: 1500,
+          })
         },
         (err) => {
           console.error('Error getting location:', err)
@@ -134,56 +99,70 @@ const Map = () => {
     <div className='flex h-full w-full gap-5'>
       {/* Map container */}
       <div className='relative flex-1 overflow-hidden rounded-xl border border-gray-200'>
-        <MapContainer
-          center={position || [0, 0]}
+        <MapView
+          ref={mapRef}
+          center={position ? [position[1], position[0]] : [0, 0]}
           zoom={13}
-          scrollWheelZoom={true}
-          style={{ height: '100%', width: '100%' }}
+          scrollZoom={true}
         >
-          <LocateButton position={position} />
+          <MapControls
+            position='top-right'
+            showZoom
+            showLocate
+            onLocate={(coords) => {
+              setPosition([coords.latitude, coords.longitude])
+            }}
+          />
 
           {/* Legend */}
-          <div className='absolute bottom-4 left-4 z-[400] flex items-center gap-2'>
+          <div className='absolute bottom-4 left-4 z-10 flex items-center gap-2'>
             <HelpInfo label='Available' type='available' />
             <HelpInfo label='Needed' type='needed' />
           </div>
 
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-          />
-
-          <LocationMarker setPosition={setPosition} />
+          {/* User location marker */}
           {position && (
-            <Marker
-              position={position}
-              icon={L.icon({
-                iconUrl:
-                  'https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png',
-                iconSize: [25, 41],
-                iconAnchor: [12, 41],
-                popupAnchor: [1, -34],
-                shadowUrl:
-                  'https://unpkg.com/leaflet@1.9.3/dist/images/marker-shadow.png',
-                shadowSize: [41, 41],
-              })}
-            >
-              <Popup>You are here!</Popup>
-            </Marker>
+            <MapMarker longitude={position[1]} latitude={position[0]}>
+              <MarkerContent>
+                <div className='relative flex h-6 w-6 items-center justify-center'>
+                  <div className='absolute h-6 w-6 animate-ping rounded-full bg-blue-400/30' />
+                  <div className='relative h-4 w-4 rounded-full border-2 border-white bg-blue-500 shadow-lg' />
+                </div>
+              </MarkerContent>
+              <MarkerTooltip>You are here!</MarkerTooltip>
+            </MapMarker>
           )}
 
+          {/* Activity markers */}
           {filteredHelpList.map((help) => (
-            <Marker
+            <MapMarker
               key={help.id}
-              position={help.position}
-              icon={getMarkerIcon(help.helpType, help.activityType)}
+              longitude={help.position[1]}
+              latitude={help.position[0]}
             >
-              <Popup>
-                {`${help.helpType} ${help.activityType === 'OFFER' ? 'available' : 'needed'}`}
-              </Popup>
-            </Marker>
+              <MarkerContent>
+                <img
+                  src={getMarkerIcon(help.helpType, help.activityType)}
+                  alt={`${help.helpType} ${help.activityType}`}
+                  className='h-10 w-7 drop-shadow-md'
+                />
+              </MarkerContent>
+              <MarkerPopup className='min-w-[140px]'>
+                <div className='flex items-center gap-2'>
+                  <img
+                    src={getMarkerIcon(help.helpType, help.activityType)}
+                    alt=''
+                    className='h-6 w-4'
+                  />
+                  <span className='text-sm font-medium text-gray-800'>
+                    {help.helpType}{' '}
+                    {help.activityType === 'OFFER' ? 'available' : 'needed'}
+                  </span>
+                </div>
+              </MarkerPopup>
+            </MapMarker>
           ))}
-        </MapContainer>
+        </MapView>
       </div>
 
       {/* Filter sidebar */}

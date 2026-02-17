@@ -11,6 +11,7 @@ import {
 } from '@/services/network/lib/activity'
 
 import { CreateActivityFormValues } from './ActivityPostModal'
+import { toast } from '@/lib/toast'
 
 interface ActivityModalWithAPIProps {
   isOpen: boolean
@@ -85,7 +86,7 @@ const ActivityModalWithAPI: React.FC<ActivityModalWithAPIProps> = ({
         },
         onError: (error) => {
           console.error('Error updating activity:', error)
-          alert('Failed to update activity. Please try again.')
+          toast.error('Failed to update activity. Please try again.')
         },
       })
     } else {
@@ -96,7 +97,7 @@ const ActivityModalWithAPI: React.FC<ActivityModalWithAPIProps> = ({
         },
         onError: (error) => {
           console.error('Error creating activity:', error)
-          alert('Failed to create activity. Please try again.')
+          toast.error('Failed to create activity. Please try again.')
         },
       })
     }

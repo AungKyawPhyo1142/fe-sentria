@@ -1,37 +1,16 @@
-import 'leaflet/dist/leaflet.css'
-import L from 'leaflet'
-import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet'
 import React, { useEffect, useRef, useState } from 'react'
+import {
+  Map as MapView,
+  MapMarker,
+  MarkerContent,
+  MarkerTooltip,
+  MapControls,
+  type MapRef,
+} from '@/components/ui/map'
 import {
   selectUserCurrentLocation,
   useUserCurrentLocationStore,
 } from '@/zustand/userCurrentLocationStore'
-import { Locate } from 'lucide-react'
-
-// Fix Leaflet default icon
-// delete (L.Icon.Default.prototype as any)._getIconUrl
-function deleteDefaultIconUrl() {
-  const proto = L.Icon.Default.prototype as unknown as {
-    _getIconUrl?: () => string
-  }
-  delete proto._getIconUrl
-}
-deleteDefaultIconUrl()
-
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl:
-    'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-})
-
-function SetViewLocation({ position }: { position: [number, number] }) {
-  const map = useMap()
-  useEffect(() => {
-    map.setView(position, 13)
-  }, [position, map])
-  return null
-}
 
 export interface LocationCoordinates {
   lat: number | null
@@ -42,9 +21,12 @@ interface MapSelectorProps {
   onPositionChange: (position: { lat: number; lng: number }) => void
 }
 
+const DEFAULT_LNG = 108.2022
+const DEFAULT_LAT = 16.0544
+
 const MapSelector: React.FC<MapSelectorProps> = ({ onPositionChange }) => {
   const [position, setPosition] = useState<LocationCoordinates | null>(null)
-  const markerRef = useRef<L.Marker | null>(null)
+  const mapRef = useRef<MapRef>(null)
 
   //! use the global state instead of calling the useEffect again
   // because user current location will & should be available almost everytime
@@ -55,71 +37,67 @@ const MapSelector: React.FC<MapSelectorProps> = ({ onPositionChange }) => {
     setPosition(userCurrentLocation)
   }, [userCurrentLocation])
 
-  const handleDragEnd = (e: L.DragEndEvent) => {
-    const marker = e.target as L.Marker
+  // Fly to new position when it changes (replaces SetViewLocation)
+  useEffect(() => {
+    if (position?.lat != null && position?.lng != null) {
+      mapRef.current?.flyTo({
+        center: [position.lng, position.lat],
+        zoom: 13,
+        duration: 1500,
+      })
+    }
+  }, [position?.lat, position?.lng])
+
+  const handleDragEnd = (lngLat: { lng: number; lat: number }) => {
     const newCoords = {
-      lat: marker.getLatLng().lat,
-      lng: marker.getLatLng().lng,
+      lat: lngLat.lat,
+      lng: lngLat.lng,
     }
     setPosition(newCoords)
     onPositionChange(newCoords)
   }
 
-  const handleLocateMe = () => {
-    if (userCurrentLocation.lat && userCurrentLocation.lng) {
-      const newCoords = {
-        lat: userCurrentLocation.lat,
-        lng: userCurrentLocation.lng,
-      }
-      setPosition(newCoords)
-
-      // Move the marker manually
-      if (markerRef.current) {
-        markerRef.current.setLatLng(newCoords)
-      }
-
-      onPositionChange(newCoords)
+  const handleLocate = (coords: { longitude: number; latitude: number }) => {
+    const newCoords = {
+      lat: coords.latitude,
+      lng: coords.longitude,
     }
+    setPosition(newCoords)
+    onPositionChange(newCoords)
   }
 
   if (!position) {
-    return <div>Loading map…</div>
+    return <div>Loading map...</div>
   }
+
+  const lng = position.lng ?? DEFAULT_LNG
+  const lat = position.lat ?? DEFAULT_LAT
 
   return (
     <div className='relative z-0'>
-      <div className='bg-primary absolute top-3 left-15 z-[1000] cursor-pointer rounded-sm p-2 text-white'>
-        <div onClick={handleLocateMe} className='relative'>
-          <Locate />
-          <div className='pointer-events-none absolute top-1/2 left-full ml-2 w-auto -translate-y-1/2 rounded bg-gray-900 px-2 py-1 text-xs whitespace-nowrap text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100'>
-            Locate me
-          </div>
-        </div>
+      <div className='h-[400px] w-full overflow-hidden rounded-lg'>
+        <MapView ref={mapRef} center={[lng, lat]} zoom={13} scrollZoom={false}>
+          <MapControls
+            position='bottom-right'
+            showZoom
+            showLocate
+            onLocate={handleLocate}
+          />
+          <MapMarker
+            longitude={lng}
+            latitude={lat}
+            draggable
+            onDragEnd={(lngLat) => handleDragEnd(lngLat)}
+          >
+            <MarkerContent>
+              <div className='flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-blue-500 shadow-lg'>
+                <div className='h-2 w-2 rounded-full bg-white' />
+              </div>
+            </MarkerContent>
+            <MarkerTooltip>Choose location for your post</MarkerTooltip>
+          </MapMarker>
+        </MapView>
       </div>
-      <MapContainer
-        center={[position.lat ?? 16.0544, position.lng ?? 108.2022]}
-        zoom={13}
-        style={{ height: '400px', width: '100%' }}
-        scrollWheelZoom={false}
-      >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/">OSM</a>'
-          url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-        />
-        <Marker
-          position={[position.lat ?? 16.0544, position.lng ?? 108.2022]}
-          draggable
-          eventHandlers={{ dragend: handleDragEnd }}
-          ref={(ref) => {
-            markerRef.current = ref
-          }}
-        >
-          <Popup>Choose Location that you want to post!</Popup>
-        </Marker>
-        <SetViewLocation
-          position={[position.lat ?? 16.0544, position.lng ?? 108.2022]}
-        />
-      </MapContainer>
     </div>
   )
 }

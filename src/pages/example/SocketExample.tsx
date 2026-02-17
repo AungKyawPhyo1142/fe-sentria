@@ -6,7 +6,7 @@ import {
 import { useSocketStore } from '@/zustand/socketStore'
 import { useQueryClient } from '@tanstack/react-query'
 import { useCallback, useEffect } from 'react'
-import { toast } from 'react-toastify'
+import { toast } from '@/lib/toast'
 
 const SocketExample = () => {
   // ** setup queryClient and connect to socket
@@ -83,7 +83,7 @@ const SocketExample = () => {
         {isSocketConnected ? '✅ Connected' : '❌ Disconnected'}
       </h1>
       <div>
-        <Button variant='primary' onClick={() => toast('Hi')}>
+        <Button variant='primary' onClick={() => toast.info('Hi')}>
           Toast
         </Button>
         <div>

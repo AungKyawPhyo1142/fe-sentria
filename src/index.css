@@ -223,11 +223,6 @@
   stroke: var(--color-white);
 }
 
-/* ── Toast Overrides ── */
-.Toastify__progress-bar {
-  background: var(--color-primary) !important;
-}
-
 /* ── Tabular numbers for data ── */
 .tabular-nums {
   font-variant-numeric: tabular-nums;

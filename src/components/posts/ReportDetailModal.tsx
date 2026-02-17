@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion'
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import clsx from 'clsx'
-import { X } from 'lucide-react'
+import { X, ChevronLeft, ChevronRight } from 'lucide-react'
 import ReactDOM from 'react-dom'
 import { User } from './PostCard'
 import { useTranslation } from 'react-i18next'
@@ -13,21 +13,28 @@ import {
   Flame,
   Waves,
   Tornado,
-  Dot,
   Ellipsis,
   EditIcon,
   Trash,
+  MapPin,
+  ChevronDown,
+  ShieldAlert,
 } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import TrustScoreBadge from './TrustScoreBadge'
 import VerifyBadge from '@/assets/VerifiedBadge.svg?react'
-import PostImageSlider from './PostImagesSlider'
 import { formatNumber } from '@/helpers/helpers'
 import CommentCard from './CommentCard'
 import CommentInputBox from './CommentInputBox'
 import { fakeComments } from './constants/fakeComments'
 import { backdropVariants, modalVariants } from './constants/constants'
-import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet'
+import {
+  Map as MapView,
+  MapMarker,
+  MarkerContent,
+  MarkerTooltip,
+  MapControls,
+} from '@/components/ui/map'
 
 interface reportDetailProps {
   className?: string
@@ -54,6 +61,17 @@ interface reportDetailProps {
   loginUser?: string
 }
 
+const DISASTER_CONFIG: Record<
+  string,
+  { icon: React.ElementType; label: string }
+> = {
+  earthquake: { icon: AlertTriangle, label: 'Earthquake' },
+  flood: { icon: Waves, label: 'Flood' },
+  fire: { icon: Flame, label: 'Fire' },
+  storm: { icon: Tornado, label: 'Storm' },
+  other: { icon: AlertTriangle, label: 'Other' },
+}
+
 const ReportDetailModal: React.FC<reportDetailProps> = ({
   className,
   isOpen,
@@ -76,349 +94,414 @@ const ReportDetailModal: React.FC<reportDetailProps> = ({
   reporterId,
   loginUser,
   coords,
-  // _id,
 }) => {
   const { t } = useTranslation()
-  const [activeTab, setActiveTab] = useState<'description' | 'location'>(
-    'description',
-  )
-
-  const getTrustWarning = (score: number, isDebunked: boolean) => {
-    if (isDebunked) {
-      return {
-        show: true,
-        message: t('common.contentDebunked'),
-        bgColor: 'bg-danger',
-      }
-    }
-    if (score <= 20) {
-      return {
-        show: true,
-        message: t('common.lowTrust'),
-        bgColor: 'bg-danger',
-      }
-    }
-    return { show: false }
-  }
-
-  const getDisasterIcon = (type: string) => {
-    const iconClass = 'w-4 h-4 text-white'
-    switch (type) {
-      case 'earthquake':
-        return <AlertTriangle className={iconClass} />
-      case 'flood':
-        return <Waves className={iconClass}></Waves>
-      case 'fire':
-        return <Flame className={iconClass} />
-      case 'storm':
-        return <Tornado className={iconClass} />
-
-      default:
-        return <AlertTriangle className={iconClass} />
-    }
-  }
+  const [showMenu, setShowMenu] = useState(false)
+  const [showMap, setShowMap] = useState(false)
+  const [heroIndex, setHeroIndex] = useState(0)
+  const scrollAreaRef = useRef<HTMLDivElement>(null)
 
   const isOwner = String(reporterId) === String(loginUser)
-  const [showMenu, setShowMenu] = useState(false)
+  const hasImages = images && images.length > 0
+  const normalizedType = disasterType.toLowerCase()
+  const disaster = DISASTER_CONFIG[normalizedType] ?? DISASTER_CONFIG.other
+  const DisasterIcon = disaster.icon
 
-  const trustWarning = getTrustWarning(trustScore, isDebunked)
+  const trustWarningVisible = isDebunked || trustScore <= 20
+  const trustWarningMessage = isDebunked
+    ? t('common.contentDebunked')
+    : t('common.lowTrust')
 
   return ReactDOM.createPortal(
     <AnimatePresence>
       {isOpen && (
         <motion.div
           className={clsx(
-            'fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-gray-900/30',
+            'fixed inset-0 z-[9999] flex items-center justify-center bg-gray-900/40 backdrop-blur-[2px]',
             className,
           )}
           initial='hidden'
           animate='visible'
           exit='exit'
           variants={backdropVariants}
+          onClick={() => setIsOpen(false)}
         >
-          {/* Trust Score Warning & Close - Outside border */}
-          <div className='m-0 flex w-189 items-center justify-between space-x-120 p-0 align-middle'>
-            <div>
-              {trustWarning.show && (
-                <div
-                  className={`mb-0 w-fit rounded-t-xl ${trustWarning.bgColor} px-4 py-1`}
-                >
-                  <span className='text-xs font-medium text-white'>
-                    {trustWarning.message}
-                  </span>
-                </div>
-              )}
-            </div>
-          </div>
           <motion.div
-            className='custom-scroll relative flex max-h-[90vh] w-[800px] flex-col rounded-lg bg-white shadow-xl'
+            className='shadow-elevated relative flex max-h-[92vh] w-[680px] flex-col overflow-hidden rounded-2xl bg-white'
             variants={modalVariants}
             initial='hidden'
             animate='visible'
             exit='exit'
+            onClick={(e) => e.stopPropagation()}
           >
-            <div className='relative px-10 pt-10'>
-              {/* Close */}
-              <button
-                onClick={() => setIsOpen(false)}
-                className='absolute top-3 right-3 z-50 cursor-pointer text-white hover:text-white/80'
-              >
-                <X
-                  className='h-7 w-7 rounded-full bg-gray-900/80 p-1'
-                  strokeWidth={2}
+            {/* ── Hero Image Area ── */}
+            {hasImages && (
+              <div className='relative h-72 w-full shrink-0 overflow-hidden bg-gray-100'>
+                <motion.img
+                  key={heroIndex}
+                  src={images[heroIndex]}
+                  alt={`Report image ${heroIndex + 1}`}
+                  className='h-full w-full object-cover'
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.25 }}
                 />
-              </button>
-              {/* header  with justify between*/}
-              <div className='sticky top-0 z-[9990] flex items-center justify-between bg-white pb-2 align-middle'>
-                {/* user verified */}
-                <div className='flex space-x-2'>
-                  <div className='relative'>
+
+                {/* Gradient overlay for readability */}
+                <div className='pointer-events-none absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20' />
+
+                {/* Image counter */}
+                {images.length > 1 && (
+                  <div className='absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-1.5'>
+                    {images.map((_, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setHeroIndex(i)}
+                        className={clsx(
+                          'h-1.5 rounded-full transition-all duration-200',
+                          i === heroIndex
+                            ? 'w-5 bg-white'
+                            : 'w-1.5 bg-white/50 hover:bg-white/70',
+                        )}
+                      />
+                    ))}
+                  </div>
+                )}
+
+                {/* Prev / Next */}
+                {images.length > 1 && (
+                  <>
+                    <button
+                      onClick={() =>
+                        setHeroIndex(
+                          (prev) => (prev - 1 + images.length) % images.length,
+                        )
+                      }
+                      className='absolute top-1/2 left-3 flex h-8 w-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-black/30 text-white transition-colors hover:bg-black/50'
+                    >
+                      <ChevronLeft className='h-4 w-4' />
+                    </button>
+                    <button
+                      onClick={() =>
+                        setHeroIndex((prev) => (prev + 1) % images.length)
+                      }
+                      className='absolute top-1/2 right-3 flex h-8 w-8 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-black/30 text-white transition-colors hover:bg-black/50'
+                    >
+                      <ChevronRight className='h-4 w-4' />
+                    </button>
+                  </>
+                )}
+
+                {/* Disaster badge — overlaid on image */}
+                <div className='bg-danger/90 absolute top-3 left-3 flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-white backdrop-blur-sm'>
+                  <DisasterIcon className='h-3.5 w-3.5' />
+                  <span className='text-xs font-semibold capitalize'>
+                    {t(`disasters.${normalizedType}` as never)}
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* Close button */}
+            <button
+              onClick={() => setIsOpen(false)}
+              className={clsx(
+                'absolute top-3 right-3 z-50 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full transition-colors',
+                hasImages
+                  ? 'bg-black/30 text-white hover:bg-black/50'
+                  : 'text-gray-400 hover:bg-gray-100 hover:text-gray-600',
+              )}
+            >
+              <X className='h-4 w-4' strokeWidth={2.5} />
+            </button>
+
+            {/* ── Scrollable Content ── */}
+            <div
+              ref={scrollAreaRef}
+              className='custom-scroll flex-1 overflow-y-auto'
+            >
+              <div className='px-7 pt-5 pb-3'>
+                {/* Trust warning banner */}
+                {trustWarningVisible && (
+                  <div className='bg-danger-light mb-4 flex items-center gap-2 rounded-lg px-3.5 py-2.5'>
+                    <ShieldAlert className='text-danger h-4 w-4 shrink-0' />
+                    <span className='text-danger text-xs font-medium'>
+                      {trustWarningMessage}
+                    </span>
+                  </div>
+                )}
+
+                {/* Disaster badge when no images */}
+                {!hasImages && (
+                  <div className='bg-danger/10 mb-4 inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1'>
+                    <DisasterIcon className='text-danger h-3.5 w-3.5' />
+                    <span className='text-danger text-xs font-semibold capitalize'>
+                      {t(`disasters.${normalizedType}` as never)}
+                    </span>
+                  </div>
+                )}
+
+                {/* Title */}
+                <h2 className='text-xl leading-snug font-semibold tracking-tight text-gray-900'>
+                  {title}
+                </h2>
+
+                {/* User info row */}
+                <div className='mt-3 flex items-center justify-between'>
+                  <div className='flex items-center gap-2.5'>
                     {user.avatar ? (
                       <img
                         src={user.avatar}
                         alt={user.name}
-                        className='h-10 w-10 rounded-full object-cover'
+                        className='h-8 w-8 rounded-full object-cover'
                       />
                     ) : (
-                      <div className='flex h-10 w-10 items-center justify-center rounded-full bg-blue-100'>
-                        <span className='text-lg font-semibold text-blue-600'>
+                      <div className='bg-primary/10 flex h-8 w-8 items-center justify-center rounded-full'>
+                        <span className='text-primary text-sm font-semibold'>
                           {user.name.charAt(0).toUpperCase()}
                         </span>
                       </div>
                     )}
-                  </div>
-
-                  {/* user naem and verify and create at */}
-                  <div className='flex flex-col'>
-                    {/* username and Badge */}
-                    <div className='flex items-center space-x-2'>
-                      <h3 className='text-base font-medium text-gray-900'>
-                        {user.name}
-                      </h3>
-                      {user.isVerified && (
-                        <VerifyBadge className='text-info h-4 w-4' />
-                      )}
-                    </div>
-                    {/* Created At */}
-                    <div className='text-xs font-normal text-gray-500'>
-                      {createdAt
-                        ? `${formatDistanceToNow(createdAt, { addSuffix: true })}`
-                        : ''}
-                    </div>
-                  </div>
-                </div>
-
-                {/* trust Score */}
-                <div className='flex space-x-2'>
-                  <div className=''>
-                    <TrustScoreBadge score={trustScore} />
-                  </div>
-                  <div
-                    className={`flex h-7 items-center space-x-1 rounded-sm px-2 py-1 text-xs font-medium text-white ${isDebunked ? 'bg-gray-200' : 'bg-danger'}`}
-                  >
-                    {getDisasterIcon(disasterType)}
-                    <span className='capitalize'>
-                      {t(`disasters.${disasterType}`)}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* post detail */}
-              <div className='sticky top-0 z-[999] bg-white'>
-                {/* disaster type and isDebunked */}
-                <div className='my-2 flex flex-row space-y-2'>
-                  {isDebunked && (
-                    <div className='bg-danger flex h-7 items-center space-x-1 rounded-sm px-2 py-1 text-xs font-medium text-white'>
-                      <span>{t('common.debunked')}</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Location */}
-                {/* <div className='mt-2 flex items-center text-sm text-black'>
-                  <MapPinned className='mr-1 h-6 w-6 stroke-1' />
-                  <span className='ml-2 text-[16px] font-semibold'>
-                    {location}
-                  </span>
-                </div> */}
-                <div className='flex items-center gap-x-3 border-b border-gray-200'>
-                  <button
-                    onClick={() => setActiveTab('description')}
-                    className={clsx(
-                      'h-[30px] w-[100px] cursor-pointer rounded-tl-lg rounded-tr-lg bg-gray-300 text-center text-sm text-white transition-colors duration-100 ease-in-out hover:opacity-80',
-                      activeTab === 'description' && 'bg-info',
-                    )}
-                  >
-                    Description
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('location')}
-                    className={clsx(
-                      'h-[30px] w-[100px] cursor-pointer rounded-tl-lg rounded-tr-lg bg-gray-300 text-center text-sm text-white transition-colors duration-100 ease-in-out hover:opacity-80',
-                      activeTab === 'location' && 'bg-info',
-                    )}
-                  >
-                    Location
-                  </button>
-                </div>
-
-                <AnimatePresence mode='wait'>
-                  {activeTab === 'description' && (
-                    <motion.div
-                      key='description'
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: 20 }}
-                      transition={{ duration: 0.2 }}
-                      className='p-6'
-                    >
-                      {/* post title */}
-                      <div className='my-3 font-semibold'>
-                        {title} - {location}
+                    <div className='flex flex-col'>
+                      <div className='flex items-center gap-1.5'>
+                        <span className='text-sm font-medium text-gray-900'>
+                          {user.name}
+                        </span>
+                        {user.isVerified && (
+                          <VerifyBadge className='text-info h-3.5 w-3.5' />
+                        )}
                       </div>
+                      <span className='text-xs text-gray-400'>
+                        {createdAt
+                          ? formatDistanceToNow(createdAt, { addSuffix: true })
+                          : ''}
+                      </span>
+                    </div>
+                  </div>
 
-                      {/* Content */}
-                      <div className=''>
-                        <p className='mb-6 text-xs leading-relaxed font-normal text-gray-700'>
-                          {content}
+                  <div className='flex items-center gap-2'>
+                    <TrustScoreBadge score={trustScore} />
+                    {isDebunked && (
+                      <span className='bg-danger rounded-md px-2 py-0.5 text-[10px] font-bold tracking-wide text-white uppercase'>
+                        {t('common.debunked')}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Divider */}
+                <div className='my-4 border-t border-gray-100' />
+
+                {/* Content */}
+                <p className='text-sm leading-relaxed text-gray-600'>
+                  {content}
+                </p>
+
+                {/* Image thumbnails (for multi-image navigation) */}
+                {hasImages && images.length > 1 && (
+                  <div className='mt-4 flex gap-2'>
+                    {images.map((img, i) => (
+                      <button
+                        key={i}
+                        onClick={() => {
+                          setHeroIndex(i)
+                          scrollAreaRef.current?.scrollTo({
+                            top: 0,
+                            behavior: 'smooth',
+                          })
+                        }}
+                        className={clsx(
+                          'h-14 w-14 shrink-0 overflow-hidden rounded-lg border-2 transition-all',
+                          i === heroIndex
+                            ? 'border-primary ring-primary/20 ring-2'
+                            : 'border-transparent opacity-60 hover:opacity-100',
+                        )}
+                      >
+                        <img
+                          src={img}
+                          alt={`Thumbnail ${i + 1}`}
+                          className='h-full w-full object-cover'
+                        />
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* ── Location Map Card ── */}
+                <div className='mt-5'>
+                  <button
+                    onClick={() => setShowMap(!showMap)}
+                    className='flex w-full cursor-pointer items-center justify-between rounded-xl border border-gray-200 px-4 py-3 transition-colors hover:bg-gray-50'
+                  >
+                    <div className='flex items-center gap-2.5'>
+                      <div className='bg-primary/10 flex h-8 w-8 items-center justify-center rounded-lg'>
+                        <MapPin className='text-primary h-4 w-4' />
+                      </div>
+                      <div className='text-left'>
+                        <p className='text-sm font-medium text-gray-900'>
+                          {location}
+                        </p>
+                        <p className='text-xs text-gray-400'>
+                          {coords.lat.toFixed(4)}, {coords.lng.toFixed(4)}
                         </p>
                       </div>
-
-                      {/* Images */}
-                      <PostImageSlider images={images} />
-                    </motion.div>
-                  )}
-                  {activeTab === 'location' && (
-                    <motion.div
-                      key='location'
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: 20 }}
-                      transition={{ duration: 0.2 }}
-                      className='py-6'
-                    >
-                      <MapContainer
-                        center={[coords.lat ?? 16.0544, coords.lng ?? 108.2022]}
-                        zoom={13}
-                        style={{ height: '400px', width: '100%' }}
-                        scrollWheelZoom={false}
-                      >
-                        <TileLayer
-                          attribution='&copy; <a href="https://www.openstreetmap.org/">OSM</a>'
-                          url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-                        />
-                        <Marker
-                          position={[
-                            coords.lat ?? 16.0544,
-                            coords.lng ?? 108.2022,
-                          ]}
-                          draggable
-                        >
-                          <Popup>Happens here!</Popup>
-                        </Marker>
-                        {/* <Set
-                            position={[position.lat ?? 16.0544, position.lng ?? 108.2022]}
-                          /> */}
-                      </MapContainer>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
-                {/* footer with up/down/cmt and menu */}
-                <div className='sticky bottom-0 bg-white pt-3'>
-                  <div className='flex items-center text-[11px] font-semibold text-gray-300'>
-                    {upvotes === 0 || downvotes === 0 ? (
-                      <span className='text-gray-300'>No votes yet</span>
-                    ) : (
-                      <>
-                        {upvotes > downvotes ? (
-                          <span className='text-primary'>
-                            {formatNumber(upvotes)} upvotes
-                          </span>
-                        ) : (
-                          <span className='text-danger'>
-                            {formatNumber(downvotes)} downvotes
-                          </span>
-                        )}
-                      </>
-                    )}
-
-                    <Dot className='h-5 w-5 text-gray-300' />
-                    <span>{formatNumber(comments)} comments</span>
-                  </div>
-                  {/* up/dowwn/cmt -> menu */}
-                  <div className='my-2 flex items-center justify-between border-t border-b border-gray-200 py-2 text-center align-middle'>
-                    {/* up/down/cmt */}
-                    <div className='flex w-full items-center space-x-4'>
-                      <button
-                        onClick={onUpvote}
-                        className={`flex min-h-0 items-center space-x-1 border-none bg-transparent p-0 ${upvotes > downvotes ? 'text-primary hover:text-primary/80' : 'text-gray-300 hover:text-gray-300/80'}`}
-                      >
-                        <CircleArrowUp className='h-6 w-6 stroke-1' />
-                      </button>
-
-                      <button
-                        onClick={onDownvote}
-                        className={`flex items-center space-x-1 ${downvotes > upvotes ? 'text-danger hover:text-danger/80' : 'text-gray-300 hover:text-gray-300/80'}`}
-                      >
-                        <CircleArrowDown className='h-6 w-6 stroke-1' />
-                      </button>
-
-                      <button
-                        onClick={onComment}
-                        className='flex items-center space-x-1 text-gray-300 hover:text-gray-300/80'
-                      >
-                        <MessageSquare className='h-6 w-6 stroke-1' />
-                      </button>
                     </div>
-                    {/* menu */}
-                    {isOwner && (
-                      <div className='relative'>
-                        <button
-                          onClick={() => setShowMenu(!showMenu)}
-                          className='items-center align-middle text-gray-300 focus-within:ring-0 hover:cursor-pointer hover:text-gray-300/80 focus:ring-0 focus:outline-none focus-visible:ring-0'
-                        >
-                          <Ellipsis className='h-6 w-6 stroke-1' />
-                        </button>
-                        {showMenu && (
-                          <div className='absolute -right-3 bottom-full z-[100] mb-1 w-28 rounded-md border border-gray-200 bg-white'>
-                            <button
-                              onClick={() => console.log('Edit Post')}
-                              className='flex w-full cursor-pointer items-center gap-2 px-4 py-2 text-xs text-gray-600 hover:text-gray-300 focus:ring-0 focus:outline-none focus-visible:ring-0'
-                              disabled
+                    <ChevronDown
+                      className={clsx(
+                        'h-4 w-4 text-gray-400 transition-transform duration-200',
+                        showMap && 'rotate-180',
+                      )}
+                    />
+                  </button>
+
+                  <AnimatePresence>
+                    {showMap && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.25, ease: 'easeInOut' }}
+                        className='overflow-hidden'
+                      >
+                        <div className='mt-2 h-48 w-full overflow-hidden rounded-xl border border-gray-200'>
+                          <MapView
+                            center={[
+                              coords.lng ?? 108.2022,
+                              coords.lat ?? 16.0544,
+                            ]}
+                            zoom={13}
+                            scrollZoom={false}
+                          >
+                            <MapControls
+                              position='bottom-right'
+                              showZoom
+                              showLocate={false}
+                            />
+                            <MapMarker
+                              longitude={coords.lng ?? 108.2022}
+                              latitude={coords.lat ?? 16.0544}
                             >
-                              <EditIcon className='h-4 w-4' /> Edit
-                            </button>
-                            <button
-                              onClick={() => console.log('Delete Post')}
-                              className='text-danger hover:text-danger/80 flex w-full items-center gap-2 px-4 py-2 text-xs hover:cursor-pointer focus:ring-0 focus:outline-none focus-visible:ring-0'
-                            >
-                              <Trash className='h-4 w-4' /> Delete
-                            </button>
-                          </div>
-                        )}
-                      </div>
+                              <MarkerContent>
+                                <div className='flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-red-500 shadow-lg'>
+                                  <div className='h-2 w-2 rounded-full bg-white' />
+                                </div>
+                              </MarkerContent>
+                              <MarkerTooltip>Reported location</MarkerTooltip>
+                            </MapMarker>
+                          </MapView>
+                        </div>
+                      </motion.div>
                     )}
+                  </AnimatePresence>
+                </div>
+
+                {/* ── Action Bar ── */}
+                <div className='mt-5 flex items-center justify-between border-t border-gray-100 pt-3'>
+                  <div className='flex items-center gap-1'>
+                    <button
+                      onClick={onUpvote}
+                      className={clsx(
+                        'flex cursor-pointer items-center gap-1 rounded-lg px-2.5 py-1.5 text-sm transition-colors',
+                        upvotes > downvotes
+                          ? 'text-primary hover:bg-primary/5'
+                          : 'text-gray-400 hover:bg-gray-50 hover:text-gray-600',
+                      )}
+                    >
+                      <CircleArrowUp
+                        className='h-[18px] w-[18px]'
+                        strokeWidth={1.5}
+                      />
+                      {upvotes > 0 && (
+                        <span className='text-xs font-medium'>
+                          {formatNumber(upvotes)}
+                        </span>
+                      )}
+                    </button>
+                    <button
+                      onClick={onDownvote}
+                      className={clsx(
+                        'flex cursor-pointer items-center gap-1 rounded-lg px-2.5 py-1.5 text-sm transition-colors',
+                        downvotes > upvotes
+                          ? 'text-danger hover:bg-danger/5'
+                          : 'text-gray-400 hover:bg-gray-50 hover:text-gray-600',
+                      )}
+                    >
+                      <CircleArrowDown
+                        className='h-[18px] w-[18px]'
+                        strokeWidth={1.5}
+                      />
+                      {downvotes > 0 && (
+                        <span className='text-xs font-medium'>
+                          {formatNumber(downvotes)}
+                        </span>
+                      )}
+                    </button>
+                    <button
+                      onClick={onComment}
+                      className='flex cursor-pointer items-center gap-1 rounded-lg px-2.5 py-1.5 text-gray-400 transition-colors hover:bg-gray-50 hover:text-gray-600'
+                    >
+                      <MessageSquare
+                        className='h-[18px] w-[18px]'
+                        strokeWidth={1.5}
+                      />
+                      {comments > 0 && (
+                        <span className='text-xs font-medium'>
+                          {formatNumber(comments)}
+                        </span>
+                      )}
+                    </button>
+                  </div>
+
+                  {isOwner && (
+                    <div className='relative'>
+                      <button
+                        onClick={() => setShowMenu(!showMenu)}
+                        className='flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-gray-50 hover:text-gray-600'
+                      >
+                        <Ellipsis className='h-4 w-4' />
+                      </button>
+                      {showMenu && (
+                        <div className='shadow-card-hover absolute right-0 bottom-full z-[100] mb-1 w-32 overflow-hidden rounded-xl border border-gray-200 bg-white'>
+                          <button
+                            onClick={() => console.log('Edit Post')}
+                            className='flex w-full cursor-pointer items-center gap-2.5 px-3.5 py-2.5 text-xs text-gray-600 transition-colors hover:bg-gray-50'
+                            disabled
+                          >
+                            <EditIcon className='h-3.5 w-3.5' /> Edit
+                          </button>
+                          <button
+                            onClick={() => console.log('Delete Post')}
+                            className='text-danger hover:bg-danger-light flex w-full cursor-pointer items-center gap-2.5 px-3.5 py-2.5 text-xs transition-colors'
+                          >
+                            <Trash className='h-3.5 w-3.5' /> Delete
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* ── Comments ── */}
+                <div className='mt-4 border-t border-gray-100 pt-4'>
+                  <p className='mb-3 text-xs font-medium tracking-wider text-gray-400 uppercase'>
+                    Comments ({fakeComments.length})
+                  </p>
+                  <div className='flex flex-col gap-1'>
+                    {fakeComments.map((cmt, index) => (
+                      <CommentCard
+                        key={index}
+                        name={cmt.name}
+                        avatar={cmt.avatar}
+                        isVerified={cmt.isVerified}
+                        content={cmt.content}
+                      />
+                    ))}
                   </div>
                 </div>
-              </div>
-
-              {/* show comments sections */}
-              <div className='flex flex-col'>
-                {fakeComments.map((cmt, index) => (
-                  <CommentCard
-                    key={index}
-                    name={cmt.name}
-                    avatar={cmt.avatar}
-                    isVerified={cmt.isVerified}
-                    content={cmt.content}
-                  />
-                ))}
               </div>
             </div>
 
-            {/* comment */}
+            {/* ── Comment Input (sticky bottom) ── */}
             <CommentInputBox VerifyBadge={VerifyBadge} />
           </motion.div>
         </motion.div>
