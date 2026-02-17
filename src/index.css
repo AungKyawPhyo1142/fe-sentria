@@ -1,143 +1,144 @@
 @import 'tailwindcss';
 
 @theme {
+  /* ── Brand ── */
   --color-primary: #2e8b57;
-  --color-secondary: #1560bd;
-  --color-accent: #fff176;
-  --color-black: #333334;
-  --color-white: #f5fefd;
-  --color-red: #b22222;
-  --font-poppins: 'Poppins', sans-serif;
+  --color-primary-dark: #236b43;
+  --color-primary-light: #e8f5ee;
+  --color-primary-50: #f0faf4;
+
+  /* ── Neutrals ── */
+  --color-white: #ffffff;
+  --color-gray-50: #f8f9fa;
+  --color-gray-100: #f1f3f5;
+  --color-gray-200: #e9ecef;
+  --color-gray-300: #dee2e6;
+  --color-gray-400: #adb5bd;
+  --color-gray-500: #6c757d;
+  --color-gray-600: #495057;
+  --color-gray-700: #343a40;
+  --color-gray-800: #212529;
+  --color-gray-900: #0f1114;
+
+  /* ── Semantic ── */
+  --color-danger: #dc2626;
+  --color-danger-light: #fef2f2;
+  --color-warning: #f59e0b;
+  --color-warning-light: #fffbeb;
+  --color-info: #2563eb;
+  --color-info-light: #eff6ff;
+  --color-success: #16a34a;
+
+  /* ── Typography ── */
+  --font-sans: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+  --font-mono: 'SF Mono', 'Cascadia Code', 'Fira Code', monospace;
+
+  /* ── Shadows ── */
+  --shadow-card:
+    0 1px 3px 0 rgb(0 0 0 / 0.03), 0 1px 2px -1px rgb(0 0 0 / 0.04);
+  --shadow-card-hover:
+    0 4px 12px -2px rgb(0 0 0 / 0.06), 0 2px 4px -2px rgb(0 0 0 / 0.04);
+  --shadow-elevated:
+    0 8px 24px -4px rgb(0 0 0 / 0.08), 0 2px 8px -2px rgb(0 0 0 / 0.04);
 }
 
+/* ── Poppins Font (legacy fallback) ── */
 @font-face {
-  font-family: Poppins;
+  font-family: 'Poppins';
   font-weight: 400;
+  font-display: swap;
   src: url(/fonts/Poppins-Regular.ttf);
 }
 
-/* Light at weight 300 */
 @font-face {
-  font-family: Poppins;
+  font-family: 'Poppins';
   font-weight: 300;
+  font-display: swap;
   src: url(/fonts/Poppins-Light.ttf);
 }
 
-/* SemiBold at weight 600 */
 @font-face {
-  font-family: Poppins;
+  font-family: 'Poppins';
   font-weight: 600;
+  font-display: swap;
   src: url(/fonts/Poppins-SemiBold.ttf);
 }
 
-/* Bold at weight 700 */
 @font-face {
-  font-family: Poppins;
+  font-family: 'Poppins';
   font-weight: 700;
+  font-display: swap;
   src: url(/fonts/Poppins-Bold.ttf);
 }
 
-/* animation */
-.fade-in {
-  -webkit-animation: fade-in 0.75s cubic-bezier(0.39, 0.575, 0.565, 1) both;
-  animation: fade-in 0.75s cubic-bezier(0.39, 0.575, 0.565, 1) both;
+/* ── Inter Font (secondary fallback) ── */
+@font-face {
+  font-family: 'Inter';
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url(/fonts/Inter-Regular.woff2) format('woff2');
 }
 
-@-webkit-keyframes fade-in {
-  0% {
-    opacity: 0;
-  }
+@font-face {
+  font-family: 'Inter';
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+  src: url(/fonts/Inter-Medium.woff2) format('woff2');
+}
 
-  100% {
-    opacity: 1;
-  }
+@font-face {
+  font-family: 'Inter';
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+  src: url(/fonts/Inter-SemiBold.woff2) format('woff2');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  src: url(/fonts/Inter-Bold.woff2) format('woff2');
+}
+
+/* ── Base ── */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Animations ── */
+.fade-in {
+  animation: fade-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 @keyframes fade-in {
   0% {
     opacity: 0;
+    transform: translateY(6px);
   }
-
   100% {
-    opacity: 1;
-  }
-}
-
-/* for custom scrollbar*/
-.custom-scrollbar::-webkit-scrollbar {
-  @apply w-1.5;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  @apply rounded-full bg-gray-100;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  @apply bg-primary rounded-full;
-}
-
-.scrollbar-hide {
-  -ms-overflow-style: none; /* Internet Explorer 10+ */
-  scrollbar-width: none; /* Firefox */
-}
-.scrollbar-hide::-webkit-scrollbar {
-  display: none; /* Safari and Chrome */
-}
-
-/* Navbar  */
-.icon-svg {
-  transition: all 0.2s ease;
-}
-.icon-svg:hover {
-  fill: #2e8b57;
-  stroke: #f5fefd;
-  cursor: pointer;
-  color: #f5fefd;
-}
-.icon-svg--active {
-  fill: #2e8b57;
-  stroke: #f5fefd;
-}
-
-/* Custom scroll styling for modals */
-.custom-scroll {
-  overflow-y: auto;
-}
-.custom-scroll::-webkit-scrollbar {
-  width: 6px;
-}
-.custom-scroll::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-.custom-scroll::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 3px;
-}
-.custom-scroll::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(5px);
-  }
-  to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.2s ease-out;
+  animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.custom-scroll {
-  overflow-y: scroll;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-.custom-scroll::-webkit-scrollbar {
-  display: none;
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes shimmer {
@@ -149,84 +150,6 @@
   }
 }
 
-.Toastify__progress-bar {
-  background: #2e8b57 !important;
-}
-
-/* Loader */
-.loader {
-  position: relative;
-  width: 150px;
-  height: 150px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  perspective: 1000px;
-}
-.circle {
-  position: absolute;
-  border-radius: 50%;
-  box-shadow:
-    8px 8px 16px #a3b1c6,
-    -8px -8px 16px #ffffff;
-  background: linear-gradient(145deg, #e0e5ec, #f9f9f9);
-  transition: all 0.3s ease;
-}
-.outer-circle {
-  width: 150px;
-  height: 150px;
-  background: rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(10px);
-  box-shadow:
-    10px 10px 20px rgba(163, 177, 198, 0.5),
-    -10px -10px 20px rgba(255, 255, 255, 0.5);
-}
-.inner-circle {
-  width: 100px;
-  height: 100px;
-  background: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(5px);
-  box-shadow:
-    inset 8px 8px 16px rgba(163, 177, 198, 0.5),
-    inset -8px -8px 16px rgba(255, 255, 255, 0.5);
-}
-/* .ball {
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  background: linear-gradient(145deg, #f1f1f1, #2e8b57);
-  border-radius: 50%;
-  box-shadow:
-    inset 5px 5px 10px rgba(163, 177, 198, 0.5),
-    inset -5px -5px 10px rgba(255, 255, 255, 0.5),
-    0 0 8px rgba(0, 0, 0, 0.1);
-  animation: spin 2s linear infinite;
-  transition: all 0.3s ease;
-} */
-/* Orbit wrapper (new) */
-.orbit {
-  position: absolute;
-  width: 150px;
-  height: 150px;
-  animation: spin 2s linear infinite;
-  transform-origin: center;
-}
-
-/* Ball follows orbit rotation */
-.ball {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 20px;
-  height: 20px;
-  background: linear-gradient(145deg, #2e8b57, #0b6833);
-  border-radius: 50%;
-  box-shadow:
-    inset 5px 5px 10px rgba(163, 177, 198, 0.5),
-    inset -5px -5px 10px rgba(255, 255, 255, 0.5),
-    0 0 8px rgba(0, 0, 0, 0.1);
-  transform: translate(-80%, -350%);
-}
 @keyframes spin {
   0% {
     transform: rotate(0deg);
@@ -236,22 +159,76 @@
   }
 }
 
-.loader:hover .orbit {
-  animation-duration: 1.5s;
+@keyframes pulse-subtle {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
 }
 
-.custom-svg {
-  position: absolute;
-  width: 100px;
-  height: 100px;
-  opacity: 0.8;
-  animation: svgSpin 4s linear infinite;
+/* ── Scrollbars ── */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
 }
-@keyframes svgSpin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--color-gray-300);
+  border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gray-400);
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.custom-scroll {
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.custom-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Navbar Icon Styles ── */
+.icon-svg {
+  transition: all 150ms ease;
+}
+
+.icon-svg:hover {
+  fill: var(--color-primary);
+  stroke: var(--color-white);
+  cursor: pointer;
+  color: var(--color-white);
+}
+
+.icon-svg--active {
+  fill: var(--color-primary);
+  stroke: var(--color-white);
+}
+
+/* ── Toast Overrides ── */
+.Toastify__progress-bar {
+  background: var(--color-primary) !important;
+}
+
+/* ── Tabular numbers for data ── */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
 }

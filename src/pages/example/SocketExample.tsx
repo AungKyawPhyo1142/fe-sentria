@@ -83,7 +83,7 @@ const SocketExample = () => {
         {isSocketConnected ? '✅ Connected' : '❌ Disconnected'}
       </h1>
       <div>
-        <Button primary onClick={() => toast('Hi')}>
+        <Button variant='primary' onClick={() => toast('Hi')}>
           Toast
         </Button>
         <div>

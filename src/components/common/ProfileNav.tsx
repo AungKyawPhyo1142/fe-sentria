@@ -4,75 +4,46 @@ import { selectAuth, useAuthStore } from '@/zustand/authStore'
 import { useNavigate } from 'react-router'
 import { generateDefaultProfileImage } from '@/helpers/helpers'
 
-const ProfileIcon: React.FC<{ firstChar: string | undefined }> = ({
-  firstChar,
-}) => {
-  return (
-    <div className='bg-primary flex size-12 items-center justify-center rounded-full border font-bold text-white'>
-      {firstChar}
-    </div>
-  )
-}
-
 const ProfileNav = () => {
   const navigate = useNavigate()
   const { userId } = useAuthStore(selectAuth)
   const {
-    data,
+    data: userProfile,
     isLoading: profileLoading,
     error: profileError,
   } = useUserProfile(userId)
-  const userProfile = data
 
   if (profileLoading)
-    return (
-      <div className='size-12 animate-pulse rounded-full border border-black/30 bg-gray-300/30 object-cover' />
-    )
+    return <div className='h-8 w-8 animate-pulse rounded-full bg-gray-100' />
 
   if (profileError || !userProfile)
     return (
-      // <Profile className='size-12 rounded-full border border-black/30 object-cover' /> // Render Profile SVG
-      <ProfileIcon
-        firstChar={generateDefaultProfileImage(userProfile?.firstName)}
-      />
+      <button
+        onClick={() => navigate(AppConstantRoutes.paths.profile)}
+        className='bg-primary/10 text-primary hover:ring-primary/30 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-xs font-semibold ring-2 ring-gray-100 transition-all duration-150'
+      >
+        {generateDefaultProfileImage(userProfile?.firstName)}
+      </button>
     )
 
   return (
-    <div
+    <button
       onClick={() => navigate(AppConstantRoutes.paths.profile)}
-      className='flex h-12.5 cursor-pointer items-center justify-center'
+      className='cursor-pointer'
     >
-      {/* <Profile className='size-8 rounded-full object-cover' border border-black/30 px-4 py-1 /> */}
       {userProfile.profile_image ? (
         <img
           src={userProfile.profile_image}
           alt='profile'
-          className='size-12 rounded-full border border-black/30 object-cover'
+          className='hover:ring-primary/30 h-8 w-8 rounded-full object-cover ring-2 ring-gray-100 transition-all duration-150'
         />
       ) : (
-        <ProfileIcon
-          firstChar={generateDefaultProfileImage(userProfile?.firstName)}
-        />
+        <div className='bg-primary/10 text-primary hover:ring-primary/30 flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold ring-2 ring-gray-100 transition-all duration-150'>
+          {generateDefaultProfileImage(userProfile?.firstName)}
+        </div>
       )}
-      {/* <span className='text-sm'> {userProfile.firstName + ' ' + userProfile.lastName}</span> */}
-    </div>
-    // <div
-    //   onClick={() => navigate(AppConstantRoutes.paths.profile)}
-    //   className='ml-5 flex h-12.5 w-50 cursor-pointer items-center justify-center space-x-2 rounded-xl border border-black/30 py-1'
-    // >
-    //   {userProfile.profile_image ? (
-    //     <img
-    //       src={userProfile.profile_image}
-    //       alt='profile'
-    //       className='h-11 w-11 rounded-full object-cover'
-    //     />
-    //   ) : (
-    //     <Profile className='h-11 w-11 rounded-full object-cover' /> // Render Profile SVG
-    //   )}
-    //   <span className='ml-3 text-[16px]'>
-    //     {userProfile.firstName + ' ' + userProfile.lastName}
-    //   </span>
-    // </div>
+    </button>
   )
 }
+
 export default ProfileNav

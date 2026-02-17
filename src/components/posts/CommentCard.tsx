@@ -37,12 +37,12 @@ const CommentCard: React.FC<CommentCardProps> = ({
       </div>
 
       {/* Comment content */}
-      <div className='rounded-md bg-[#333334]/9 px-3 py-2'>
+      <div className='rounded-md bg-gray-50 px-3 py-2'>
         <div className='flex items-center space-x-2'>
-          <h3 className='text-[16px] font-medium text-black'>{name}</h3>
-          {isVerified && <VerifyBadge className='h-4 w-4 text-[#1560BD]' />}
+          <h3 className='text-base font-medium text-gray-900'>{name}</h3>
+          {isVerified && <VerifyBadge className='text-info h-4 w-4' />}
         </div>
-        <div className='text-[15px] font-light'>{content}</div>
+        <div className='text-[15px] font-normal'>{content}</div>
       </div>
     </div>
   )

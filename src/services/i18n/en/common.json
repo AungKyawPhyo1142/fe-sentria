@@ -46,7 +46,9 @@
   "sidebar": {
     "Favorites": "Favorites",
     "Notifications": "Notifications",
-    "Home": "Home Page",
+    "Home": "Home",
+    "Map": "Map",
+    "Resources": "Resources",
     "LogOut": "LogOut",
     "Language": "English",
     "ReportPost": "Report a disaster",

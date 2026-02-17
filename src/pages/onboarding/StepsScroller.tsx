@@ -160,9 +160,10 @@ const StepsScroller: React.FC = () => {
           <div className=''>
             <Button
               onClick={handleStart}
-              secondary={true}
-              type={'button'}
-              className='w-[560px] rounded-md px-10 py-2 text-white'
+              variant='primary'
+              type='button'
+              size='lg'
+              className='w-[560px]'
             >
               {t('onboarding.startExploring')}
             </Button>

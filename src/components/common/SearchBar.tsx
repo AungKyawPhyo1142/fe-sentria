@@ -8,7 +8,7 @@ const SearchBar = () => {
       <Search size={26} strokeWidth={1} className='hover:cursor-pointer' />
       <input
         type='text'
-        className='w-36 bg-transparent text-[16px] font-extralight focus:ring-0 focus:outline-0'
+        className='w-36 bg-transparent text-base font-normal focus:ring-0 focus:outline-0'
         placeholder={t('sidebar.SearchPost')}
       />
     </div>

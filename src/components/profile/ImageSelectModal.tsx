@@ -96,7 +96,7 @@ const ImageSelectModal: React.FC<Props> = ({
   return (
     <div
       className={clsx(
-        'fixed top-0 left-0 z-[9999999] flex h-full w-full items-center justify-center bg-black/40',
+        'fixed top-0 left-0 z-[9999999] flex h-full w-full items-center justify-center bg-gray-900/40',
         className,
       )}
       onClick={(e) => e.target === e.currentTarget && closeModal()}
@@ -125,7 +125,7 @@ const ImageSelectModal: React.FC<Props> = ({
                 ? 'border-blue-400 bg-blue-50'
                 : selectedFile
                   ? 'border-green-400 bg-green-50'
-                  : 'border-gray-300 bg-black/15 hover:bg-black/25',
+                  : 'border-gray-300 bg-gray-900/15 hover:bg-gray-900/25',
             )}
             onClick={() => fileInputRef.current?.click()}
             onDragOver={handleDragOver}
@@ -141,10 +141,10 @@ const ImageSelectModal: React.FC<Props> = ({
             ) : (
               <div className='flex flex-col items-center justify-center'>
                 <Image
-                  className='mb-2 h-24 w-24 text-[#33333430]'
+                  className='mb-2 h-24 w-24 text-gray-300'
                   strokeWidth={0.5}
                 />
-                <p className='text-sm font-medium text-[#33333430]'>
+                <p className='text-sm font-medium text-gray-300'>
                   {isDragOver
                     ? 'Drop image here'
                     : 'Click here to upload profile image or drag & drop'}
@@ -155,17 +155,15 @@ const ImageSelectModal: React.FC<Props> = ({
 
           <div className='flex w-full space-x-4'>
             <Button
-              className='w-full bg-black/25 text-gray-800 hover:bg-gray-300'
+              variant='secondary'
               onClick={closeModal}
               type='button'
+              className='w-full'
             >
               Cancel
             </Button>
 
-            <Button
-              className='bg-primary w-full text-[20px] font-medium'
-              onClick={handleSave}
-            >
+            <Button variant='primary' onClick={handleSave} className='w-full'>
               Save
             </Button>
           </div>

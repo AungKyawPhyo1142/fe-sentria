@@ -21,7 +21,7 @@ const LanguageToggle = () => {
       <div
         role='button'
         onClick={toggleLanguage}
-        className='border-secondary relative flex h-10 w-22 cursor-pointer items-center rounded-[10px] border transition-colors select-none focus:outline-none'
+        className='border-secondary relative flex h-10 w-22 cursor-pointer items-center rounded-xl border transition-colors select-none focus:outline-none'
       >
         {/* MN Text - shown on right when MN is active */}
         {!isEnglish && (
@@ -39,14 +39,14 @@ const LanguageToggle = () => {
 
         {/* Toggle knob with flag */}
         <div
-          className={`flex h-10 w-10 transform items-center justify-center rounded-[10px] transition-transform duration-300 ${
+          className={`flex h-10 w-10 transform items-center justify-center rounded-xl transition-transform duration-300 ${
             isEnglish ? 'translate-x-12' : 'translate-x-0'
           }`}
         >
           <img
             src={isEnglish ? EnFlag : MnFlag}
             alt='Flag'
-            className='border-secondary h-8 w-8 rounded-[10px] border-2 object-cover'
+            className='border-secondary h-8 w-8 rounded-xl border-2 object-cover'
           />
         </div>
       </div>

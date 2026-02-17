@@ -23,9 +23,9 @@ const MapFilter = () => {
   ]
   return (
     <div className='flex w-2/6 flex-col items-center justify-center gap-y-5'>
-      <div className='flex w-full flex-col gap-y-4 rounded-lg border border-[#33333430] p-4'>
-        <h2 className='text-lg font-light text-[#3333344d]'>Filter by</h2>
-        <hr className='mb-1 border-t border-[#33333430]' />
+      <div className='flex w-full flex-col gap-y-4 rounded-lg border border-gray-200 p-4'>
+        <h2 className='text-lg font-normal text-gray-400'>Filter by</h2>
+        <hr className='mb-1 border-t border-gray-200' />
         <div className='flex flex-col gap-y-5'>
           {filterItemList.map((item) => (
             <label
@@ -40,7 +40,7 @@ const MapFilter = () => {
               <input
                 type='checkbox'
                 id={item.id}
-                className='accent-primary h-4 w-4 cursor-pointer rounded border-gray-300'
+                className='accent-primary h-4 w-4 cursor-pointer rounded border-gray-200'
                 checked={selectedTypes.has(item.id)}
                 onChange={() => toggleType(item.id)}
               />
@@ -49,7 +49,7 @@ const MapFilter = () => {
         </div>
       </div>
       <button
-        className={`min-h-[50px] w-full cursor-pointer rounded-lg border py-2 text-base font-light transition-all duration-200 ease-in-out hover:opacity-[90%] active:opacity-100 ${
+        className={`h-10 w-full cursor-pointer rounded-lg border py-2 text-base font-normal transition-all duration-200 ease-in-out hover:opacity-[90%] active:opacity-100 ${
           needed
             ? 'bg-red border-red text-white'
             : 'text-red border-red hover:bg-red/80 bg-transparent hover:text-white'
@@ -59,7 +59,7 @@ const MapFilter = () => {
         Help Needed
       </button>
       <button
-        className={`min-h-[50px] w-full cursor-pointer rounded-lg border py-2 text-base font-light transition-all duration-200 ease-in-out hover:opacity-[90%] active:opacity-100 ${
+        className={`h-10 w-full cursor-pointer rounded-lg border py-2 text-base font-normal transition-all duration-200 ease-in-out hover:opacity-[90%] active:opacity-100 ${
           available
             ? 'bg-secondary border-secondary text-white'
             : 'text-secondary border-secondary hover:bg-secondary/80 bg-transparent hover:text-white'

@@ -21,7 +21,6 @@ const Register = () => {
     .getData()
     .map((country) => country.label)
 
-  //register form submission handler
   const initialValues: RegisterFormValues = {
     firstName: '',
     lastName: '',
@@ -76,7 +75,6 @@ const Register = () => {
 
   const onSubmit = async (values: RegisterFormValues) => {
     const res = await authRequest.Register(values).catch(() => {
-      // handle error
       setErrorModal(true)
       console.error('Registration failed')
     })
@@ -104,22 +102,20 @@ const Register = () => {
         type='error'
         onClick={() => setErrorModal(false)}
         withButtons={true}
-        content='An unexpected error occurred. Please try again later.Extra shit apprently.'
+        content='An unexpected error occurred. Please try again later.'
         setIsOpen={setErrorModal}
-      ></Modal>
-      <form
-        onSubmit={formik.handleSubmit}
-        className='flex w-[85%] flex-col items-start justify-center gap-y-5'
-      >
-        <div>
-          <h1 className='text-[32px] font-medium text-[#333334]'>
+      />
+      <form onSubmit={formik.handleSubmit} className='space-y-4'>
+        <div className='mb-2'>
+          <h1 className='text-2xl font-semibold text-gray-900'>
             {t('Register.welcome')}
           </h1>
-          <h3 className='text-[16px] font-light text-[#333334]/50'>
+          <p className='mt-1 text-sm text-gray-500'>
             {t('Register.instruction')}
-          </h3>
+          </p>
         </div>
-        <div className='flex flex-row gap-x-5'>
+
+        <div className='grid grid-cols-2 gap-3'>
           <Input
             id='firstName'
             name='firstName'
@@ -139,7 +135,8 @@ const Register = () => {
             type='text'
           />
         </div>
-        <div className='flex flex-row gap-x-5'>
+
+        <div className='grid grid-cols-2 gap-3'>
           <Input
             id='username'
             name='username'
@@ -168,7 +165,6 @@ const Register = () => {
           error={formik.errors.birthday}
           placeholder={t('Register.dateOfBirth')}
           type='date'
-          className='text-zinc-500'
         />
         <DropDown
           id='country'
@@ -199,35 +195,37 @@ const Register = () => {
           type='password'
         />
 
-        <div className='flex w-full justify-between'>
+        <div className='flex w-full items-center justify-between'>
           <label className='flex items-center gap-x-2'>
             <input
               type='checkbox'
               id='remember'
               onChange={undefined}
               checked={undefined}
-              className='h-6 w-6 accent-white'
-              style={{ accentColor: 'green' }}
+              className='accent-primary h-4 w-4 rounded border-gray-200'
             />
-            <span className='text-[13px] font-light text-[#333334]/50'>
-              {t('Register.terms')}
-            </span>
+            <span className='text-xs text-gray-500'>{t('Register.terms')}</span>
           </label>
-          <Button
-            loading={formik.isSubmitting}
-            disabled={formik.isSubmitting}
-            primary
-            type='submit'
-            className='w-30'
-          >
-            {t('Register.register')}
-          </Button>
         </div>
-        <div className='w-full border-t border-[#333334]/30 pt-8 text-center'>
+
+        <Button
+          loading={formik.isSubmitting}
+          disabled={formik.isSubmitting}
+          variant='primary'
+          size='lg'
+          type='submit'
+          className='w-full'
+        >
+          {t('Register.register')}
+        </Button>
+
+        <div className='border-t border-gray-200 pt-6'>
           <Button
-            outline
+            variant='outline'
+            size='lg'
             className='w-full'
             onClick={() => navigate(AppConstantRoutes.paths.auth.login)}
+            type='button'
           >
             {t('Register.sentrian')}
           </Button>

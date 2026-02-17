@@ -32,9 +32,9 @@ const DropDown: React.FC<Props> = (props) => {
           onChange={onChange}
           disabled={disabled}
           className={clsx(
-            'min-h-[50px] w-full rounded-lg border-1 px-3 py-2 text-base font-light ring-0 transition-colors duration-200 outline-none placeholder:text-zinc-400 focus:border-zinc-500',
-            disabled ? 'text-zinc-500' : 'border-zinc-300 text-black',
-            value === '' ? 'text-zinc-400' : 'text-black',
+            'focus:border-primary h-10 w-full rounded-lg border px-3 py-2 text-base font-normal ring-0 transition-colors duration-200 outline-none placeholder:text-gray-400',
+            disabled ? 'text-gray-500' : 'border-gray-200 text-gray-900',
+            value === '' ? 'text-gray-400' : 'text-gray-900',
             className,
           )}
         >
@@ -47,7 +47,7 @@ const DropDown: React.FC<Props> = (props) => {
                 <option
                   key={index}
                   value={item}
-                  className='text-base font-light text-black'
+                  className='text-base font-normal text-gray-900'
                 >
                   {item}
                 </option>
@@ -57,7 +57,7 @@ const DropDown: React.FC<Props> = (props) => {
                   <option
                     key={key}
                     value={key}
-                    className='text-base font-light text-black'
+                    className='text-base font-normal text-gray-900'
                   >
                     {val}
                   </option>

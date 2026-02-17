@@ -3,12 +3,10 @@ import React, { useState } from 'react'
 import { Eye, EyeOff, Search } from 'lucide-react'
 
 export interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
-  classsName?: string
+  className?: string
   error?: string
   hint?: string
-  primary?: boolean
-  secondary?: boolean
-  showSearchIcon?: boolean // Add the new search icon
+  showSearchIcon?: boolean
   inputRef?: React.Ref<HTMLInputElement>
 }
 
@@ -22,10 +20,7 @@ const Input: React.FC<Props> = (props) => {
     className,
     error,
     hint,
-    primary,
-    secondary,
-    showSearchIcon, // Destructure the new icon
-    // defaultValue,
+    showSearchIcon,
     type,
     readOnly,
     inputRef,
@@ -38,7 +33,6 @@ const Input: React.FC<Props> = (props) => {
     showPassword: false,
   })
 
-  // toggle password visibility
   const onEyeIconClick = () => {
     setInputState((prev) => ({
       inputType: prev.inputType === 'password' ? 'text' : 'password',
@@ -50,28 +44,23 @@ const Input: React.FC<Props> = (props) => {
     return inputState.showPassword ? (
       <Eye
         onClick={onEyeIconClick}
-        className='absolute right-4 cursor-pointer'
-        size={20}
-        strokeWidth={1}
-        color={'black'}
+        className='absolute right-3 cursor-pointer text-gray-400 hover:text-gray-700'
+        size={18}
+        strokeWidth={1.5}
       />
     ) : (
       <EyeOff
         onClick={onEyeIconClick}
-        className='absolute right-4 cursor-pointer'
-        size={20}
-        strokeWidth={1}
-        color={'black'}
+        className='absolute right-3 cursor-pointer text-gray-400 hover:text-gray-700'
+        size={18}
+        strokeWidth={1.5}
       />
     )
   }
+
   const handleSearchIcon = () => {
     return showSearchIcon ? (
-      <Search
-        className='absolute left-4 cursor-pointer'
-        size={20}
-        color={'gray'}
-      />
+      <Search className='absolute left-3 text-gray-400' size={18} />
     ) : null
   }
 
@@ -88,13 +77,12 @@ const Input: React.FC<Props> = (props) => {
           disabled={disabled}
           type={inputState.inputType}
           className={clsx(
-            'min-h-[50px] w-full rounded-lg border-1 px-3 py-2 text-base font-light ring-0 transition-colors duration-200 outline-none placeholder:text-zinc-400 focus:border-zinc-500',
-            disabled ? 'text-zinc-500' : 'border-zinc-300 text-black',
-            primary && 'text-white outline-none',
-            secondary && 'bg-[#FFFFFF] !text-[#121212]',
-            type === 'password' && 'pr-8',
+            'focus:border-primary focus:ring-primary/20 h-10 w-full rounded-lg border bg-white px-3 text-sm text-gray-900 ring-0 transition-colors duration-150 outline-none placeholder:text-gray-400 focus:ring-2',
+            disabled ? 'bg-gray-50 text-gray-400' : 'border-gray-200',
+            type === 'password' && 'pr-10',
             type === 'file' && 'opacity-0',
-            error ? 'border-red-500' : 'border-gray-500',
+            error ? 'border-danger' : '',
+            showSearchIcon && 'pl-10',
             className,
           )}
           readOnly={readOnly}
@@ -103,10 +91,10 @@ const Input: React.FC<Props> = (props) => {
         {type === 'password' && handlePasswordDisplayIcon()}
       </div>
       {hint && !error && (
-        <span className='text-dark-400 block pt-1 pl-2 text-sm'>{hint}</span>
+        <span className='block pt-1 pl-1 text-xs text-gray-400'>{hint}</span>
       )}
       {error && (
-        <span className='block pt-1 pl-2 text-sm text-red-500'>{error}</span>
+        <span className='text-danger block pt-1 pl-1 text-xs'>{error}</span>
       )}
     </div>
   )

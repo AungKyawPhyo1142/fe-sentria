@@ -34,7 +34,7 @@ const Modal: React.FC<Props> = ({
       {isOpen && (
         <div
           className={clsx(
-            'fixed inset-0 z-50 flex items-center justify-center bg-black/40',
+            'fixed inset-0 z-50 flex items-center justify-center bg-gray-900/40',
             className,
           )}
         >
@@ -91,7 +91,7 @@ const Modal: React.FC<Props> = ({
               {withButtons && (
                 <div className='flex space-x-9'>
                   <Button
-                    outline
+                    variant='outline'
                     className='w-[100px] px-5'
                     onClick={() => setIsOpen(false)}
                   >
@@ -99,16 +99,8 @@ const Modal: React.FC<Props> = ({
                   </Button>
 
                   <Button
-                    className={clsx(
-                      'w-[100px] px-5',
-                      type === 'error'
-                        ? 'bg-red hover:bg-red/90'
-                        : type === 'success'
-                          ? 'bg-primary hover:bg-primary/90'
-                          : type === 'warning'
-                            ? 'bg-amber-600 hover:bg-amber-500'
-                            : 'bg-secondary hover:bg-secondary/90',
-                    )}
+                    variant={type === 'error' ? 'danger' : 'primary'}
+                    className='w-[100px] px-5'
                     onClick={onClick}
                   >
                     Confirm

@@ -66,8 +66,8 @@ const ActivityPostCard = ({
     return (
       <div
         className={`${
-          isOffering ? 'bg-secondary' : 'bg-red'
-        } flex h-7 items-center justify-center space-x-1 rounded-sm px-2 py-1 text-[10px] font-extralight text-white`}
+          isOffering ? 'bg-info' : 'bg-red'
+        } flex h-7 items-center justify-center space-x-1 rounded-sm px-2 py-1 text-[10px] font-normal text-white`}
       >
         {isOffering ? (
           <OfferHelp className='h-5 w-5 text-white' />
@@ -99,7 +99,7 @@ const ActivityPostCard = ({
   }
 
   return (
-    <div className='rounded-lg border border-[#33333430] px-8 py-7'>
+    <div className='rounded-lg border border-gray-200 px-8 py-7'>
       {/* header */}
       <div className='mb-2'>
         <div className='mb-4 flex items-center justify-between'>
@@ -123,15 +123,15 @@ const ActivityPostCard = ({
 
             <div className='flex flex-col'>
               <div className='flex items-center space-x-2'>
-                <h3 className='text-[16px] font-medium text-black'>
+                <h3 className='text-base font-medium text-gray-900'>
                   {user.name}
                 </h3>
                 {user.isVerified && (
-                  <VerifyBadge className='h-4 w-4 text-[#1560BD]' />
+                  <VerifyBadge className='text-info h-4 w-4' />
                 )}
               </div>
 
-              <div className='text-xs font-light text-zinc-500'>
+              <div className='text-xs font-normal text-gray-500'>
                 {createdAt
                   ? `${formatDistanceToNow(createdAt, { addSuffix: true })}`
                   : ''}
@@ -142,15 +142,15 @@ const ActivityPostCard = ({
         </div>
 
         {/* location */}
-        <div className='mt-2 flex items-center text-sm text-black'>
+        <div className='mt-2 flex items-center text-sm text-gray-900'>
           <MapPinned className='mr-1 h-6 w-6 stroke-1' />
-          <span className='ml-2 text-[16px] font-semibold'>{location}</span>
+          <span className='ml-2 text-base font-semibold'>{location}</span>
         </div>
       </div>
 
       {/* Content */}
       <div className='mb-2'>
-        <div className='rich-text-content mb-6 text-[12px] leading-relaxed font-extralight text-[#333334]'>
+        <div className='rich-text-content mb-6 text-xs leading-relaxed font-normal text-gray-700'>
           {content && getTextContent(content).length > 300 ? (
             <>
               <div
@@ -179,8 +179,8 @@ const ActivityPostCard = ({
               <div
                 key={help}
                 className={`${
-                  helpType === 'Offering Help' ? 'bg-secondary/70' : 'bg-red'
-                } flex h-8 w-8 items-center justify-center rounded px-2 py-1 text-xs font-medium text-black`}
+                  helpType === 'Offering Help' ? 'bg-info/70' : 'bg-red'
+                } flex h-8 w-8 items-center justify-center rounded px-2 py-1 text-xs font-medium text-gray-900`}
               >
                 {getResourceIcon(help)}
               </div>

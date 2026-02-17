@@ -63,7 +63,7 @@ const DeleteReportModal: React.FC<DeleteReportModalProps> = ({
       {isOpen && (
         <motion.div
           className={clsx(
-            'fixed inset-0 z-[9999] flex items-center justify-center bg-black/30',
+            'fixed inset-0 z-[9999] flex items-center justify-center bg-gray-900/30',
             className,
           )}
           initial='hidden'
@@ -127,15 +127,16 @@ const DeleteReportModal: React.FC<DeleteReportModalProps> = ({
 
             <div className='flex justify-end space-x-3'>
               <Button
-                className='w-full bg-black/25 text-gray-800 hover:bg-gray-300'
+                variant='secondary'
                 onClick={cancelButton}
                 disabled={isDeleting}
                 type='button'
+                className='w-full'
               >
                 Cancel
               </Button>
               <Button
-                destructive
+                variant='danger'
                 onClick={handleDelete}
                 disabled={isDeleting}
                 className='w-full'

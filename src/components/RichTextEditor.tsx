@@ -37,7 +37,7 @@ export default function RichTextEditor({
   return (
     <>
       {/* Tiptap Editor Toolbar */}
-      <div className='mb-2 flex items-center gap-1 rounded-t-lg border border-[#33333430] p-1'>
+      <div className='mb-2 flex items-center gap-1 rounded-t-lg border border-gray-200 p-1'>
         <button
           onClick={() => editor.chain().focus().toggleBold().run()}
           className={`rounded p-1 hover:bg-gray-100 ${editor.isActive('bold') ? 'bg-gray-200' : ''}`}
@@ -52,7 +52,7 @@ export default function RichTextEditor({
         >
           <Italic size={18} />
         </button>
-        <div className='mx-1 h-5 w-px bg-gray-300'></div>
+        <div className='mx-1 h-5 w-px bg-gray-200'></div>
         <button
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           className={`rounded p-1 hover:bg-gray-100 ${editor.isActive('bulletList') ? 'bg-gray-200' : ''}`}
@@ -71,11 +71,11 @@ export default function RichTextEditor({
 
       {/* Tiptap Editor Content */}
       <div
-        className={`overflow-y-auto rounded-b-lg border border-[#33333430] ${className}`}
+        className={`overflow-y-auto rounded-b-lg border border-gray-200 ${className}`}
       >
         <EditorContent
           editor={editor}
-          className={`min-h-[${minHeight}] w-full rounded-lg p-1 text-[16px] outline-none focus:border-zinc-500`}
+          className={`min-h-[${minHeight}] focus:border-primary w-full rounded-lg p-1 text-base outline-none`}
         />
       </div>
     </>

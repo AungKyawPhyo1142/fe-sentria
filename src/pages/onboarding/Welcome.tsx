@@ -20,9 +20,10 @@ function Welcome() {
         onClick={() => {
           navigate(AppConstantRoutes.paths.onboarding.steps)
         }}
-        primary={true}
-        type={'button'}
-        className='cursor-pointer rounded-l px-12 py-3 text-lg text-white md:text-xl'
+        variant='primary'
+        type='button'
+        size='lg'
+        className='px-12'
       >
         {t('onboarding.letsTakeFirstStep')}
       </Button>

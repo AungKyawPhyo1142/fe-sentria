@@ -33,9 +33,9 @@ export default function ImageSelection({
 
   return (
     <>
-      <div className='group relative h-60 w-60 rounded-lg border border-[#33333430] p-1'>
+      <div className='group relative h-60 w-60 rounded-lg border border-gray-200 p-1'>
         {isUploading && (
-          <div className='bg-opacity-50 absolute inset-0 flex items-center justify-center rounded-lg bg-black'>
+          <div className='bg-opacity-50 absolute inset-0 flex items-center justify-center rounded-lg bg-gray-900'>
             <div className='text-white'>Uploading...</div>
           </div>
         )}
@@ -51,7 +51,7 @@ export default function ImageSelection({
           </div>
         )}
 
-        <div className='absolute inset-0 flex cursor-pointer items-center justify-center rounded-lg bg-black/80 opacity-0 transition-opacity duration-200 group-hover:opacity-100'>
+        <div className='absolute inset-0 flex cursor-pointer items-center justify-center rounded-lg bg-gray-900/80 opacity-0 transition-opacity duration-200 group-hover:opacity-100'>
           <PencilLine
             onClick={handleEditClick}
             className='h-13 w-13 stroke-1 text-white'

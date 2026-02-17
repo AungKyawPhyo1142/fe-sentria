@@ -88,14 +88,14 @@ const ReportDetailModal: React.FC<reportDetailProps> = ({
       return {
         show: true,
         message: t('common.contentDebunked'),
-        bgColor: 'bg-[#B22222]',
+        bgColor: 'bg-danger',
       }
     }
     if (score <= 20) {
       return {
         show: true,
         message: t('common.lowTrust'),
-        bgColor: 'bg-[#B22222]',
+        bgColor: 'bg-danger',
       }
     }
     return { show: false }
@@ -128,7 +128,7 @@ const ReportDetailModal: React.FC<reportDetailProps> = ({
       {isOpen && (
         <motion.div
           className={clsx(
-            'fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-black/30',
+            'fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-gray-900/30',
             className,
           )}
           initial='hidden'
@@ -143,7 +143,7 @@ const ReportDetailModal: React.FC<reportDetailProps> = ({
                 <div
                   className={`mb-0 w-fit rounded-t-xl ${trustWarning.bgColor} px-4 py-1`}
                 >
-                  <span className='text-[12px] font-medium text-white'>
+                  <span className='text-xs font-medium text-white'>
                     {trustWarning.message}
                   </span>
                 </div>
@@ -164,7 +164,7 @@ const ReportDetailModal: React.FC<reportDetailProps> = ({
                 className='absolute top-3 right-3 z-50 cursor-pointer text-white hover:text-white/80'
               >
                 <X
-                  className='h-7 w-7 rounded-full bg-black/80 p-1'
+                  className='h-7 w-7 rounded-full bg-gray-900/80 p-1'
                   strokeWidth={2}
                 />
               </button>
@@ -192,15 +192,15 @@ const ReportDetailModal: React.FC<reportDetailProps> = ({
                   <div className='flex flex-col'>
                     {/* username and Badge */}
                     <div className='flex items-center space-x-2'>
-                      <h3 className='text-[16px] font-medium text-black'>
+                      <h3 className='text-base font-medium text-gray-900'>
                         {user.name}
                       </h3>
                       {user.isVerified && (
-                        <VerifyBadge className='h-4 w-4 text-[#1560BD]' />
+                        <VerifyBadge className='text-info h-4 w-4' />
                       )}
                     </div>
                     {/* Created At */}
-                    <div className='text-xs font-light text-zinc-500'>
+                    <div className='text-xs font-normal text-gray-500'>
                       {createdAt
                         ? `${formatDistanceToNow(createdAt, { addSuffix: true })}`
                         : ''}
@@ -214,7 +214,7 @@ const ReportDetailModal: React.FC<reportDetailProps> = ({
                     <TrustScoreBadge score={trustScore} />
                   </div>
                   <div
-                    className={`flex h-7 items-center space-x-1 rounded-sm px-2 py-1 text-xs font-medium text-white ${isDebunked ? 'bg-[#33333430]' : 'bg-[#B22222]'}`}
+                    className={`flex h-7 items-center space-x-1 rounded-sm px-2 py-1 text-xs font-medium text-white ${isDebunked ? 'bg-gray-200' : 'bg-danger'}`}
                   >
                     {getDisasterIcon(disasterType)}
                     <span className='capitalize'>
@@ -229,7 +229,7 @@ const ReportDetailModal: React.FC<reportDetailProps> = ({
                 {/* disaster type and isDebunked */}
                 <div className='my-2 flex flex-row space-y-2'>
                   {isDebunked && (
-                    <div className='flex h-7 items-center space-x-1 rounded-sm bg-[#B22222] px-2 py-1 text-xs font-medium text-white'>
+                    <div className='bg-danger flex h-7 items-center space-x-1 rounded-sm px-2 py-1 text-xs font-medium text-white'>
                       <span>{t('common.debunked')}</span>
                     </div>
                   )}
@@ -242,12 +242,12 @@ const ReportDetailModal: React.FC<reportDetailProps> = ({
                     {location}
                   </span>
                 </div> */}
-                <div className='flex items-center gap-x-3 border-b-1 border-[#33333430]'>
+                <div className='flex items-center gap-x-3 border-b border-gray-200'>
                   <button
                     onClick={() => setActiveTab('description')}
                     className={clsx(
                       'h-[30px] w-[100px] cursor-pointer rounded-tl-lg rounded-tr-lg bg-gray-300 text-center text-sm text-white transition-colors duration-100 ease-in-out hover:opacity-80',
-                      activeTab === 'description' && 'bg-secondary',
+                      activeTab === 'description' && 'bg-info',
                     )}
                   >
                     Description
@@ -256,7 +256,7 @@ const ReportDetailModal: React.FC<reportDetailProps> = ({
                     onClick={() => setActiveTab('location')}
                     className={clsx(
                       'h-[30px] w-[100px] cursor-pointer rounded-tl-lg rounded-tr-lg bg-gray-300 text-center text-sm text-white transition-colors duration-100 ease-in-out hover:opacity-80',
-                      activeTab === 'location' && 'bg-secondary',
+                      activeTab === 'location' && 'bg-info',
                     )}
                   >
                     Location
@@ -280,7 +280,7 @@ const ReportDetailModal: React.FC<reportDetailProps> = ({
 
                       {/* Content */}
                       <div className=''>
-                        <p className='mb-6 text-[12px] leading-relaxed font-extralight text-[#333334]'>
+                        <p className='mb-6 text-xs leading-relaxed font-normal text-gray-700'>
                           {content}
                         </p>
                       </div>
@@ -327,9 +327,9 @@ const ReportDetailModal: React.FC<reportDetailProps> = ({
 
                 {/* footer with up/down/cmt and menu */}
                 <div className='sticky bottom-0 bg-white pt-3'>
-                  <div className='flex items-center text-[9px] font-semibold text-[#33333430]'>
+                  <div className='flex items-center text-[11px] font-semibold text-gray-300'>
                     {upvotes === 0 || downvotes === 0 ? (
-                      <span className='text-[#33333430]'>No votes yet</span>
+                      <span className='text-gray-300'>No votes yet</span>
                     ) : (
                       <>
                         {upvotes > downvotes ? (
@@ -337,37 +337,37 @@ const ReportDetailModal: React.FC<reportDetailProps> = ({
                             {formatNumber(upvotes)} upvotes
                           </span>
                         ) : (
-                          <span className='text-[#B22222]'>
+                          <span className='text-danger'>
                             {formatNumber(downvotes)} downvotes
                           </span>
                         )}
                       </>
                     )}
 
-                    <Dot className='h-5 w-5 text-[#33333430]' />
+                    <Dot className='h-5 w-5 text-gray-300' />
                     <span>{formatNumber(comments)} comments</span>
                   </div>
                   {/* up/dowwn/cmt -> menu */}
-                  <div className='my-2 flex items-center justify-between border-t border-b border-[#33333430] py-2 text-center align-middle'>
+                  <div className='my-2 flex items-center justify-between border-t border-b border-gray-200 py-2 text-center align-middle'>
                     {/* up/down/cmt */}
                     <div className='flex w-full items-center space-x-4'>
                       <button
                         onClick={onUpvote}
-                        className={`flex min-h-0 items-center space-x-1 border-none bg-transparent p-0 ${upvotes > downvotes ? 'text-primary hover:text-primary/80' : 'text-[#33333430] hover:text-[#3333430]/80'}`}
+                        className={`flex min-h-0 items-center space-x-1 border-none bg-transparent p-0 ${upvotes > downvotes ? 'text-primary hover:text-primary/80' : 'text-gray-300 hover:text-gray-300/80'}`}
                       >
                         <CircleArrowUp className='h-6 w-6 stroke-1' />
                       </button>
 
                       <button
                         onClick={onDownvote}
-                        className={`flex items-center space-x-1 ${downvotes > upvotes ? 'text-[#B22222] hover:text-[#B22222]/80' : 'text-[#33333430] hover:text-[#33333430]/80'}`}
+                        className={`flex items-center space-x-1 ${downvotes > upvotes ? 'text-danger hover:text-danger/80' : 'text-gray-300 hover:text-gray-300/80'}`}
                       >
                         <CircleArrowDown className='h-6 w-6 stroke-1' />
                       </button>
 
                       <button
                         onClick={onComment}
-                        className='flex items-center space-x-1 text-[#33333430] hover:text-[#33333430]/80'
+                        className='flex items-center space-x-1 text-gray-300 hover:text-gray-300/80'
                       >
                         <MessageSquare className='h-6 w-6 stroke-1' />
                       </button>
@@ -377,22 +377,22 @@ const ReportDetailModal: React.FC<reportDetailProps> = ({
                       <div className='relative'>
                         <button
                           onClick={() => setShowMenu(!showMenu)}
-                          className='items-center align-middle text-[#33333430] focus-within:ring-0 hover:cursor-pointer hover:text-[#33333430]/80 focus:ring-0 focus:outline-none focus-visible:ring-0'
+                          className='items-center align-middle text-gray-300 focus-within:ring-0 hover:cursor-pointer hover:text-gray-300/80 focus:ring-0 focus:outline-none focus-visible:ring-0'
                         >
                           <Ellipsis className='h-6 w-6 stroke-1' />
                         </button>
                         {showMenu && (
-                          <div className='absolute -right-3 bottom-full z-[100] mb-1 w-28 rounded-md border border-[#333334]/30 bg-white'>
+                          <div className='absolute -right-3 bottom-full z-[100] mb-1 w-28 rounded-md border border-gray-200 bg-white'>
                             <button
                               onClick={() => console.log('Edit Post')}
-                              className='flex w-full cursor-pointer items-center gap-2 px-4 py-2 text-xs text-[#333334]/80 hover:text-[#333334]/30 focus:ring-0 focus:outline-none focus-visible:ring-0'
+                              className='flex w-full cursor-pointer items-center gap-2 px-4 py-2 text-xs text-gray-600 hover:text-gray-300 focus:ring-0 focus:outline-none focus-visible:ring-0'
                               disabled
                             >
                               <EditIcon className='h-4 w-4' /> Edit
                             </button>
                             <button
                               onClick={() => console.log('Delete Post')}
-                              className='flex w-full items-center gap-2 px-4 py-2 text-xs text-[#B22222] hover:cursor-pointer hover:text-[#B22222]/80 focus:ring-0 focus:outline-none focus-visible:ring-0'
+                              className='text-danger hover:text-danger/80 flex w-full items-center gap-2 px-4 py-2 text-xs hover:cursor-pointer focus:ring-0 focus:outline-none focus-visible:ring-0'
                             >
                               <Trash className='h-4 w-4' /> Delete
                             </button>

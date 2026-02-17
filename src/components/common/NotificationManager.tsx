@@ -54,7 +54,7 @@ const NotificationManager = () => {
               href={url}
               target='_blank'
               rel='noopener noreferrer'
-              style={{ color: '#3498db', textDecoration: 'underline' }}
+              className='text-info underline'
             >
               View Details on USGS
             </a>

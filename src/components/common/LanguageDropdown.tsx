@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import i18next from 'i18next'
-import { Languages } from 'lucide-react'
-import { useLocation } from 'react-router'
+import { Globe } from 'lucide-react'
 
 const LanguageDropdown = () => {
   const [open, setOpen] = useState(false)
@@ -19,7 +18,6 @@ const LanguageDropdown = () => {
 
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  // Close dropdown if clicked outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -32,36 +30,40 @@ const LanguageDropdown = () => {
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
-  const location = useLocation()
-  const isMapPage = location.pathname === '/map'
-  const displayText = currentLang === 'en' ? 'English' : 'မြန်မာ'
+
+  const displayText = currentLang === 'en' ? 'EN' : 'MM'
 
   return (
     <div className='relative' ref={dropdownRef}>
-      {/* Button */}
       <button
         onClick={toggleDropdown}
-        className='flex items-center gap-2 rounded-[10px] py-2 text-[16px] transition-colors hover:cursor-pointer'
+        className='flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl text-gray-400 transition-all duration-150 hover:bg-gray-100 hover:text-gray-600'
       >
-        <Languages />
-        {!isMapPage && <span>{displayText}</span>}
+        <Globe size={20} strokeWidth={1.5} />
       </button>
 
-      {/* Dropdown */}
       {open && (
-        <div className='animate-fade-in absolute bottom-full mb-2 rounded-[10px] border border-gray-300 bg-white transition-all'>
-          <ul className='text-[16px]'>
+        <div className='animate-fade-in absolute bottom-full left-1/2 mb-2 -translate-x-1/2 rounded-xl bg-white shadow-[var(--shadow-elevated)]'>
+          <ul className='py-1'>
             <li
               onClick={() => changeLanguage('en')}
-              className='cursor-pointer rounded-t-[10px] px-4 py-2 hover:bg-gray-100'
+              className={`cursor-pointer px-4 py-2 text-sm transition-colors duration-100 hover:bg-gray-50 ${
+                currentLang === 'en'
+                  ? 'text-primary font-medium'
+                  : 'text-gray-600'
+              }`}
             >
               English
             </li>
             <li
               onClick={() => changeLanguage('mm')}
-              className='cursor-pointer rounded-b-[10px] px-4 py-2 hover:bg-gray-100'
+              className={`cursor-pointer px-4 py-2 text-sm transition-colors duration-100 hover:bg-gray-50 ${
+                currentLang === 'mm'
+                  ? 'text-primary font-medium'
+                  : 'text-gray-600'
+              }`}
             >
-              မြန်မာ
+              Myanmar
             </li>
           </ul>
         </div>

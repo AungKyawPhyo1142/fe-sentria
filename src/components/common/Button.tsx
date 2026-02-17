@@ -1,27 +1,36 @@
 import clsx from 'clsx'
 import { ButtonHTMLAttributes, ReactNode } from 'react'
 
-/*
-    TODO: change the color & style of the button as needed
-*/
-
 interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
-  className?: string
-  icon?: string
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger'
+  size?: 'sm' | 'md' | 'lg'
   loading?: boolean
-  primary?: boolean
-  secondary?: boolean
-  destructive?: boolean
-  tertiary?: boolean
-  outline?: boolean
-  primaryOutline?: boolean
   children: ReactNode
-  type?: 'button' | 'submit' | 'reset'
+  className?: string
 }
-const Spinner = () => {
+
+const variantStyles: Record<NonNullable<Props['variant']>, string> = {
+  primary: 'bg-primary text-white hover:bg-primary-dark',
+  secondary: 'bg-gray-100 text-gray-700 hover:bg-gray-200',
+  outline: 'border border-gray-200 text-gray-700 hover:bg-gray-50 bg-white',
+  ghost: 'text-gray-500 hover:text-gray-700 hover:bg-gray-100',
+  danger: 'bg-danger text-white hover:opacity-90',
+}
+
+const sizeStyles: Record<NonNullable<Props['size']>, string> = {
+  sm: 'h-8 px-3 text-sm rounded-md',
+  md: 'h-10 px-4 text-sm rounded-lg',
+  lg: 'h-12 px-6 text-base rounded-lg',
+}
+
+const Spinner = ({ variant }: { variant: Props['variant'] }) => {
+  const colorClass =
+    variant === 'secondary' || variant === 'outline' || variant === 'ghost'
+      ? 'text-gray-700'
+      : 'text-white'
   return (
     <svg
-      className='h-7 w-7 animate-spin text-white'
+      className={clsx('h-5 w-5 animate-spin', colorClass)}
       xmlns='http://www.w3.org/2000/svg'
       fill='none'
       viewBox='0 0 24 24'
@@ -42,33 +51,22 @@ const Spinner = () => {
     </svg>
   )
 }
-const Button: React.FC<Props> = (props) => {
-  const {
-    className,
-    loading,
-    primary,
-    secondary,
-    tertiary,
-    destructive,
-    outline,
-    primaryOutline,
-    children,
-    ...rest // rest of the props, this comes from ButtonHTMLAttributes<HTMLButtonElement>
-  } = props
 
+const Button: React.FC<Props> = ({
+  variant = 'primary',
+  size = 'md',
+  loading,
+  children,
+  className,
+  ...rest
+}) => {
   return (
     <button
       {...rest}
       className={clsx(
-        'min-h-[50px] cursor-pointer rounded-lg py-2 text-base font-light text-white transition-all duration-200 ease-in-out hover:opacity-[90%] active:opacity-100',
-        primary && 'bg-primary text-black disabled:bg-[#B3B3B3]',
-        secondary && 'bg-secondary disabled:bg-[#B3B3B3]',
-        tertiary && 'bg-[#B3B3B3] text-white',
-        destructive && 'bg-red disabled:bg-[#B3B3B3]',
-        primaryOutline &&
-          'border-primary !text-primary border hover:bg-black/8',
-        outline &&
-          'border-secondary !text-secondary hover:bg-secondary border hover:!text-white disabled:bg-[#B3B3B3]',
+        'inline-flex cursor-pointer items-center justify-center text-sm font-medium transition-all duration-150 ease-in-out disabled:cursor-not-allowed disabled:opacity-50',
+        variantStyles[variant],
+        sizeStyles[size],
         className,
       )}
     >
@@ -76,7 +74,7 @@ const Button: React.FC<Props> = (props) => {
         (children ?? 'Button')
       ) : (
         <div className='flex justify-center'>
-          <Spinner />
+          <Spinner variant={variant} />
         </div>
       )}
     </button>

@@ -274,7 +274,7 @@ const CreateResourceModal: React.FC<Props> = ({
       {isOpen && (
         <motion.div
           className={clsx(
-            'fixed inset-0 z-[9999] flex items-center justify-center bg-black/30',
+            'fixed inset-0 z-[9999] flex items-center justify-center bg-gray-900/30',
           )}
           initial='hidden'
           animate='visible'
@@ -289,7 +289,7 @@ const CreateResourceModal: React.FC<Props> = ({
             exit='exit'
           >
             {/* Header */}
-            <div className='sticky top-0 z-[9998] flex items-baseline justify-between border-b-1 border-black/30 bg-white py-5'>
+            <div className='sticky top-0 z-[9998] flex items-baseline justify-between border-b border-gray-200 bg-white py-5'>
               <h1 className='text-[26px] font-semibold'>Create Resource</h1>
               <button
                 onClick={closeModal}
@@ -316,7 +316,7 @@ const CreateResourceModal: React.FC<Props> = ({
                     }))
                   }
                   placeholder='Enter resource name'
-                  className='block min-h-[50px] w-full appearance-none rounded-[10px] border border-zinc-300 px-4 py-2 text-base font-light text-black transition-colors duration-200 focus:outline-black/30'
+                  className='focus:ring-primary/20 block h-10 w-full appearance-none rounded-xl border border-gray-200 px-4 py-2 text-base font-normal text-gray-900 transition-colors duration-200 focus:ring-2 focus:outline-none'
                 />
               </div>
 
@@ -338,7 +338,7 @@ const CreateResourceModal: React.FC<Props> = ({
                         resourceType: e.target.value as ResourceType,
                       }))
                     }
-                    className='block min-h-[50px] w-full appearance-none rounded-[10px] border border-zinc-300 px-4 py-2 text-base font-light text-black transition-colors duration-200 focus:outline-black/30'
+                    className='focus:ring-primary/20 block h-10 w-full appearance-none rounded-xl border border-gray-200 px-4 py-2 text-base font-normal text-gray-900 transition-colors duration-200 focus:ring-2 focus:outline-none'
                   >
                     <option value=''>Select the types of resource</option>
                     {resourceTypes.map((type) => (
@@ -347,7 +347,7 @@ const CreateResourceModal: React.FC<Props> = ({
                       </option>
                     ))}
                   </select>
-                  <div className='absolute inset-y-0 right-0 flex items-center px-4 text-black'>
+                  <div className='absolute inset-y-0 right-0 flex items-center px-4 text-gray-900'>
                     <ChevronDown />
                   </div>
                 </div>
@@ -363,7 +363,7 @@ const CreateResourceModal: React.FC<Props> = ({
                   content={formData.parameters.description}
                   onChange={handleDescriptionChange}
                   minHeight='112px'
-                  className='block min-h-28 w-full appearance-none rounded-[10px] border border-zinc-300 px-4 py-2 text-base font-light text-black transition-colors duration-200 focus:outline-black/30'
+                  className='focus:ring-primary/20 block min-h-28 w-full appearance-none rounded-xl border border-gray-200 px-4 py-2 text-base font-normal text-gray-900 transition-colors duration-200 focus:ring-2 focus:outline-none'
                 />
               </div>
 
@@ -375,7 +375,7 @@ const CreateResourceModal: React.FC<Props> = ({
                 <p className='mb-2 text-sm font-thin text-black/50'>
                   Click or drag the pin to set your location
                 </p>
-                <div className='h-48 w-full overflow-hidden rounded-[10px] border border-zinc-300'>
+                <div className='h-48 w-full overflow-hidden rounded-xl border border-gray-200'>
                   <MapContainer
                     center={
                       formData.parameters.location.latitude !== 0 &&
@@ -458,15 +458,15 @@ const CreateResourceModal: React.FC<Props> = ({
                 </label>
                 <div
                   className={clsx(
-                    'cursor-pointer rounded-[10px] border-2 border-dashed border-zinc-300 px-6 py-10 text-center transition-colors hover:border-black/30',
-                    isDragOver && 'border-black/30',
+                    'cursor-pointer rounded-xl border-2 border-dashed border-gray-200 px-6 py-10 text-center transition-colors hover:border-gray-200',
+                    isDragOver && 'border-gray-200',
                   )}
                   onClick={() => fileInputRef.current?.click()}
                   onDragOver={handleDragOver}
                   onDragLeave={handleDragLeave}
                   onDrop={handleDrop}
                 >
-                  <div className='flex flex-col items-center justify-center text-black/30 hover:text-black'>
+                  <div className='flex flex-col items-center justify-center text-gray-900/30 hover:text-gray-900'>
                     <p>
                       <CloudUpload className='mb-2' />
                     </p>
@@ -478,7 +478,7 @@ const CreateResourceModal: React.FC<Props> = ({
                     <p className='mb-2'>or</p>
                     <button
                       type='button'
-                      className='rounded-[10px] border border-black/30 px-4 py-2 transition-colors hover:cursor-pointer'
+                      className='rounded-xl border border-gray-200 px-4 py-2 transition-colors hover:cursor-pointer'
                     >
                       Browse
                     </button>
@@ -500,7 +500,7 @@ const CreateResourceModal: React.FC<Props> = ({
                     {previewUrls.map((url, index) => (
                       <div
                         key={index}
-                        className='group relative h-26 w-full overflow-hidden rounded-[10px]'
+                        className='group relative h-26 w-full overflow-hidden rounded-xl'
                       >
                         <img
                           src={url}
@@ -510,7 +510,7 @@ const CreateResourceModal: React.FC<Props> = ({
                         <button
                           type='button'
                           onClick={() => removeImage(index)}
-                          className='absolute top-1 right-1 rounded-full bg-black/50 p-1 text-white transition-opacity group-hover:cursor-pointer group-hover:bg-black/30'
+                          className='absolute top-1 right-1 rounded-full bg-black/50 p-1 text-white transition-opacity group-hover:cursor-pointer group-hover:bg-gray-900/30'
                         >
                           <X className='h-4 w-4' />
                         </button>
@@ -523,17 +523,18 @@ const CreateResourceModal: React.FC<Props> = ({
               {/* Buttons */}
               <div className='sticky bottom-0 z-[9999] flex justify-end space-x-5 bg-white py-4'>
                 <Button
-                  className='w-30 bg-black/25'
+                  variant='secondary'
                   type='button'
                   onClick={closeModal}
+                  className='w-30'
                 >
                   Cancel
                 </Button>
                 <Button
-                  className='w-30'
-                  primary
+                  variant='primary'
                   type='button'
                   onClick={handleSave}
+                  className='w-30'
                 >
                   Create
                 </Button>

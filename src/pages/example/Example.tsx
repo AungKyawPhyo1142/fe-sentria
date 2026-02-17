@@ -68,10 +68,10 @@ const Example = () => {
         <div className='mt-5 flex flex-col gap-y-3 rounded p-10'>
           <Input placeholder='example' />
           {/* <Input placeholder='Password' type='password' /> */}
-          <Button primary>Primary Button</Button>
-          <Button secondary>Secondary Button</Button>
-          <Button destructive>Destructive Button</Button>
-          <Button outline>Outline Button</Button>
+          <Button variant='primary'>Primary Button</Button>
+          <Button variant='secondary'>Secondary Button</Button>
+          <Button variant='danger'>Destructive Button</Button>
+          <Button variant='outline'>Outline Button</Button>
         </div>
         <div className='mt-10 border-t border-black pt-4'>
           <button

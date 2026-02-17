@@ -11,13 +11,14 @@ const NoDataStatement: React.FC<NoDataStatementProps> = ({
   subHeading,
 }) => {
   return (
-    <div className='flex flex-col items-center justify-center'>
-      <NoDataIcon className='size-[300px]' />
-      <div className='flex flex-col items-center justify-center gap-y-3'>
-        <h1 className='text-3xl font-medium text-[#939090]'>{heading}</h1>
-        <h3 className='text-base font-light text-[#A0A0A0]'>{subHeading}</h3>
+    <div className='flex flex-col items-center justify-center py-20'>
+      <NoDataIcon className='h-48 w-48 opacity-60' />
+      <div className='mt-6 flex flex-col items-center justify-center gap-y-2 text-center'>
+        <h2 className='text-lg font-semibold text-gray-700'>{heading}</h2>
+        <p className='max-w-sm text-sm text-gray-400'>{subHeading}</p>
       </div>
     </div>
   )
 }
+
 export default NoDataStatement

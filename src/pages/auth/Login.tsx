@@ -54,18 +54,14 @@ const Login = () => {
   const { onInputChange } = useCustomEvents<LoginFormValues>(formik)
 
   return (
-    <form
-      onSubmit={formik.handleSubmit}
-      className='items-center justify-center space-y-5'
-    >
-      <div>
-        <h1 className='text-[32px] font-medium text-[#333334]'>
+    <form onSubmit={formik.handleSubmit} className='space-y-4'>
+      <div className='mb-2'>
+        <h1 className='text-2xl font-semibold text-gray-900'>
           {t('Login.welcome')}
         </h1>
-        <h3 className='text-[16px] font-light text-[#333334]/50'>
-          {t('Login.instruction')}
-        </h3>
+        <p className='mt-1 text-sm text-gray-500'>{t('Login.instruction')}</p>
       </div>
+
       <Input
         type='text'
         autoComplete='email'
@@ -85,26 +81,27 @@ const Login = () => {
         placeholder={t('Login.password')}
       />
 
-      <div className='flex justify-between'>
-        <Button
-          primary
-          type='submit'
-          loading={formik.isSubmitting}
-          disabled={formik.isSubmitting}
-          className='w-30'
-        >
-          {t('Login.login')}
-        </Button>
-        <a
-          href='#'
-          className='mt-2 text-sm font-light text-[#333334]/50 underline hover:italic'
-        >
+      <Button
+        variant='primary'
+        size='lg'
+        type='submit'
+        loading={formik.isSubmitting}
+        disabled={formik.isSubmitting}
+        className='w-full'
+      >
+        {t('Login.login')}
+      </Button>
+
+      <div className='text-right'>
+        <a href='#' className='hover:text-primary text-sm text-gray-500'>
           {t('Login.forgot')}
         </a>
       </div>
-      <div className='mt-5 border-t border-[#333334]/30 pt-8 text-center'>
+
+      <div className='border-t border-gray-200 pt-6'>
         <Button
-          outline
+          variant='outline'
+          size='lg'
           className='w-full'
           onClick={() => navigate(AppConstantRoutes.paths.auth.register)}
           type='button'

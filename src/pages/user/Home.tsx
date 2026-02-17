@@ -1,5 +1,4 @@
 import { useSocketStore } from '@/zustand/socketStore'
-// import { useTranslation } from 'react-i18next'
 import NotificationSidebar from '@/components/common/NotificationSidebar'
 import PostCard, { PostCardSkeleton } from '@/components/posts/PostCard'
 import {
@@ -12,27 +11,24 @@ import { useEffect } from 'react'
 import NoDataStatement from '@/components/common/NoDataStatement'
 import ErrorFetch from '@/components/common/ErrorFetch'
 
-// component for Post Lists
 interface ReportPostProps {
   postLists: ReportData[]
   isLoading?: boolean
 }
+
 const PostList: React.FC<ReportPostProps> = ({ postLists, isLoading }) => {
   const { userId } = useAuthStore(selectAuth)
 
   return (
-    // * rendering get all reports
-    <div className=''>
+    <div className='space-y-4'>
       {isLoading && (
-        <div className='flex flex-col gap-4'>
-          {/* Skeleton loading for post cards */}
-          {[...Array(5)].map((_, index) => (
+        <>
+          {[...Array(4)].map((_, index) => (
             <PostCardSkeleton key={index} />
           ))}
-        </div>
+        </>
       )}
       {postLists.map((postList, index) => {
-        // imag url
         const imageUrls =
           postList.media
             ?.filter(
@@ -73,10 +69,7 @@ const PostList: React.FC<ReportPostProps> = ({ postLists, isLoading }) => {
   )
 }
 
-// Home
 const Home = () => {
-  // const { t } = useTranslation()
-
   const connect = useSocketStore((state) => state.connect)
   const earthquakeAlertListener = useSocketStore(
     (state) => state.earthquakeAlertListener,
@@ -84,7 +77,6 @@ const Home = () => {
   const sendUserLocation = useSocketStore((state) => state.sendUserLocation)
   const isConnected = useSocketStore((state) => state.isConnected)
 
-  // use effect
   useEffect(() => {
     connect()
     earthquakeAlertListener()
@@ -97,7 +89,6 @@ const Home = () => {
           lat: pos.coords.latitude,
           lng: pos.coords.longitude,
         })
-        // set user current location global state via zustand
         setUserCurrentLocation({
           lat: pos.coords.latitude,
           lng: pos.coords.longitude,
@@ -107,30 +98,26 @@ const Home = () => {
   }, [isConnected, sendUserLocation])
 
   const { data, isLoading, error, refetch } = useGetAllDisasterReports()
-  // console.log('report data: ', data)
-  // console.log('data.pages', data?.pages)
 
   const reports =
     data?.pages?.flatMap((page) => page.data.reports.data ?? []) ?? []
-  console.log('reports: ', reports)
 
   if (error)
     return (
       <ErrorFetch
         heading='Try Again!'
-        subHeading="There's error data fetching in disaster reports.Please try again!"
+        subHeading="There's error data fetching in disaster reports. Please try again!"
         reFetch={refetch}
       />
     )
 
   return (
     <div className='fade-in'>
-      <div className='w-3/4'>
-        {/* Post Cards */}
-        {reports.length === 0 ? (
+      <div className='mx-auto max-w-[640px]'>
+        {reports.length === 0 && !isLoading ? (
           <NoDataStatement
-            heading='No Disaster Report Found'
-            subHeading="There's nothing here yet! Start by adding your first disaster report post."
+            heading='No Reports Yet'
+            subHeading='Start by adding your first disaster report to help your community stay informed.'
           />
         ) : (
           <PostList postLists={reports} isLoading={isLoading} />
@@ -140,4 +127,5 @@ const Home = () => {
     </div>
   )
 }
+
 export default Home

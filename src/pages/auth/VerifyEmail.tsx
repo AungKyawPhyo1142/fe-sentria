@@ -1,3 +1,4 @@
+import AuthLayout from '@/components/auth/AuthLayout'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useParams } from 'react-router'
 import { AppConstantRoutes } from '@/services/routes/path'
@@ -18,7 +19,7 @@ function VerifyEmail() {
   const [errorMessage, setErrorMessage] = useState('')
   const navigate = useNavigate()
 
-  const animationDuration = 3000 // 3 seconds to animate after verification success
+  const animationDuration = 3000
 
   const { data, error, isLoading } = useVerifyEmail(token || '')
 
@@ -37,24 +38,25 @@ function VerifyEmail() {
     }
   }, [isLoading, error, data, t])
 
-  // Redirect after animation completes
   useEffect(() => {
     if (animationComplete) {
       const redirectTimer = setTimeout(() => {
         navigate(AppConstantRoutes.paths.onboarding.welcome)
-      }, 1000) // 1 second delay before redirecting
+      }, 1000)
 
       return () => clearTimeout(redirectTimer)
     }
   }, [animationComplete, navigate])
 
   return (
-    <div className='fade-in flex min-h-screen flex-col items-center justify-center space-y-10 bg-white p-4'>
-      <div className='flex w-full flex-col items-center justify-center space-y-8 px-4'>
+    <AuthLayout>
+      <div className='flex flex-col items-center space-y-8 text-center'>
         {verificationStatus === 'loading' && (
           <>
-            <div className='border-primary h-12 w-12 animate-spin rounded-full border-4 border-t-transparent'></div>
-            <p className='text-primary'>{t('emailVerification.verifying')}</p>
+            <div className='border-primary h-12 w-12 animate-spin rounded-full border-4 border-t-transparent' />
+            <p className='text-primary text-sm'>
+              {t('emailVerification.verifying')}
+            </p>
           </>
         )}
 
@@ -64,11 +66,11 @@ function VerifyEmail() {
               setAnimationComplete={setAnimationComplete}
               animationDuration={animationDuration}
             />
-            <h1 className='text-2xl font-semibold'>
+            <h1 className='text-2xl font-semibold text-gray-900'>
               {t('emailVerification.verified')}
             </h1>
             {animationComplete && (
-              <p className='animate-fade-in text-gray-500'>
+              <p className='animate-fade-in text-sm text-gray-500'>
                 {t('emailVerification.redirecting')}
               </p>
             )}
@@ -77,17 +79,17 @@ function VerifyEmail() {
 
         {verificationStatus === 'error' && (
           <>
-            <div className='text-red-500'>
+            <div className='text-danger'>
               <XCircle size={64} strokeWidth={1} />
             </div>
-            <h1 className='text-xl text-red-500'>
+            <h1 className='text-danger text-xl font-semibold'>
               {t('emailVerification.verificationFailed')}
             </h1>
-            <p className='text-gray-700'>{errorMessage}</p>
+            <p className='text-sm text-gray-700'>{errorMessage}</p>
           </>
         )}
       </div>
-    </div>
+    </AuthLayout>
   )
 }
 

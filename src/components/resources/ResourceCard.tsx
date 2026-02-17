@@ -67,7 +67,7 @@ const ResourceCard = ({
   }
 
   return (
-    <div className='flex w-full flex-col space-y-3 rounded-lg border border-[#33333430] px-8 py-7'>
+    <div className='flex w-full flex-col space-y-3 rounded-lg border border-gray-200 px-8 py-7'>
       {/* header */}
       <div className='mb-2'>
         <div className='mb-4 flex items-center justify-between'>
@@ -91,17 +91,17 @@ const ResourceCard = ({
 
             <div className='flex flex-col'>
               <div className='flex items-center space-x-2'>
-                <h3 className='text-[16px] font-medium text-black'>
+                <h3 className='text-base font-medium text-gray-900'>
                   {user.name}
                 </h3>
                 {user.isVerified && (
                   <VerifyBadge
-                    className='h-4 w-4 text-[#1560BD]'
+                    className='text-info h-4 w-4'
                     aria-label='Verified user'
                   />
                 )}
               </div>
-              <div className='text-xs font-light text-zinc-500'>
+              <div className='text-xs font-normal text-gray-500'>
                 {createdAt
                   ? `${formatDistanceToNow(createdAt, { addSuffix: true })}`
                   : ''}
@@ -114,7 +114,7 @@ const ResourceCard = ({
               resourceTypes.map((resource) => (
                 <div
                   key={resource}
-                  className='bg-secondary flex h-8 w-8 items-center justify-center rounded px-2 py-1 text-xs font-medium text-black'
+                  className='bg-info flex h-8 w-8 items-center justify-center rounded px-2 py-1 text-xs font-medium text-gray-900'
                   aria-label={`Resource: ${resource}`}
                 >
                   {getResourceIcon(resource)}
@@ -125,9 +125,9 @@ const ResourceCard = ({
 
         {/* location */}
         {location && (
-          <div className='mt-2 flex items-center text-sm text-black'>
+          <div className='mt-2 flex items-center text-sm text-gray-900'>
             <MapPinned className='mr-1 h-6 w-6 stroke-1' aria-hidden='true' />
-            <span className='ml-2 text-[16px] font-semibold'>{location}</span>
+            <span className='ml-2 text-base font-semibold'>{location}</span>
           </div>
         )}
       </div>
@@ -137,7 +137,7 @@ const ResourceCard = ({
         {description && stripHtml(description).length > 300 ? (
           <div className='rich-text-content'>
             <div
-              className='mb-3 text-[12px] leading-relaxed font-extralight text-[#333334]'
+              className='mb-3 text-xs leading-relaxed font-normal text-gray-700'
               dangerouslySetInnerHTML={{
                 __html: getPreviewHtml(description, 300),
               }}
@@ -152,7 +152,7 @@ const ResourceCard = ({
           </div>
         ) : (
           <div
-            className='rich-text-content mb-3 text-[12px] leading-relaxed font-extralight text-[#333334]'
+            className='rich-text-content mb-3 text-xs leading-relaxed font-normal text-gray-700'
             dangerouslySetInnerHTML={{ __html: description }}
           />
         )}

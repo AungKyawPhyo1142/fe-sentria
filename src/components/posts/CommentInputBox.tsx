@@ -52,7 +52,7 @@ const CommentInputBox: React.FC<CommentInputBoxProps> = ({ VerifyBadge }) => {
   const avatar = userProfile.profile_image
 
   return (
-    <div className='sticky bottom-0 z-[999] rounded-lg rounded-t-[10px] bg-gray-300 px-8 py-5'>
+    <div className='sticky bottom-0 z-[999] rounded-lg rounded-t-xl bg-gray-300 px-8 py-5'>
       {/* user comment */}
       <div className='flex items-center space-x-3'>
         <div className='relative'>
@@ -72,8 +72,8 @@ const CommentInputBox: React.FC<CommentInputBoxProps> = ({ VerifyBadge }) => {
         </div>
 
         <div className='flex items-center space-x-2'>
-          <h3 className='text-[16px] font-medium text-black'>{fullName}</h3>
-          {isVerified && <VerifyBadge className='h-4 w-4 text-[#1560BD]' />}
+          <h3 className='text-base font-medium text-gray-900'>{fullName}</h3>
+          {isVerified && <VerifyBadge className='text-info h-4 w-4' />}
         </div>
       </div>
 
@@ -87,7 +87,7 @@ const CommentInputBox: React.FC<CommentInputBoxProps> = ({ VerifyBadge }) => {
           className='w-full border-none px-3 text-sm outline-none focus:ring-0 focus:outline-none'
         />
 
-        <div className='flex space-x-2 px-3 text-[#333334]/30'>
+        <div className='flex space-x-2 px-3 text-gray-300'>
           <Image onClick={handleImageClick} className='cursor-pointer' />
           <Send onClick={handleSend} className='cursor-pointer' />
         </div>
@@ -103,7 +103,7 @@ const CommentInputBox: React.FC<CommentInputBoxProps> = ({ VerifyBadge }) => {
 
       {/* Preview selected image */}
       {imagePreview && (
-        <div className='relative mt-2 h-24 w-24 rounded-md bg-[#e0e0e0]'>
+        <div className='relative mt-2 h-24 w-24 rounded-md bg-gray-200'>
           <img
             src={imagePreview}
             alt='preview'

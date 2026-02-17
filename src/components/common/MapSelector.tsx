@@ -91,7 +91,7 @@ const MapSelector: React.FC<MapSelectorProps> = ({ onPositionChange }) => {
       <div className='bg-primary absolute top-3 left-15 z-[1000] cursor-pointer rounded-sm p-2 text-white'>
         <div onClick={handleLocateMe} className='relative'>
           <Locate />
-          <div className='pointer-events-none absolute top-1/2 left-full ml-2 w-auto -translate-y-1/2 rounded bg-black px-2 py-1 text-xs whitespace-nowrap text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100'>
+          <div className='pointer-events-none absolute top-1/2 left-full ml-2 w-auto -translate-y-1/2 rounded bg-gray-900 px-2 py-1 text-xs whitespace-nowrap text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100'>
             Locate me
           </div>
         </div>

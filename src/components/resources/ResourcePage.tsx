@@ -182,12 +182,12 @@ export default function ResourcePage() {
       <div className='flex w-full flex-col items-center justify-between'>
         <div className='mt-2 flex w-full items-center justify-between gap-4 py-4'>
           <div className='flex flex-shrink-0 items-center gap-4'>
-            <span className='text-[16px] font-extralight whitespace-nowrap text-black'>
+            <span className='text-base font-normal whitespace-nowrap text-gray-900'>
               Sort by:
             </span>
             <div className='relative w-75 flex-shrink-0'>
               <DropDown
-                className='min-h-[50px] w-full appearance-none text-sm'
+                className='h-10 w-full appearance-none text-sm'
                 itemList={sortOptions.map(
                   (option) => option[0].toUpperCase() + option.slice(1),
                 )}
@@ -199,14 +199,14 @@ export default function ResourcePage() {
                 }
                 placeholder='Sort by'
               />
-              <ChevronDown className='pointer-events-none absolute top-1/2 right-4 h-6 w-6 -translate-y-1/2 text-black' />
+              <ChevronDown className='pointer-events-none absolute top-1/2 right-4 h-6 w-6 -translate-y-1/2 text-gray-900' />
             </div>
           </div>
           <div className='max-w-md flex-1'>
             <Input
               showSearchIcon
               type='text'
-              className={`min-h-[50px] w-full border-r ps-11 text-[16px] ${
+              className={`h-10 w-full border-r ps-11 text-base ${
                 locationSearch.trim()
                   ? 'border-blue-300 ring-2 ring-blue-200'
                   : ''
@@ -224,13 +224,13 @@ export default function ResourcePage() {
           {isVerified ? (
             <button
               onClick={() => setIsModalOpen(true)}
-              className='bg-primary flex h-12.5 flex-shrink-0 items-center justify-center rounded-xl px-4 py-1 font-light text-white hover:cursor-pointer'
+              className='bg-primary flex h-12.5 flex-shrink-0 items-center justify-center rounded-xl px-4 py-1 font-normal text-white hover:cursor-pointer'
             >
               <CirclePlus size={26} strokeWidth={1} />
-              <span className='ml-3 text-[16px]'>Create a resource</span>
+              <span className='ml-3 text-base'>Create a resource</span>
             </button>
           ) : (
-            <div className='flex min-h-[50px] items-center justify-center rounded-lg border border-red-300 bg-red-50/50 px-4 text-center text-xs text-red-700'>
+            <div className='flex h-10 items-center justify-center rounded-lg border border-red-300 bg-red-50/50 px-4 text-center text-xs text-red-700'>
               Verify your profile to create resources
             </div>
           )}
@@ -287,9 +287,9 @@ export default function ResourcePage() {
 
       {/* Resource Filter */}
       <div className='flex w-2/6 flex-col items-center justify-center gap-y-5 pt-6'>
-        <div className='flex w-full flex-col gap-y-4 rounded-lg border border-[#33333430] p-4'>
-          <h2 className='text-lg font-light text-[#3333344d]'>Filter by</h2>
-          <hr className='mb-1 border-t border-[#33333430]' />
+        <div className='flex w-full flex-col gap-y-4 rounded-lg border border-gray-200 p-4'>
+          <h2 className='text-lg font-normal text-gray-400'>Filter by</h2>
+          <hr className='mb-1 border-t border-gray-200' />
           <div className='flex flex-col gap-y-5'>
             {filterItemList.map((item) => (
               <label

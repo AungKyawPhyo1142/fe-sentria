@@ -7,22 +7,25 @@ import { ToastContainer } from 'react-toastify'
 const LayoutWithAuth = () => {
   const location = useLocation()
   const isMapPage = location.pathname === '/map'
+  const isProfilePage = location.pathname === '/profile'
 
   return (
-    <div className='flex min-h-screen flex-col'>
+    <div className='flex min-h-screen bg-gray-50'>
       <ToastContainer />
-      <div className='flex flex-1'>
-        <Sidebar />
-        <div className='w-full flex-col'>
-          <div>
-            {/* NavBar */}
-            {location.pathname !== '/profile' && <NavBar />}
-          </div>
-          <main className={`mt-18 ${isMapPage ? 'ml-26' : 'ml-64'} p-8`}>
-            <Outlet />
-          </main>
-          <NotificationManager />
-        </div>
+      <Sidebar />
+
+      <div className='ml-16 flex flex-1 flex-col'>
+        {!isProfilePage && <NavBar />}
+
+        <main
+          className={`flex-1 ${
+            isMapPage ? '' : 'px-8 pt-20 pb-8'
+          } ${isMapPage ? 'mt-14' : ''}`}
+        >
+          <Outlet />
+        </main>
+
+        <NotificationManager />
       </div>
     </div>
   )

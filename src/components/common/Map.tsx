@@ -122,7 +122,7 @@ const Map = () => {
 
   return (
     <div className='flex w-full items-start justify-between gap-x-[100px]'>
-      <div className='flex w-full items-center justify-center rounded-md border border-[#33333430] p-10'>
+      <div className='flex w-full items-center justify-center rounded-md border border-gray-200 p-10'>
         <MapContainer
           center={position || [0, 0]}
           zoom={13}
@@ -133,10 +133,10 @@ const Map = () => {
 
           {/* Custom marker icon for the default marker */}
           <div className='absolute bottom-3 left-5 z-[400] flex cursor-pointer flex-row items-center gap-4'>
-            <div className='group flex cursor-pointer flex-row items-center rounded-sm bg-[#F6BD16] backdrop-blur-2xl'>
+            <div className='group bg-warning flex cursor-pointer flex-row items-center rounded-sm backdrop-blur-2xl'>
               <HelpInfo title='Help Available' type='available' />
             </div>
-            <div className='group flex cursor-pointer flex-row items-center rounded-sm bg-[#F6BD16]'>
+            <div className='group bg-warning flex cursor-pointer flex-row items-center rounded-sm'>
               <HelpInfo title='Help Needed' type='needed' />
             </div>
           </div>

@@ -29,7 +29,7 @@ const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
       {isOpen && (
         <motion.div
           className={clsx(
-            'fixed inset-0 z-[9999] flex items-center justify-center bg-black/30',
+            'fixed inset-0 z-[9999] flex items-center justify-center bg-gray-900/30',
           )}
           initial='hidden'
           animate='visible'
@@ -60,15 +60,16 @@ const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
 
             <div className='flex justify-end space-x-3'>
               <Button
-                className='w-full bg-black/25 text-gray-800 hover:bg-gray-300'
+                variant='secondary'
                 onClick={onClose}
                 disabled={isDeleting}
                 type='button'
+                className='w-full'
               >
                 Cancel
               </Button>
               <Button
-                destructive
+                variant='danger'
                 onClick={onConfirm}
                 disabled={isDeleting}
                 className='w-full'

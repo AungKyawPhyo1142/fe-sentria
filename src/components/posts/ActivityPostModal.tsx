@@ -237,7 +237,7 @@ const ActivityPostModal: React.FC<Props> = ({
       {isOpen && (
         <motion.div
           className={clsx(
-            'fixed inset-0 z-[9999] flex items-center justify-center bg-black/30',
+            'fixed inset-0 z-[9999] flex items-center justify-center bg-gray-900/30',
           )}
           initial='hidden'
           animate='visible'
@@ -252,7 +252,7 @@ const ActivityPostModal: React.FC<Props> = ({
             exit='exit'
           >
             {/* Header */}
-            <div className='sticky top-0 z-[9998] flex items-baseline justify-between border-b-1 border-black/30 bg-white py-5'>
+            <div className='sticky top-0 z-[9998] flex items-baseline justify-between border-b border-gray-200 bg-white py-5'>
               <h1 className='text-[26px] font-semibold'>
                 {initialData ? 'Edit Activity' : 'Request / Offer Help'}
               </h1>
@@ -272,7 +272,7 @@ const ActivityPostModal: React.FC<Props> = ({
                     ? 'Request for help'
                     : 'Offer help'}
                 </h3>
-                <p className='mb-6 text-[20px] font-medium text-black/50'>
+                <p className='mb-6 text-[20px] font-medium text-gray-400'>
                   Please fill up the following form to{' '}
                   {formData.activityType === 'request' ? 'request' : 'offer'}{' '}
                   help.
@@ -289,7 +289,7 @@ const ActivityPostModal: React.FC<Props> = ({
                         onChange={() => handleTypeChange('offer')}
                         className='accent-primary mr-2 h-[20px] w-[20px]'
                       />
-                      <span className='text-base font-light'>Offer help</span>
+                      <span className='text-base font-normal'>Offer help</span>
                     </label>
                     <label className='flex items-center'>
                       <input
@@ -299,7 +299,7 @@ const ActivityPostModal: React.FC<Props> = ({
                         onChange={() => handleTypeChange('request')}
                         className='accent-primary mr-2 h-[20px] w-[20px]'
                       />
-                      <span className='text-base font-light'>
+                      <span className='text-base font-normal'>
                         Request for help
                       </span>
                     </label>
@@ -311,7 +311,7 @@ const ActivityPostModal: React.FC<Props> = ({
                 <p className='mb-2 text-xl font-semibold'>
                   What kind of help can you provide?
                 </p>
-                <div className='space-y-3 rounded-[10px] border border-zinc-300 px-8 py-6'>
+                <div className='space-y-3 rounded-xl border border-gray-200 px-8 py-6'>
                   {helpOptions.map((option) => (
                     <div key={option.id} className='flex flex-col space-y-2'>
                       <label className='flex items-center'>
@@ -321,14 +321,14 @@ const ActivityPostModal: React.FC<Props> = ({
                           onChange={() => handleHelpTypeToggle(option.id)}
                           className='accent-primary mr-3 h-6 w-6'
                         />
-                        <span className='text-base font-light'>
+                        <span className='text-base font-normal'>
                           {option.label}
                         </span>
                       </label>
                       {formData.helpItems.includes(option.id) &&
                         option.id !== 'wifi' && (
                           <div className='ml-9 flex items-center gap-2'>
-                            <span className='text-sm font-light text-black'>
+                            <span className='text-sm font-normal text-gray-900'>
                               For how many people:
                             </span>
                             <input
@@ -341,7 +341,7 @@ const ActivityPostModal: React.FC<Props> = ({
                                   parseInt(e.target.value) || 1,
                                 )
                               }
-                              className='h-8 w-12 rounded-[10px] border border-zinc-300 px-2 py-2 text-sm'
+                              className='h-8 w-12 rounded-xl border border-gray-200 px-2 py-2 text-sm'
                             />
                           </div>
                         )}
@@ -358,7 +358,7 @@ const ActivityPostModal: React.FC<Props> = ({
                   content={formData.description}
                   onChange={handleDescriptionChange}
                   minHeight='112px'
-                  className='block min-h-28 w-full appearance-none rounded-[10px] border border-zinc-300 px-4 py-2 text-base font-light text-black transition-colors duration-200 focus:outline-black/30'
+                  className='focus:ring-primary/20 block min-h-28 w-full appearance-none rounded-xl border border-gray-200 px-4 py-2 text-base font-normal text-gray-900 transition-colors duration-200 focus:ring-2 focus:outline-none'
                 />
               </div>
 
@@ -366,10 +366,10 @@ const ActivityPostModal: React.FC<Props> = ({
                 <label className='mb-2 block text-xl font-semibold'>
                   Your location <span className='text-red'>*</span>
                 </label>
-                <p className='mb-2 text-sm font-thin text-black/50'>
+                <p className='mb-2 text-sm font-normal text-gray-400'>
                   Click or drag the pin to set your exact location
                 </p>
-                <div className='h-60 w-full overflow-hidden rounded-[10px] border border-zinc-300'>
+                <div className='h-60 w-full overflow-hidden rounded-xl border border-gray-200'>
                   <MapContainer
                     center={formData.coordinates || [0, 0]}
                     zoom={13}
@@ -412,19 +412,21 @@ const ActivityPostModal: React.FC<Props> = ({
               {/* Buttons */}
               <div className='sticky bottom-0 z-[9999] flex justify-end space-x-5 bg-white py-4'>
                 <Button
-                  className='w-25 bg-black/25'
+                  variant='secondary'
                   type='button'
                   onClick={closeModal}
+                  className='w-25'
                 >
                   Cancel
                 </Button>
                 <Button
-                  destructive={
+                  variant={
                     !initialData && formData.activityType === 'request'
+                      ? 'danger'
+                      : 'primary'
                   }
-                  primary={!!initialData || formData.activityType === 'offer'}
                   onClick={handleSubmit}
-                  className={`w-50`}
+                  className='w-50'
                   type='button'
                 >
                   {initialData
