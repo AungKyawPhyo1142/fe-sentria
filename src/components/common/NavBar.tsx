@@ -30,8 +30,8 @@ const Navbar = () => {
 
   const createActivityMutation = useCreateActivity()
 
-  const pageTitle = pageTitleMap[location.pathname]
-    ? t(pageTitleMap[location.pathname])
+  const pageTitle: string = pageTitleMap[location.pathname]
+    ? t(pageTitleMap[location.pathname] as never)
     : ''
 
   const handleActivitySubmit = (data: CreateActivityFormValues) => {

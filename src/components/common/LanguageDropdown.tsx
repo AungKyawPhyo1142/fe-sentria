@@ -31,8 +31,6 @@ const LanguageDropdown = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  const displayText = currentLang === 'en' ? 'EN' : 'MM'
-
   return (
     <div className='relative' ref={dropdownRef}>
       <button
