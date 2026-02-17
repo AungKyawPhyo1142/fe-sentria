@@ -1,5 +1,14 @@
 import clsx from 'clsx'
-import { ChevronDown, CloudUpload, X } from 'lucide-react'
+import {
+  CloudUpload,
+  X,
+  Activity,
+  Droplets,
+  CloudLightning,
+  Flame,
+  MapPin,
+  Loader2,
+} from 'lucide-react'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import ReactDOM from 'react-dom'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -23,7 +32,21 @@ import {
 import { useCreateDisasterReport } from '@/services/network/lib/disasterReport'
 import { backdropVariants, modalVariants } from '../posts/constants/constants'
 
-// Create Post Modal Interfaace
+const DISASTER_TYPES = [
+  { value: 'EARTHQUAKE', labelKey: 'createPost.earthquake', Icon: Activity },
+  { value: 'FLOOD', labelKey: 'createPost.flood', Icon: Droplets },
+  { value: 'STORM', labelKey: 'createPost.storm', Icon: CloudLightning },
+  { value: 'FIRE', labelKey: 'createPost.fire', Icon: Flame },
+] as const
+
+const SEVERITY_LEVELS = [
+  { value: 'UNKNOWN', labelKey: 'severity.unknown', activeClass: 'border-gray-500 bg-gray-100 text-gray-700' },
+  { value: 'MINOR', labelKey: 'severity.minor', activeClass: 'border-info bg-info-light text-info' },
+  { value: 'MODERATE', labelKey: 'severity.moderate', activeClass: 'border-warning bg-warning-light text-warning' },
+  { value: 'SEVERE', labelKey: 'severity.severe', activeClass: 'border-danger bg-danger-light text-danger' },
+] as const
+
+// Create Post Modal Interface
 interface createPostProps {
   className?: string
   isOpen: boolean
@@ -281,6 +304,9 @@ const CreatePostModal: React.FC<createPostProps> = ({
     )
   }
 
+  const detectedCity = formik.values.parameters.location.city
+  const detectedCountry = formik.values.parameters.location.country
+
   return ReactDOM.createPortal(
     <AnimatePresence>
       {isOpen && (
@@ -295,112 +321,121 @@ const CreatePostModal: React.FC<createPostProps> = ({
           variants={backdropVariants}
         >
           <motion.div
-            className='custom-scroll relative max-h-[90vh] w-189 rounded-lg bg-white px-8 shadow-xl'
+            className='custom-scroll relative max-h-[90vh] w-[756px] overflow-y-auto rounded-xl bg-white shadow-xl'
             variants={modalVariants}
             initial='hidden'
             animate='visible'
             exit='exit'
           >
             {/* Header */}
-            <div className='sticky top-0 z-20 flex items-baseline justify-between border-b border-gray-200 bg-white py-5'>
-              <h1 className='text-2xl font-semibold'>
-                {t('createPost.create')}
-              </h1>
-
-              <button
-                onClick={() => setIsOpen(false)}
-                className='absolute right-0 cursor-pointer text-gray-500 hover:text-gray-700'
-              >
-                <X className='h-8 w-8' strokeWidth={2} />
-              </button>
-            </div>
-            {/* Form */}
-            <form onSubmit={formik.handleSubmit} className='space-y-5 pt-6'>
-              {/* Select Disaster Type */}
-              <div>
-                <label
-                  htmlFor='incidentType'
-                  className='mb-2 block text-xl font-semibold'
+            <div className='sticky top-0 z-20 border-b border-gray-200 bg-white px-8 py-5'>
+              <div className='flex items-center justify-between'>
+                <div>
+                  <h1 className='text-lg font-semibold text-gray-900'>
+                    {t('createPost.create')}
+                  </h1>
+                  <p className='mt-0.5 text-sm text-gray-500'>
+                    Help your community by reporting what you see on the ground.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className='flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600'
                 >
-                  {t('createPost.disaster')} <span className='text-red'>*</span>
+                  <X className='h-5 w-5' strokeWidth={2} />
+                </button>
+              </div>
+            </div>
+
+            {/* Form */}
+            <form onSubmit={formik.handleSubmit} className='px-8'>
+              {/* Disaster Type — icon card grid */}
+              <div className='py-5'>
+                <label className='mb-1.5 block text-sm font-medium text-gray-700'>
+                  {t('createPost.disaster')} <span className='text-danger'>*</span>
                 </label>
-                <div className='relative w-full'>
-                  <select
-                    id='incidentType'
-                    name='incidentType'
-                    className='focus:ring-primary/20 block h-10 w-full appearance-none rounded-xl border border-gray-200 px-4 py-2 text-base font-normal text-gray-900 transition-colors duration-200 focus:ring-2 focus:outline-none'
-                    value={formik.values.parameters.incidentType}
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                      formik.setFieldValue(
-                        'parameters.incidentType',
-                        e.target.value,
-                      )
-                    }}
-                    required
-                  >
-                    <option value='EARTHQUAKE'>
-                      {t('createPost.earthquake')}
-                    </option>
-                    <option value='FLOOD'>{t('createPost.flood')}</option>
-                    <option value='STORM'>{t('createPost.storm')}</option>
-                    <option value='FIRE'>{t('createPost.fire')}</option>
-                  </select>
-                  <div className='absolute inset-y-0 right-0 flex items-center px-4 text-gray-900'>
-                    <ChevronDown />
-                  </div>
+                <div className='grid grid-cols-4 gap-2.5'>
+                  {DISASTER_TYPES.map(({ value, labelKey, Icon }) => {
+                    const isSelected =
+                      formik.values.parameters.incidentType === value
+                    return (
+                      <button
+                        key={value}
+                        type='button'
+                        onClick={() =>
+                          formik.setFieldValue('parameters.incidentType', value)
+                        }
+                        className={clsx(
+                          'flex flex-col items-center gap-1.5 rounded-xl border-2 px-3 py-3.5 transition-all duration-150',
+                          isSelected
+                            ? 'border-primary bg-primary-light text-primary'
+                            : 'border-gray-200 bg-white text-gray-400 hover:border-gray-300 hover:text-gray-500',
+                        )}
+                      >
+                        <Icon
+                          className='h-5 w-5'
+                          strokeWidth={isSelected ? 2.5 : 2}
+                        />
+                        <span className='text-xs font-medium'>
+                          {t(labelKey as never)}
+                        </span>
+                      </button>
+                    )
+                  })}
                 </div>
                 {formik.errors.parameters?.incidentType && (
-                  <p className='text-red mt-1 text-sm'>
+                  <p className='mt-1.5 text-sm text-danger'>
                     {formik.errors.parameters.incidentType}
                   </p>
                 )}
               </div>
 
-              {/* Pick Severity type */}
-              <div>
-                <label
-                  htmlFor='severity'
-                  className='mb-2 block text-xl font-semibold'
-                >
-                  {t('createPost.severity')} <span className='text-red'>*</span>
+              {/* Severity — color-coded pills */}
+              <div className='pb-5'>
+                <label className='mb-1.5 block text-sm font-medium text-gray-700'>
+                  {t('createPost.severity')} <span className='text-danger'>*</span>
                 </label>
-                <div className='relative w-full'>
-                  <select
-                    id='severity'
-                    name='severity'
-                    className='focus:ring-primary/20 block h-10 w-full appearance-none rounded-xl border border-gray-200 px-4 py-2 text-base font-normal text-gray-900 transition-colors duration-200 focus:ring-2 focus:outline-none'
-                    value={formik.values.parameters.severity}
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                      formik.setFieldValue(
-                        'parameters.severity',
-                        e.target.value,
-                      )
-                    }}
-                    required
-                  >
-                    <option value='UNKOWN'>{t('severity.unknown')} </option>
-                    <option value='MINOR'>{t('severity.minor')}</option>
-                    <option value='MODERATE'>{t('severity.moderate')}</option>
-                    <option value='SEVERE'>{t('severity.severe')}</option>
-                  </select>
-                  <div className='absolute inset-y-0 right-0 flex items-center px-4 text-gray-900'>
-                    <ChevronDown />
-                  </div>
+                <div className='flex gap-2'>
+                  {SEVERITY_LEVELS.map(({ value, labelKey, activeClass }) => {
+                    const isSelected =
+                      formik.values.parameters.severity === value
+                    return (
+                      <button
+                        key={value}
+                        type='button'
+                        onClick={() =>
+                          formik.setFieldValue('parameters.severity', value)
+                        }
+                        className={clsx(
+                          'rounded-lg border px-4 py-1.5 text-sm font-medium transition-all duration-150',
+                          isSelected
+                            ? activeClass
+                            : 'border-gray-200 bg-white text-gray-500 hover:border-gray-300 hover:bg-gray-50',
+                        )}
+                      >
+                        {t(labelKey as never)}
+                      </button>
+                    )
+                  })}
                 </div>
                 {formik.errors.parameters?.severity && (
-                  <p className='text-red mt-1 text-sm'>
+                  <p className='mt-1.5 text-sm text-danger'>
                     {formik.errors.parameters.severity}
                   </p>
                 )}
               </div>
-              {/* title is name */}
-              <div>
+
+              {/* Divider */}
+              <div className='border-t border-gray-100' />
+
+              {/* Title */}
+              <div className='pt-5'>
                 <label
                   htmlFor='name'
-                  className='mb-2 block text-xl font-semibold'
+                  className='mb-1.5 block text-sm font-medium text-gray-700'
                 >
                   {t('createPost.title')}
-                  <span className='text-red'>*</span>
+                  <span className='text-danger'> *</span>
                 </label>
                 <Input
                   type='text'
@@ -411,19 +446,20 @@ const CreatePostModal: React.FC<createPostProps> = ({
                   required
                 />
               </div>
-              {/* description */}
-              <div>
+
+              {/* Description */}
+              <div className='pt-5'>
                 <label
                   htmlFor='description'
-                  className='mb-2 block text-xl font-semibold'
+                  className='mb-1.5 block text-sm font-medium text-gray-700'
                 >
                   {t('createPost.description')}
-                  <span className='text-red'>*</span>
+                  <span className='text-danger'> *</span>
                 </label>
                 <textarea
-                  // maxLength={300}
                   id='description'
                   name='description'
+                  placeholder='Describe what happened — what you saw, heard, or experienced...'
                   value={formik.values.parameters.description}
                   onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
                     formik.setFieldValue(
@@ -431,28 +467,53 @@ const CreatePostModal: React.FC<createPostProps> = ({
                       e.target.value,
                     )
                   }}
-                  className='focus:ring-primary/20 block min-h-28 w-full appearance-none rounded-xl border border-gray-200 px-4 py-2 text-base font-normal text-gray-900 transition-colors duration-200 focus:ring-2 focus:outline-none'
+                  className='focus:border-primary focus:ring-primary/20 block min-h-24 w-full resize-none rounded-lg border border-gray-200 px-3.5 py-2.5 text-sm text-gray-900 transition-colors duration-200 placeholder:text-gray-400 focus:ring-2 focus:outline-none'
                   required
                 />
                 {formik.errors.parameters?.description && (
-                  <p className='text-red mt-1 text-sm'>
+                  <p className='mt-1.5 text-sm text-danger'>
                     {formik.errors.parameters.description}
                   </p>
                 )}
               </div>
 
-              {/* Pick the location where the disaster occurred */}
-              <div>
-                <label className='mb-2 block text-xl font-semibold'>
+              {/* Divider */}
+              <div className='mt-5 border-t border-gray-100' />
+
+              {/* Location */}
+              <div className='py-5'>
+                <label className='mb-1 block text-sm font-medium text-gray-700'>
                   {t('createPost.location')}
-                  <span className='text-red'>*</span>
+                  <span className='text-danger'> *</span>
                 </label>
+                <p className='mb-3 text-xs text-gray-400'>
+                  {isGeocoding ? (
+                    <span className='inline-flex items-center gap-1.5'>
+                      <Loader2 className='h-3 w-3 animate-spin' />
+                      Detecting location...
+                    </span>
+                  ) : (
+                    t('createPost.dragPin')
+                  )}
+                </p>
+
+                {/* Detected location badge */}
+                {detectedCity && detectedCountry && !isGeocoding && (
+                  <div className='mb-3 inline-flex items-center gap-1.5 rounded-lg bg-primary-light px-3 py-1.5 text-sm text-primary'>
+                    <MapPin className='h-3.5 w-3.5' />
+                    <span className='font-medium'>
+                      {detectedCity}, {detectedCountry}
+                    </span>
+                  </div>
+                )}
+
+                {/* Validation errors */}
                 {formik.touched.parameters?.location &&
                   formik.errors.parameters?.location &&
                   typeof formik.errors.parameters.location === 'object' &&
                   Object.values(formik.errors.parameters.location).map(
                     (error, index) => (
-                      <p key={index} className='text-red mt-1 text-sm'>
+                      <p key={index} className='mb-1 text-sm text-danger'>
                         {error}
                       </p>
                     ),
@@ -460,56 +521,63 @@ const CreatePostModal: React.FC<createPostProps> = ({
                 {formik.touched.parameters?.location &&
                   formik.errors.parameters?.location &&
                   typeof formik.errors.parameters.location === 'string' && (
-                    <p className='text-red mt-1 text-sm'>
+                    <p className='mb-1 text-sm text-danger'>
                       {formik.errors.parameters.location}
                     </p>
                   )}
-                <p className='mb-2 text-sm font-normal text-gray-400'>
-                  {isGeocoding
-                    ? 'Fetching address...'
-                    : t('createPost.dragPin')}
-                </p>
 
-                {/* Placeholder for Leaflet map */}
-                <MapSelector onPositionChange={handlePositionChange} />
+                <div className='overflow-hidden rounded-xl border border-gray-200'>
+                  <MapSelector onPositionChange={handlePositionChange} />
+                </div>
               </div>
 
-              {/* drop or upload images */}
-              <div>
-                <label className='mb-2 block text-xl font-semibold'>
+              {/* Divider */}
+              <div className='border-t border-gray-100' />
+
+              {/* Image Upload */}
+              <div className='py-5'>
+                <label className='mb-1.5 block text-sm font-medium text-gray-700'>
                   {t('createPost.images')}
+                  <span className='ml-1 text-xs font-normal text-gray-400'>
+                    (optional)
+                  </span>
                 </label>
                 <div
                   {...getRootProps()}
-                  className='cursor-pointer rounded-lg border-2 border-dashed border-gray-200 px-6 py-10 text-center transition-colors hover:border-gray-200'
+                  className={clsx(
+                    'cursor-pointer rounded-xl border-2 border-dashed px-6 py-8 text-center transition-colors duration-150',
+                    isDragActive
+                      ? 'border-primary bg-primary-light'
+                      : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50',
+                  )}
                 >
                   <input {...getInputProps()} />
                   {isDragActive ? (
-                    <p>{t('createPost.dropFile')} ...</p>
+                    <p className='text-sm font-medium text-primary'>
+                      {t('createPost.dropFile')} ...
+                    </p>
                   ) : (
-                    <div className='flex flex-col items-center justify-center text-gray-400 hover:text-gray-900'>
-                      <p>
-                        <CloudUpload className='mb-2' />
-                        {/* optional size and margin */}
-                      </p>
-                      <p className='mb-2'>{t('createPost.upload')}</p>
-                      <p className='mb-2'>{t('createPost.or')}</p>
-                      <button
-                        type='button'
-                        className='rounded-xl border border-gray-200 px-4 py-2 transition-colors hover:cursor-pointer'
-                      >
-                        {t('createPost.browse')}
-                      </button>
+                    <div className='flex flex-col items-center gap-2 text-gray-400'>
+                      <CloudUpload className='h-8 w-8' strokeWidth={1.5} />
+                      <div>
+                        <p className='text-sm text-gray-500'>
+                          {t('createPost.upload')}
+                        </p>
+                        <p className='mt-0.5 text-xs text-gray-400'>
+                          PNG, JPG up to 10MB
+                        </p>
+                      </div>
                     </div>
                   )}
                 </div>
-                {/* image preview */}
+
+                {/* Image previews */}
                 {previewImages.length > 0 && (
-                  <div className='mt-4 grid grid-cols-5 gap-4'>
+                  <div className='mt-3 grid grid-cols-5 gap-2.5'>
                     {previewImages.map((src, index) => (
                       <div
                         key={index}
-                        className='group relative h-26 w-full overflow-hidden rounded-xl'
+                        className='group relative aspect-square w-full overflow-hidden rounded-lg'
                       >
                         <img
                           src={src}
@@ -519,12 +587,12 @@ const CreatePostModal: React.FC<createPostProps> = ({
                         <button
                           type='button'
                           onClick={(e) => {
-                            e.stopPropagation() // prevent dropzone click
+                            e.stopPropagation()
                             handleRemoveImage(index)
                           }}
-                          className='absolute top-1 right-1 rounded-full bg-gray-900/50 p-1 text-white transition-opacity group-hover:cursor-pointer group-hover:bg-gray-900/30'
+                          className='absolute top-1.5 right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-gray-900/60 text-white opacity-0 transition-opacity group-hover:opacity-100'
                         >
-                          <X className='h-4 w-4' />
+                          <X className='h-3 w-3' />
                         </button>
                       </div>
                     ))}
@@ -532,18 +600,16 @@ const CreatePostModal: React.FC<createPostProps> = ({
                 )}
               </div>
 
-              {/* Buttons */}
-              <div className='sticky bottom-0 z-20 flex justify-end space-x-5 bg-white py-4'>
+              {/* Footer Buttons */}
+              <div className='sticky bottom-0 z-20 flex justify-end gap-3 border-t border-gray-100 bg-white py-4'>
                 <Button
                   variant='secondary'
                   type='button'
                   onClick={handleCancel}
-                  className='w-29'
                 >
                   {t('createPost.cancel')}
                 </Button>
-                <Button variant='primary' type='submit' className='w-29'>
-                  {/* {isPending ? 'Submitting...' : t('createPost.submit')} */}
+                <Button variant='primary' type='submit'>
                   {t('createPost.submit')}
                 </Button>
               </div>

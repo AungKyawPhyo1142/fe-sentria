@@ -1,46 +1,50 @@
 import Map from '@/components/common/Map'
 import { MapFilterProvider } from '@/components/common/MapFilterContext'
 import { ActivityFeed } from '@/components/posts/ActivityFeed'
+import { MapIcon, ListFilter } from 'lucide-react'
 import { useState } from 'react'
-import ResourcePage from '@/components/resources/ResourcePage'
+
+type TabId = 'map' | 'activity'
+
+const tabs: { id: TabId; label: string; Icon: typeof MapIcon }[] = [
+  { id: 'map', label: 'Map', Icon: MapIcon },
+  { id: 'activity', label: 'Activity Feed', Icon: ListFilter },
+]
+
 const MapPage = () => {
-  const [page, setPage] = useState(1)
-  const pageList = [
-    {
-      id: 1,
-      label: 'Map',
-      component: (
-        <div className='flex w-full flex-row items-start py-10'>
-          <MapFilterProvider>
-            <Map />
-          </MapFilterProvider>
-        </div>
-      ),
-    },
-    { id: 2, label: 'Activity Feed', component: <ActivityFeed /> },
-    { id: 3, label: 'Resources', component: <ResourcePage /> },
-  ]
+  const [activeTab, setActiveTab] = useState<TabId>('map')
 
   return (
-    <div className='fade-in flex h-screen flex-col items-center justify-start'>
-      <div className='flex w-full flex-row items-center justify-between gap-x-5 rounded-lg bg-gray-50 p-2'>
-        {pageList.map((item) => (
+    <div className='fade-in flex h-[calc(100vh-88px)] flex-col'>
+      {/* Tab bar */}
+      <div className='flex shrink-0 gap-1 rounded-lg bg-gray-100 p-1'>
+        {tabs.map(({ id, label, Icon }) => (
           <button
-            key={item.id}
-            name={item.label}
-            className={`min-h-[30px] w-full cursor-pointer rounded-lg border py-2 text-base font-normal transition-all duration-200 ease-in-out hover:opacity-[90%] active:opacity-100 ${
-              page === item.id
-                ? 'border-gray-200 bg-white text-gray-900'
-                : 'border-none text-gray-400 hover:bg-gray-200 hover:text-gray-900'
+            key={id}
+            onClick={() => setActiveTab(id)}
+            className={`flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-md py-2 text-sm font-medium transition-all duration-150 ${
+              activeTab === id
+                ? 'bg-white text-gray-900 shadow-sm'
+                : 'text-gray-500 hover:text-gray-700'
             }`}
-            onClick={() => setPage(item.id)}
           >
-            {item.label}
+            <Icon className='h-4 w-4' />
+            {label}
           </button>
         ))}
       </div>
 
-      {pageList.find((item) => item.id === page)?.component}
+      {/* Tab content */}
+      <div className='min-h-0 flex-1'>
+        {activeTab === 'map' && (
+          <div className='flex h-full pt-4'>
+            <MapFilterProvider>
+              <Map />
+            </MapFilterProvider>
+          </div>
+        )}
+        {activeTab === 'activity' && <ActivityFeed />}
+      </div>
     </div>
   )
 }

@@ -1,5 +1,14 @@
 import { Droplets, HouseIcon, MapPinHouse, Utensils, Wifi } from 'lucide-react'
+import clsx from 'clsx'
 import { useMapFilter } from './MapFilterContext'
+
+const filterItemList = [
+  { label: 'Shelter', id: 'SHELTER', icon: <HouseIcon className='h-4 w-4' strokeWidth={1.5} /> },
+  { label: 'Water', id: 'WATER', icon: <Droplets className='h-4 w-4' strokeWidth={1.5} /> },
+  { label: 'Food', id: 'FOOD', icon: <Utensils className='h-4 w-4' strokeWidth={1.5} /> },
+  { label: 'Wifi', id: 'WIFI', icon: <Wifi className='h-4 w-4' strokeWidth={1.5} /> },
+  { label: 'Nearby', id: 'near', icon: <MapPinHouse className='h-4 w-4' strokeWidth={1.5} /> },
+]
 
 const MapFilter = () => {
   const {
@@ -10,37 +19,29 @@ const MapFilter = () => {
     available,
     setAvailable,
   } = useMapFilter()
-  const filterItemList = [
-    { label: 'Shelter', id: 'shelter', icon: <HouseIcon strokeWidth={1.5} /> },
-    { label: 'Water', id: 'water', icon: <Droplets strokeWidth={1.5} /> },
-    { label: 'Food', id: 'food', icon: <Utensils strokeWidth={1.5} /> },
-    { label: 'Wifi', id: 'wifi', icon: <Wifi strokeWidth={1.5} /> },
-    {
-      label: 'Nearest Location',
-      id: 'near',
-      icon: <MapPinHouse strokeWidth={1.5} />,
-    },
-  ]
+
   return (
-    <div className='flex w-2/6 flex-col items-center justify-center gap-y-5'>
-      <div className='flex w-full flex-col gap-y-4 rounded-lg border border-gray-200 p-4'>
-        <h2 className='text-lg font-normal text-gray-400'>Filter by</h2>
-        <hr className='mb-1 border-t border-gray-200' />
-        <div className='flex flex-col gap-y-5'>
+    <div className='flex w-64 shrink-0 flex-col gap-3'>
+      {/* Filter checkboxes */}
+      <div className='rounded-xl border border-gray-200 p-4'>
+        <h3 className='mb-3 text-xs font-medium tracking-wide text-gray-400 uppercase'>
+          Filter by
+        </h3>
+        <div className='flex flex-col gap-2.5'>
           {filterItemList.map((item) => (
             <label
               key={item.id}
-              htmlFor={item.id}
-              className='flex cursor-pointer flex-row items-center justify-between gap-x-2'
+              htmlFor={`map-filter-${item.id}`}
+              className='flex cursor-pointer items-center justify-between rounded-lg px-2 py-1.5 transition-colors hover:bg-gray-50'
             >
-              <div className='flex flex-row items-center gap-x-5'>
+              <div className='flex items-center gap-3 text-gray-600'>
                 {item.icon}
-                <span className='text-base text-gray-700'>{item.label}</span>
+                <span className='text-sm'>{item.label}</span>
               </div>
               <input
                 type='checkbox'
-                id={item.id}
-                className='accent-primary h-4 w-4 cursor-pointer rounded border-gray-200'
+                id={`map-filter-${item.id}`}
+                className='accent-primary h-3.5 w-3.5 cursor-pointer rounded'
                 checked={selectedTypes.has(item.id)}
                 onChange={() => toggleType(item.id)}
               />
@@ -48,26 +49,32 @@ const MapFilter = () => {
           ))}
         </div>
       </div>
-      <button
-        className={`h-10 w-full cursor-pointer rounded-lg border py-2 text-base font-normal transition-all duration-200 ease-in-out hover:opacity-[90%] active:opacity-100 ${
-          needed
-            ? 'bg-red border-red text-white'
-            : 'text-red border-red hover:bg-red/80 bg-transparent hover:text-white'
-        }`}
-        onClick={() => setNeeded(!needed)}
-      >
-        Help Needed
-      </button>
-      <button
-        className={`h-10 w-full cursor-pointer rounded-lg border py-2 text-base font-normal transition-all duration-200 ease-in-out hover:opacity-[90%] active:opacity-100 ${
-          available
-            ? 'bg-secondary border-secondary text-white'
-            : 'text-secondary border-secondary hover:bg-secondary/80 bg-transparent hover:text-white'
-        }`}
-        onClick={() => setAvailable(!available)}
-      >
-        Help Available
-      </button>
+
+      {/* Status toggles */}
+      <div className='flex flex-col gap-2'>
+        <button
+          onClick={() => setNeeded(!needed)}
+          className={clsx(
+            'flex h-9 w-full cursor-pointer items-center justify-center rounded-lg border text-sm font-medium transition-all duration-150',
+            needed
+              ? 'border-danger bg-danger text-white'
+              : 'border-danger/30 text-danger hover:bg-danger-light',
+          )}
+        >
+          Help Needed
+        </button>
+        <button
+          onClick={() => setAvailable(!available)}
+          className={clsx(
+            'flex h-9 w-full cursor-pointer items-center justify-center rounded-lg border text-sm font-medium transition-all duration-150',
+            available
+              ? 'border-info bg-info text-white'
+              : 'border-info/30 text-info hover:bg-info-light',
+          )}
+        >
+          Help Available
+        </button>
+      </div>
     </div>
   )
 }

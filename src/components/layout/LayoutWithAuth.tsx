@@ -19,8 +19,8 @@ const LayoutWithAuth = () => {
 
         <main
           className={`flex-1 ${
-            isMapPage ? '' : 'px-8 pt-20 pb-8'
-          } ${isMapPage ? 'mt-14' : ''}`}
+            isMapPage ? 'px-6 pt-18 pb-4' : 'px-8 pt-20 pb-8'
+          }`}
         >
           <Outlet />
         </main>
