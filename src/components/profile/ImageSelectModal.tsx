@@ -96,7 +96,7 @@ const ImageSelectModal: React.FC<Props> = ({
   return (
     <div
       className={clsx(
-        'fixed inset-0 z-50 flex items-center justify-center bg-black/40',
+        'fixed top-0 left-0 z-[9999999] flex h-full w-full items-center justify-center bg-black/40',
         className,
       )}
       onClick={(e) => e.target === e.currentTarget && closeModal()}
@@ -155,15 +155,15 @@ const ImageSelectModal: React.FC<Props> = ({
 
           <div className='flex w-full space-x-4'>
             <Button
-              outline
-              className='h-13 flex-1 text-[20px] font-medium'
+              className='w-full bg-black/25 text-gray-800 hover:bg-gray-300'
               onClick={closeModal}
+              type='button'
             >
               Cancel
             </Button>
 
             <Button
-              className='bg-primary h-13 flex-1 text-[20px] font-medium'
+              className='bg-primary w-full text-[20px] font-medium'
               onClick={handleSave}
             >
               Save

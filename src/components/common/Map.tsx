@@ -1,3 +1,4 @@
+import { useGetActivities } from '@/services/network/lib/activity'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { useEffect, useState } from 'react'
@@ -54,6 +55,7 @@ const Map = () => {
         (pos) => {
           const { latitude, longitude } = pos.coords
           setPosition([latitude, longitude])
+          console.log('User position:', latitude, longitude)
         },
         (err) => {
           console.error('Error getting location:', err)
@@ -68,129 +70,33 @@ const Map = () => {
   }, [position])
 
   type DisasterHelp = {
-    id: number
-    disasterType: string
-    helpType: 'needed' | 'available'
+    id: string
+    helpType: string
+    activityType: 'REQUEST' | 'OFFER'
     position: [number, number]
   }
 
-  const disasterHelpList: DisasterHelp[] = [
-    {
-      id: 1,
-      disasterType: 'shelter',
-      helpType: 'needed',
-      position: position
-        ? [position[0] + 0.003, position[1] + 0.003]
-        : [0.003, 0.003],
-    },
-    {
-      id: 2,
-      disasterType: 'water',
-      helpType: 'available',
-      position: position
-        ? [position[0] - 0.003, position[1] - 0.003]
-        : [-0.003, -0.003],
-    },
-    {
-      id: 3,
-      disasterType: 'food',
-      helpType: 'needed',
-      position: position
-        ? [position[0] + 0.003, position[1] - 0.003]
-        : [0.003, -0.003],
-    },
-    {
-      id: 4,
-      disasterType: 'wifi',
-      helpType: 'available',
-      position: position
-        ? [position[0] - 0.003, position[1] + 0.003]
-        : [-0.003, 0.003],
-    },
-    {
-      id: 5,
-      disasterType: 'shelter',
-      helpType: 'available',
-      position: position ? [position[0] + 0.006, position[1]] : [0.006, 0],
-    },
-    {
-      id: 6,
-      disasterType: 'water',
-      helpType: 'needed',
-      position: position ? [position[0], position[1] + 0.006] : [0, 0.006],
-    },
-    {
-      id: 7,
-      disasterType: 'food',
-      helpType: 'available',
-      position: position ? [position[0] - 0.006, position[1]] : [-0.006, 0],
-    },
-    {
-      id: 8,
-      disasterType: 'wifi',
-      helpType: 'needed',
-      position: position ? [position[0], position[1] - 0.006] : [0, -0.006],
-    },
-    {
-      id: 9,
-      disasterType: 'shelter',
-      helpType: 'needed',
-      position: position
-        ? [position[0] + 0.0045, position[1] + 0.0045]
-        : [0.0045, 0.0045],
-    },
-    {
-      id: 10,
-      disasterType: 'food',
-      helpType: 'available',
-      position: position
-        ? [position[0] - 0.0045, position[1] - 0.0045]
-        : [-0.0045, -0.0045],
-    },
-    // Places over 0.5km (~0.005 deg latitude/longitude) from current position
-    {
-      id: 11,
-      disasterType: 'shelter',
-      helpType: 'available',
-      position: position
-        ? [position[0] + 0.01, position[1] + 0.01]
-        : [0.01, 0.01],
-    },
-    {
-      id: 12,
-      disasterType: 'water',
-      helpType: 'needed',
-      position: position
-        ? [position[0] - 0.012, position[1] + 0.012]
-        : [-0.012, 0.012],
-    },
-    {
-      id: 13,
-      disasterType: 'food',
-      helpType: 'available',
-      position: position
-        ? [position[0] + 0.015, position[1] - 0.015]
-        : [0.015, -0.015],
-    },
-    {
-      id: 14,
-      disasterType: 'wifi',
-      helpType: 'needed',
-      position: position
-        ? [position[0] - 0.02, position[1] - 0.02]
-        : [-0.02, -0.02],
-    },
-  ]
+  const { data: activitiesData } = useGetActivities()
+
+  const disasterHelpList: DisasterHelp[] =
+    activitiesData?.data.map((activity) => ({
+      id: activity.id,
+      helpType: activity.helpItems[0].helpType,
+      activityType: activity.activityType,
+      position: [activity.latitude, activity.longitude],
+    })) || []
 
   const { selectedTypes, needed, available } = useMapFilter()
 
+  console.log('disasterHelpList:', disasterHelpList)
+
   const filteredHelpList = disasterHelpList.filter((help) => {
     const matchesStatus =
-      (needed && help.helpType === 'needed') ||
-      (available && help.helpType === 'available')
+      (needed && help.activityType === 'REQUEST') ||
+      (available && help.activityType === 'OFFER')
 
     const matchesType =
-      selectedTypes.size === 0 || selectedTypes.has(help.disasterType)
+      selectedTypes.size === 0 || selectedTypes.has(help.helpType)
 
     const matchesNear =
       !selectedTypes.has('near') ||
@@ -211,6 +117,8 @@ const Map = () => {
     const latLng2 = L.latLng(pos2[0], pos2[1])
     return latLng1.distanceTo(latLng2) <= maxMeters
   }
+
+  console.log(filteredHelpList)
 
   return (
     <div className='flex w-full items-start justify-between gap-x-[100px]'>
@@ -263,20 +171,20 @@ const Map = () => {
                 position={help.position}
                 icon={L.icon({
                   iconUrl:
-                    help.disasterType === 'shelter'
-                      ? help.helpType === 'needed'
+                    help.helpType === 'SHELTER'
+                      ? help.activityType === 'REQUEST'
                         ? ShelterNeeded
                         : ShelterAvailable
-                      : help.disasterType === 'water'
-                        ? help.helpType === 'needed'
+                      : help.helpType === 'WATER'
+                        ? help.activityType === 'REQUEST'
                           ? WaterNeeded
                           : WaterAvailable
-                        : help.disasterType === 'food'
-                          ? help.helpType === 'needed'
+                        : help.helpType === 'FOOD'
+                          ? help.activityType === 'REQUEST'
                             ? FoodNeeded
                             : FoodAvailable
-                          : help.disasterType === 'wifi'
-                            ? help.helpType === 'needed'
+                          : help.helpType === 'WIFI'
+                            ? help.activityType === 'REQUEST'
                               ? WifiNeeded
                               : WifiAvailable
                             : ShelterAvailable,
@@ -285,7 +193,7 @@ const Map = () => {
                   popupAnchor: [1, -34],
                 })}
               >
-                <Popup>{`${help.disasterType} ${help.helpType === 'available' ? 'available' : 'needed'}`}</Popup>
+                <Popup>{`${help.helpType} ${help.activityType === 'OFFER' ? 'available' : 'needed'}`}</Popup>
               </Marker>
             )
           })}

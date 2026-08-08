@@ -45,10 +45,16 @@ export const AppConstantRoutes = {
     get resources() {
       return '/resources'
     },
+    get fav() {
+      return '/fav'
+    },
     get example() {
       return {
         get default() {
           return '/example'
+        },
+        get webSocket() {
+          return `${this.default}/websocket`
         },
       }
     },

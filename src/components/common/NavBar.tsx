@@ -1,11 +1,59 @@
-import { useEffect, useState } from 'react'
-import Profile from '@/assets/default-profile.svg?react'
-import { CirclePlus, HeartHandshake, Map, Phone } from 'lucide-react'
-import { AppConstantRoutes } from '@/services/routes/path'
-import { useLocation, useNavigate } from 'react-router'
+// import Profile from '@/assets/default-profile.svg?react'
 import Home from '@/assets/icons/home.svg?react'
 import Hand from '@/assets/icons/OfferHand2.svg?react'
+import { useTranslation } from 'react-i18next'
+import CreatePostModal from './CreatePostModal'
+import ProfileNav from './ProfileNav'
+// import SearchBar from './SearchBar'
+import { CreateActivityFormValues } from '@/components/posts/ActivityPostModal'
+import {
+  ActivityType,
+  CreateActivityRequest,
+  HelpType,
+  useCreateActivity,
+} from '@/services/network/lib/activity'
+import { AppConstantRoutes } from '@/services/routes/path'
+import { CirclePlus, HeartHandshake, Map, Phone } from 'lucide-react'
+import { useState } from 'react'
+import { useLocation, useNavigate } from 'react-router'
+import ActivityPostModal from '../posts/ActivityPostModal'
 import SearchInput from './SearchInput'
+
+// //Skeleton
+// export const NavbarSkeleton = ({
+//   isMapPage = false,
+// }: {
+//   isMapPage?: boolean
+// }) => {
+//   return (
+//     <div
+//       className={`fixed top-0 right-0 ${isMapPage ? 'left-30' : 'left-68'} z-[99] flex items-end justify-between bg-white py-4 pr-8 pl-4`}
+//     >
+//       <div className='flex space-x-5'>
+//         {/* Navbar Icons Skeleton */}
+//         <div className='flex h-12.5 items-center gap-x-10 rounded-xl border border-black/10 p-4'>
+//           {Array.from({ length: 5 }).map((_, i) => (
+//             <div
+//               key={i}
+//               className='h-7 w-7 animate-pulse rounded-md bg-gray-300'
+//             />
+//           ))}
+//         </div>
+
+//         {/* Search Input Skeleton */}
+//         <div className='h-12.5 w-75 animate-pulse rounded-xl bg-gray-300' />
+
+//         {/* Report Post Button Skeleton */}
+//         <div className='flex h-12.5 w-50 animate-pulse items-center justify-center rounded-xl bg-gray-300' />
+//       </div>
+
+//       {/* Profile Skeleton */}
+//       <div className='h-12.5 w-12.5 animate-pulse rounded-full bg-gray-300' />
+//     </div>
+//   )
+// }
+
+//NavItems
 
 const NavbarItems = [
   {
@@ -62,63 +110,149 @@ const NavbarItems = [
 ]
 
 const Navbar = () => {
-  const [activeIcon, setActiveIcon] = useState<string>('home')
+  // const [activeIcon, setActiveIcon] = useState<string>('home')
+  const [isActivityModalOpen, setIsActivityModalOpen] = useState(false)
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
-  const handleIconClick = (title: string, path?: string) => {
-    setActiveIcon(title)
-    if (path) navigate(path) /**will chang it later */
+  //open create post
+  const [createPost, setCreatePost] = useState(false)
+
+  const createActivityMutation = useCreateActivity()
+
+  const handleActivitySubmit = (data: CreateActivityFormValues) => {
+    // Validate
+    if (!data.description?.trim()) {
+      alert('Please provide a description for your activity.')
+      return
+    }
+
+    if (!data.helpItems || data.helpItems.length === 0) {
+      alert('Please select at least one type of help.')
+      return
+    }
+
+    // Convert form data to API format with proper structure
+    const apiData: CreateActivityRequest = {
+      activityType:
+        data.activityType === 'offer'
+          ? ActivityType.OFFER
+          : ActivityType.REQUEST,
+      description: data.description.trim(),
+      location: {
+        city: data.city?.trim() || 'London', // Default to London if no city provided
+        country: data.country?.trim() || 'United Kingdom', // Default to UK if no country provided
+        latitude: data.coordinates ? data.coordinates[0] : 51.5074, // London coordinates as default
+        longitude: data.coordinates ? data.coordinates[1] : -0.1278,
+      },
+      helpItems: data.helpItems.map((helpType) => ({
+        helpType: mapHelpTypeToHelpType(helpType),
+        quantity: data.quantities[helpType] || null,
+      })),
+    }
+
+    console.log('Submitting activity:', apiData)
+
+    createActivityMutation.mutate(apiData, {
+      onSuccess: (response) => {
+        console.log('Activity created successfully from NavBar:', response)
+        setIsActivityModalOpen(false)
+      },
+      onError: (error) => {
+        console.error('Error creating activity from NavBar:', error)
+        alert('Failed to create activity. Please try again.')
+      },
+    })
+  }
+
+  const mapHelpTypeToHelpType = (helpType: string): HelpType => {
+    switch (helpType.toLowerCase()) {
+      case 'food':
+        return HelpType.FOOD
+      case 'water':
+        return HelpType.WATER
+      case 'shelter':
+        return HelpType.SHELTER
+      case 'wifi':
+        return HelpType.WIFI
+      default:
+        return HelpType.FOOD
+    }
   }
 
   //map page
   const location = useLocation()
   const isMapPage = location.pathname === '/map'
 
-  useEffect(() => {
-    const currentPath = location.pathname
-    const matchedItem = NavbarItems.find(
-      (item) => item.path && currentPath.includes(item.path),
-    )
-    if (matchedItem) {
-      setActiveIcon(matchedItem.title)
-    }
-  }, [location.pathname])
+  const currentPath = location.pathname
+
+  const isActive = (path?: string) =>
+    path ? currentPath.includes(path) : false
 
   return (
     <div
-      className={`fixed top-0 right-0 ${isMapPage ? 'left-30' : 'left-68'} z-[999] flex items-end justify-between bg-white py-4 pr-8 pl-4 text-black transition-all duration-300 ease-in-out`}
+      // className={`fixed top-0 right-0 z-20 ${isMapPage ? 'left-30' : 'left-68'} mr-6 flex items-center justify-between bg-white py-4 text-black transition-all duration-300 ease-in-out`}
+      className={`fixed top-0 right-0 ${isMapPage ? 'left-30' : 'left-68'} z-50 flex items-end justify-between bg-white py-4 pr-8 pl-4 text-black transition-all duration-300 ease-in-out`}
     >
       <div className={`flex ${isMapPage ? 'space-x-5' : 'space-x-8'}`}>
-        <SearchInput />
-
         {/* Navbar Icons */}
+
         <div className='flex h-12.5 items-center justify-between gap-x-10 rounded-xl border border-black/30 p-4'>
           {NavbarItems.map((item) => (
             <button
               key={item.title}
-              onClick={() => handleIconClick(item.title, item.path)}
+              onClick={() => item.path && navigate(item.path)}
               disabled={!item.path}
             >
-              {item.icon(activeIcon === item.title)}
+              {item.icon(isActive(item.path))}
             </button>
           ))}
         </div>
 
-        {/* Create Post */}
-        <button className='bg-primary flex h-12.5 items-center justify-center rounded-xl px-4 py-1 font-light text-white hover:cursor-pointer'>
-          <CirclePlus size={26} strokeWidth={1} />
-          <span className='ml-3 text-[16px]'>Report a disaster</span>
-        </button>
+        <SearchInput />
+
+        {/* Create Post / Help Buttons */}
+        {isMapPage ? (
+          <button
+            onClick={() => setIsActivityModalOpen(true)}
+            className='bg-secondary flex h-12.5 items-center justify-center rounded-xl px-4 py-1 font-light text-white hover:cursor-pointer'
+          >
+            <CirclePlus size={26} strokeWidth={1} />
+            <span className='ml-3 text-[16px]'>I need / I can help</span>
+          </button>
+        ) : (
+          <>
+            <button
+              onClick={() => setCreatePost(true)}
+              className='bg-primary flex h-12.5 items-center justify-center rounded-xl px-4 py-1 font-light text-white hover:cursor-pointer'
+            >
+              <CirclePlus size={26} strokeWidth={1} />
+              <span className='ml-3 text-[16px]'>
+                {t('sidebar.ReportPost')}
+              </span>
+            </button>
+            {createPost && (
+              <CreatePostModal isOpen={createPost} setIsOpen={setCreatePost} />
+            )}
+          </>
+        )}
       </div>
 
       {/* Profile */}
-      <div
+      <ProfileNav />
+      {/* <div
         onClick={() => navigate(AppConstantRoutes.paths.profile)}
         className='flex h-12.5 cursor-pointer items-center justify-center gap-x-2 rounded-xl border border-black/30 px-4 py-1'
       >
         <Profile className='size-8 rounded-full object-cover' />
         <span className='text-sm'>Sweeny Sydney</span>
-      </div>
+      </div> */}
+
+      <ActivityPostModal
+        isOpen={isActivityModalOpen}
+        setIsOpen={setIsActivityModalOpen}
+        onSubmit={handleActivitySubmit}
+      />
     </div>
   )
 }

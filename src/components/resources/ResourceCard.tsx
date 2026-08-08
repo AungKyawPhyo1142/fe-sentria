@@ -5,6 +5,8 @@ import Hotline from '@/assets/icons/Hotline.svg?react'
 import FirstAid from '@/assets/icons/FirstAid.svg?react'
 import PostImages from '../posts/PostImages'
 import '../RichTextStyles.css'
+import { formatDistanceToNow } from 'date-fns'
+import FavoriteButton from '../common/FavoriteButton'
 
 interface User {
   name: string
@@ -14,6 +16,7 @@ interface User {
 
 interface ResourceCardProps {
   user: User
+  resourceId: string
   location: string
   description: string
   images?: string[]
@@ -24,9 +27,11 @@ interface ResourceCardProps {
 
 const ResourceCard = ({
   user,
+  resourceId,
   location,
   description,
   resourceTypes,
+  createdAt,
   images,
   onReadMore,
 }: ResourceCardProps) => {
@@ -62,7 +67,7 @@ const ResourceCard = ({
   }
 
   return (
-    <div className='mx-6 flex w-full flex-col space-y-10 rounded-lg border border-[#33333430] px-8 py-7'>
+    <div className='flex w-full flex-col space-y-3 rounded-lg border border-[#33333430] px-8 py-7'>
       {/* header */}
       <div className='mb-2'>
         <div className='mb-4 flex items-center justify-between'>
@@ -84,7 +89,7 @@ const ResourceCard = ({
               )}
             </div>
 
-            <div>
+            <div className='flex flex-col'>
               <div className='flex items-center space-x-2'>
                 <h3 className='text-[16px] font-medium text-black'>
                   {user.name}
@@ -95,6 +100,11 @@ const ResourceCard = ({
                     aria-label='Verified user'
                   />
                 )}
+              </div>
+              <div className='text-xs font-light text-zinc-500'>
+                {createdAt
+                  ? `${formatDistanceToNow(createdAt, { addSuffix: true })}`
+                  : ''}
               </div>
             </div>
           </div>
@@ -149,8 +159,12 @@ const ResourceCard = ({
       </div>
 
       {/* Images */}
-      <div className='flex items-center space-x-2 text-xs'>
+      <div className='mb-5 flex items-center space-x-2 text-xs'>
         {images && images.length > 0 && <PostImages images={images} />}
+      </div>
+      {/* Favorite */}
+      <div className='flex justify-end'>
+        <FavoriteButton postId={resourceId} postType='RESOURCE' />
       </div>
     </div>
   )

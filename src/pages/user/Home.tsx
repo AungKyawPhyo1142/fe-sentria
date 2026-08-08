@@ -1,57 +1,142 @@
-import Button from '@/components/common/Button'
-import { AppConstantRoutes } from '@/services/routes/path'
-import { useNavigate } from 'react-router'
+import { useSocketStore } from '@/zustand/socketStore'
+// import { useTranslation } from 'react-i18next'
+import NotificationSidebar from '@/components/common/NotificationSidebar'
+import PostCard, { PostCardSkeleton } from '@/components/posts/PostCard'
+import {
+  ReportData,
+  useGetAllDisasterReports,
+} from '@/services/network/lib/disasterReport'
+import { selectAuth, useAuthStore } from '@/zustand/authStore'
+import { setUserCurrentLocation } from '@/zustand/userCurrentLocationStore'
+import { useEffect } from 'react'
+import NoDataStatement from '@/components/common/NoDataStatement'
+import ErrorFetch from '@/components/common/ErrorFetch'
 
+// component for Post Lists
+interface ReportPostProps {
+  postLists: ReportData[]
+  isLoading?: boolean
+}
+const PostList: React.FC<ReportPostProps> = ({ postLists, isLoading }) => {
+  const { userId } = useAuthStore(selectAuth)
+
+  return (
+    // * rendering get all reports
+    <div className=''>
+      {isLoading && (
+        <div className='flex flex-col gap-4'>
+          {/* Skeleton loading for post cards */}
+          {[...Array(5)].map((_, index) => (
+            <PostCardSkeleton key={index} />
+          ))}
+        </div>
+      )}
+      {postLists.map((postList, index) => {
+        // imag url
+        const imageUrls =
+          postList.media
+            ?.filter(
+              (m) =>
+                typeof m?.type === 'string' &&
+                m.type.toLowerCase() === 'image' &&
+                typeof m.url === 'string' &&
+                m.url.trim() !== '',
+            )
+            .map((m) => m.url) ?? []
+
+        return (
+          <PostCard
+            reporterId={postList.generatedBy.id}
+            key={index}
+            id={postList._id}
+            loginUser={userId}
+            user={{
+              name: `${postList.generatedBy.firstName} ${postList.generatedBy.lastName}`,
+              avatar: postList.generatedBy.profile_image,
+              isVerified: true,
+            }}
+            trustScore={postList.factCheck.overallPercentage}
+            isDebunked={postList.factCheck.goService.status === 'debunked'}
+            location={`${postList.location.city}, ${postList.location.country}`}
+            title={postList.reportName}
+            content={postList.description}
+            images={imageUrls}
+            disasterType={postList.incidentType}
+            upvotes={postList.factCheck.communityScore?.upvotes ?? 0}
+            downvotes={postList.factCheck.communityScore?.downvotes ?? 0}
+            comments={0}
+            createdAt={new Date(postList.createdAt)}
+          />
+        )
+      })}
+    </div>
+  )
+}
+
+// Home
 const Home = () => {
-  const navigate = useNavigate()
+  // const { t } = useTranslation()
+
+  const connect = useSocketStore((state) => state.connect)
+  const earthquakeAlertListener = useSocketStore(
+    (state) => state.earthquakeAlertListener,
+  )
+  const sendUserLocation = useSocketStore((state) => state.sendUserLocation)
+  const isConnected = useSocketStore((state) => state.isConnected)
+
+  // use effect
+  useEffect(() => {
+    connect()
+    earthquakeAlertListener()
+  }, [connect, earthquakeAlertListener])
+
+  useEffect(() => {
+    if (isConnected) {
+      navigator.geolocation.getCurrentPosition((pos) => {
+        sendUserLocation({
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+        })
+        // set user current location global state via zustand
+        setUserCurrentLocation({
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+        })
+      })
+    }
+  }, [isConnected, sendUserLocation])
+
+  const { data, isLoading, error, refetch } = useGetAllDisasterReports()
+  // console.log('report data: ', data)
+  // console.log('data.pages', data?.pages)
+
+  const reports =
+    data?.pages?.flatMap((page) => page.data.reports.data ?? []) ?? []
+  console.log('reports: ', reports)
+
+  if (error)
+    return (
+      <ErrorFetch
+        heading='Try Again!'
+        subHeading="There's error data fetching in disaster reports.Please try again!"
+        reFetch={refetch}
+      />
+    )
+
   return (
     <div className='fade-in'>
-      <h1>Home Page</h1>
-      <div className='my-10 flex items-center gap-x-3'>
-        <Button className='px-10' primary>
-          Home Page
-        </Button>
-        <Button
-          className='px-10'
-          primary
-          onClick={() => navigate(AppConstantRoutes.paths.resources)}
-        >
-          Resource Page
-        </Button>
+      <div className='w-3/4'>
+        {/* Post Cards */}
+        {reports.length === 0 ? (
+          <NoDataStatement
+            heading='No Disaster Report Found'
+            subHeading="There's nothing here yet! Start by adding your first disaster report post."
+          />
+        ) : (
+          <PostList postLists={reports} isLoading={isLoading} />
+        )}
       </div>
-      <p className='text-base'>
-        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quam sed
-        facilis fuga illo alias laboriosam? Earum atque esse deserunt nihil,
-        pariatur mollitia nobis consequatur voluptatibus sequi excepturi tempora
-        ab obcaecati!Loremloe Lorem ipsum dolor sit, amet consectetur
-        adipisicing elit. Sapiente pariatur at non ullam quae inventore. Ex
-        consequuntur necessitatibus voluptates dolorem, modi quod totam adipisci
-        tempore culpa eligendi consequatur quos asperiores. Lorem, ipsum dolor
-        sit amet consectetur adipisicing elit. Dolore dignissimos quas optio
-        consequuntur officiis totam vero. Omnis nesciunt praesentium saepe
-        reiciendis maxime, unde voluptatem cupiditate deleniti, pariatur
-        exercitationem magnam expedita! Lorem ipsum dolor, sit amet consectetur
-        adipisicing elit. Voluptate, doloremque debitis recusandae quam
-        voluptates placeat maxime sint facilis nisi ipsam, nemo vero quibusdam
-        tenetur error possimus velit nostrum? Ex, inventore. Lorem ipsum dolor
-        sit amet consectetur adipisicing elit. Dolorem veritatis ratione
-        corporis dignissimos, voluptatum at, vitae rerum exercitationem quidem
-        nam unde, nesciunt neque excepturi maiores quas ducimus similique error
-        voluptatibus. Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        Porro fuga corrupti molestias quia non dolorem officiis maxime vitae
-        culpa voluptatum iste atque, optio fugit consequuntur iusto nemo
-        veritatis voluptates molestiae? Lorem, ipsum dolor sit amet consectetur
-        adipisicing elit. Blanditiis tenetur deserunt alias, ad accusamus
-        praesentium corporis placeat facilis aperiam ratione mollitia aliquid
-        aut recusandae similique sed! Tenetur blanditiis nemo reiciendis? Lorem
-        ipsum dolor sit amet consectetur adipisicing elit. Distinctio aperiam,
-        culpa asperiores aliquam esse illo dignissimos fugiat facere suscipit
-        reprehenderit ipsa quia vero numquam necessitatibus similique eaque modi
-        exercitationem quasi? Lorem ipsum dolor sit amet consectetur adipisicing
-        elit. Excepturi quisquam error magni ut, praesentium inventore maiores
-        cumque at eaque ratione quaerat, velit maxime vero dolor cum libero
-        doloribus ullam. Alias?
-      </p>
+      <NotificationSidebar />
     </div>
   )
 }

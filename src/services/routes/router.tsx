@@ -13,7 +13,9 @@ import VerificationSent from '@/pages/auth/VerificationSent'
 import Confirmed from '@/pages/auth/VerifyEmail'
 import Profile from '@/pages/user/Profile'
 import MapPage from '@/pages/user/MapPage'
-import ResourcePage from '@/pages/user/ResourcePage'
+import SocketExample from '@/pages/example/SocketExample'
+import ResourcePage from '@/components/resources/ResourcePage'
+import FavPage from '@/pages/user/FavPage'
 
 /*
   This file is where you define the routes
@@ -79,6 +81,10 @@ export const router = createBrowserRouter([
         element: <Home />,
       },
       {
+        path: AppConstantRoutes.paths.example.webSocket,
+        element: <SocketExample />,
+      },
+      {
         path: '',
         element: <Navigate to={AppConstantRoutes.paths.home} replace />,
       },
@@ -93,6 +99,10 @@ export const router = createBrowserRouter([
       {
         path: AppConstantRoutes.paths.resources,
         element: <ResourcePage />,
+      },
+      {
+        path: AppConstantRoutes.paths.fav,
+        element: <FavPage />,
       },
     ],
   },

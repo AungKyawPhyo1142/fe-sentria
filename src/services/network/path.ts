@@ -33,6 +33,35 @@ export const ApiConstantRoutes = {
         },
       }
     },
+    get report() {
+      return {
+        get default() {
+          return '/report'
+        },
+        // get create() {
+        //   return `${this.default}/create`
+        // },
+        getReportById(id: string) {
+          return `${this.default}/${id}`
+        },
+        get createReport() {
+          return `${this.default}/create`
+        },
+        deleteReport(id: string) {
+          return `${this.default}/delete/${id}`
+        },
+        editReport(id: string) {
+          return `${this.default}/update/${id}`
+        },
+      }
+    },
+    get location() {
+      return {
+        get reverseGeocode() {
+          return `/location/reverse-geocode`
+        },
+      }
+    },
     get resources() {
       return {
         get default() {
@@ -52,6 +81,44 @@ export const ApiConstantRoutes = {
         },
         get delete() {
           return `${this.default}/delete/:id`
+        },
+      }
+    },
+    get activity() {
+      return {
+        get default() {
+          return '/activity'
+        },
+        get getAll() {
+          return `${this.default}`
+        },
+        getById(id: string) {
+          return `${this.default}/${id}`
+        },
+        get create() {
+          return `${this.default}`
+        },
+        get update() {
+          return `${this.default}/:id`
+        },
+        get delete() {
+          return `${this.default}/:id`
+        },
+      }
+    },
+    get favorites() {
+      return {
+        get default() {
+          return '/favorites'
+        },
+        get toggle() {
+          return `${this.default}/toggle`
+        },
+        get getFavorites() {
+          return `${this.default}`
+        },
+        getFavByType(postType: string) {
+          return `${this.default}/${postType}`
         },
       }
     },

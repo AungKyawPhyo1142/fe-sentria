@@ -15,7 +15,7 @@ import { object, ObjectSchema, string } from 'yup'
 const Register = () => {
   const navigate = useNavigate()
   const { t } = useTranslation()
-  const [errorModal, setErrorModal] = useState(true)
+  const [errorModal, setErrorModal] = useState(false)
 
   const countryOptions = countryList()
     .getData()
@@ -109,7 +109,7 @@ const Register = () => {
       ></Modal>
       <form
         onSubmit={formik.handleSubmit}
-        className='w-[85%] items-center justify-center space-y-2'
+        className='flex w-[85%] flex-col items-start justify-center gap-y-5'
       >
         <div>
           <h1 className='text-[32px] font-medium text-[#333334]'>
@@ -223,7 +223,7 @@ const Register = () => {
             {t('Register.register')}
           </Button>
         </div>
-        <div className='mt-5 border-t border-[#333334]/30 pt-8 text-center'>
+        <div className='w-full border-t border-[#333334]/30 pt-8 text-center'>
           <Button
             outline
             className='w-full'
